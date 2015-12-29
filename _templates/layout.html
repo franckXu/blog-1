@@ -1,0 +1,13 @@
+{#- Supress blog title, nav and archive link -#}
+
+{%- extends "flat/layout.html" -%}
+
+{%- block header -%}
+{%- endblock -%}
+
+{%- block navigation -%}
+{%- endblock -%}
+
+{%- block extrahead -%}
+<link rel="stylesheet" href="{{ pathto('_static/extra.css', 1) }}" type="text/css" />
+{%- endblock -%}

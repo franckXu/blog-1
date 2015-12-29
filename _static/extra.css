@@ -1,0 +1,11 @@
+div.archive_link {
+    display: none;   
+}
+
+article p {
+    text-align: justify; 
+}
+
+div.section p { 
+    text-align: justify; 
+}
