@@ -25,7 +25,7 @@ author = 'Vlad Rișcuția'
 copyright = author
 
 # Change this to your blog root URL (required for RSS feed)
-website = 'http://blog.vladris.com/blog/html/'
+website = 'http://vladris.com/blog/'
 
 # **************************************************************
 # More tweaks you can do
