@@ -243,9 +243,8 @@ linearly independent paths through a program’s source code.</p>
 <dt>The complexity M is then defined as</dt>
 <dd><em>M = E − N + 2P</em></dd>
 <dt>where</dt>
-<dd><em>E = the number of edges of the graph.</em>
-<em>N = the number of nodes of the graph.</em>
-<em>P = the number of connected components.</em></dd>
+<dd><em>E = the number of edges of the graph, N = the number of nodes of the
+graph, P = the number of connected components.</em></dd>
 </dl>
 <div align="center" class="align-center"><img src="http://vladris.com/blog/_images/cyclomatic_complexity.svg"/></div>
 <p>A control flow graph of a simple program. The program begins executing at
@@ -427,9 +426,9 @@ data (<span class="docutils literal"><span class="pre">IdTypeToStringMap</span><
 </div>
 <div class="section" id="avoid-loops">
 <h3>Avoid loops</h3>
-<p>This goes back to the great C++ Seasoning talk I mentioned above, namely the
-<em>No Raw Loops</em> guideline. Here’s a C# example: given a list of numbers, we want
-to get the square of all the odd numbers in the list.</p>
+<p>This goes back to the C++ Seasoning talk, namely the <em>No Raw Loops</em> guideline. Here’s
+a C# example: given a list of numbers, we want to get the square of all the odd
+numbers in the list.</p>
 <div class="highlight-c#"><div class="highlight"><pre><span class="kt">var</span> <span class="n">numbers</span> <span class="p">=</span> <span class="k">new</span> <span class="n">List</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;</span> <span class="p">{</span> <span class="m">6</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">2</span><span class="p">,</span> <span class="m">7</span><span class="p">,</span> <span class="m">3</span><span class="p">,</span> <span class="m">4</span><span class="p">,</span> <span class="m">9</span><span class="p">,</span> <span class="m">5</span><span class="p">,</span> <span class="m">8</span> <span class="p">};</span>
 
 <span class="c1">// Get the squares of all odd numbers</span>
@@ -490,7 +489,7 @@ well, and only need to worry about maintaining our predicates.</p>
 <p>It might not look like a big deal in this simple made-up example, but as code
 evolves, it becomes harder and harder to follow the iteration logic, as the
 code gets littered with <span class="docutils literal"><span class="pre">break</span></span>, <span class="docutils literal"><span class="pre">continue</span></span>, and <span class="docutils literal"><span class="pre">return</span></span> statements (see
-the C++ Seasoning example quoted in the Write Less Code section above).</p>
+the Chrome example quoted in the Write Less Code section).</p>
 <p>Key takeaways:</p>
 <ul class="simple">
 <li>Try to keep functions linear (or as linear as possible)</li>
