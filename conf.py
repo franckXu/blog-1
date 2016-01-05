@@ -16,7 +16,7 @@ project = 'Blog'
 tagline = ''
 
 # Change this to the description of your blog
-description = 'My blog'
+description = "Vlad's Tech Blog"
 
 # Change this to your name
 author = 'Vlad Rișcuția'
@@ -32,7 +32,7 @@ website = 'http://blog.vladris.com/blog/html/'
 # **************************************************************
 
 # Add your Disqus shortname to enable comments powered by Disqus
-disqus_shortname = None
+disqus_shortname = 'vladris'
 
 # Change your favicon (new favicon goes in _static directory)
 html_favicon = '_static/tinkerer.ico'
@@ -54,7 +54,7 @@ rss_generate_full_posts = False
 posts_per_page = 10
 
 # Character use to replace non-alphanumeric characters in slug
-slug_word_separator = '_'
+slug_word_separator = '-'
 
 # Set to page under /pages (eg. "about" for "pages/about.html")
 landing_page = None
