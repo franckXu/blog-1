@@ -249,9 +249,8 @@ First, a few notes on cyclomatic complexity from Wikipedia:
     The complexity M is then defined as
         *M = E − N + 2P*
     where
-        *E = the number of edges of the graph.*
-        *N = the number of nodes of the graph.*
-        *P = the number of connected components.*
+        *E = the number of edges of the graph, N = the number of nodes of the
+        graph, P = the number of connected components.*
 
     .. image:: cyclomatic_complexity.svg
         :align: center
@@ -457,9 +456,9 @@ data (``IdTypeToStringMap``), not as code (long series of if/else).
 Avoid loops
 ~~~~~~~~~~~
 
-This goes back to the great C++ Seasoning talk I mentioned above, namely the
-*No Raw Loops* guideline. Here's a C# example: given a list of numbers, we want
-to get the square of all the odd numbers in the list.
+This goes back to the C++ Seasoning talk, namely the *No Raw Loops* guideline. Here's
+a C# example: given a list of numbers, we want to get the square of all the odd
+numbers in the list.
 
 .. code-block:: c#
 
@@ -529,7 +528,7 @@ well, and only need to worry about maintaining our predicates.
 It might not look like a big deal in this simple made-up example, but as code
 evolves, it becomes harder and harder to follow the iteration logic, as the
 code gets littered with ``break``, ``continue``, and ``return`` statements (see
-the C++ Seasoning example quoted in the Write Less Code section above).
+the Chrome example quoted in the Write Less Code section).
 
 Key takeaways:
 
