@@ -517,7 +517,7 @@ That being said, what I would actually recommend is using Linq:
                     Where(number => number % 2 != 0).
                     Select(number => number * number);
 
-Fewer lines of code and no branching whatsoever [1]_. ``Where`` and ``Select``
+Fewer lines of code and no branching whatsoever [*]_. ``Where`` and ``Select``
 are generic algorithms, and their arguments are the predicates we use. This makes
 the intent of the code clear at a glance - we are filtering the collection with
 a predicate (``number => number % 2 != 0``) and applying a transformation to it
@@ -557,7 +557,9 @@ iterations for some of the examples I used throughout the presentation (both the
 handcrafted and the library versions), and in all cases the code leveraging
 library functions ran slightly faster.
 
-.. [1] Cyclomatic complexity of this is actually higher when computed by looking
+----
+
+.. [*] Cyclomatic complexity of this is actually higher when computed by looking
    at basic blocks (eg. from Visual Studio's ``Analyze`` menu), since the compiler
    will automatically add a finally block to dispose of the Linq-returned
    IEnumerables in case of exception. That being said, I prefer
