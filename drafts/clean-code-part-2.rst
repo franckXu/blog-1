@@ -21,7 +21,7 @@ Immutable data
 If something shouldn't change, mark it as immutable and let the compiler enforce
 that. A good rule of thumb is to mark things as ``const`` (``const&``,
 ``const*`` etc.) and/or ``readonly`` by default, and make them mutable only when
-truly needed [*]_.
+truly needed [#]_.
 
 A simple example:
 
@@ -114,7 +114,7 @@ Another way to reduce states is to use pure functions. Unfortunately there isn't
 a lot of syntax-level support for this in C++ and C# (C++ supports ``const``
 member functions, which guarantee at compile time that calling the member
 function on an instance of the type won't change the attributes of that
-instance) [*]_
+instance) [#]_
 
 This goes back to the recommendation from Part 1 of using generic algorithms and
 predicates rather than implementing raw loops. In many cases, traversal state is
@@ -157,13 +157,138 @@ Write Readable Code
 
     *Source:* https://en.wikipedia.org/wiki/Expressive_power_(computer_science)
 
+Code is read many more times than it is written/modified, so it should be
+optimized for readability. What I mean by this is making the intent of the code
+clear at a glance - this includes giving good descriptive names to variables,
+functions, and types, adding useful comments where appropriate (a comment should
+describe what the code does if it is non-obvious; a comment like ``foo(); // calls foo()``
+is not a useful comment), and in general structure the code for easy reading.
+
+For a counterexample, think back on a piece of code you read that elicited a
+WTF. That's the kind of code you don't want to write.
+
+I won't insist much here, since there are countless books and industry best
+practices for improving code readability.
+
+Another way to make the code more readable is to have a good knowledge of the
+language you are using. The strength of a language lies in its particularities,
+so use them whenever appropriate. This means writing `idiomatic code <http://stackoverflow.com/questions/84102/what-is-idiomatic-code>`_,
+which implies knowledge of the language idioms. Don't write C++ code like C
+code, write it like C++ code. Don't write C# code as C++, write it as C# etc.
+
+Also, keep up to date on the language. Language syntax evolves to address needs,
+so in general modern syntax introduces simpler, better ways to implement things
+than old syntax. Take object allocation and initialization in C++ as an example:
+
+.. code-block:: c
+
+    Foo* foo = (Foo*)malloc(sizeof(Foo));
+    init(foo);
+    ...
+    deinit(foo);
+    free(foo);
+
+This is the C way of allocating and initializing a structure on the heap, then
+deinitializing and freeing it. Allocation and initialization are separate steps,
+with opportunity to leak both memory (by omitting the ``free`` call) and
+managed resources (by omitting the ``deinit`` call). Not to mention opportunity
+\to end up with an initialized struct (by omitting the ``init`` call), or
+accidental double-initialization, double-deinitialization, double-free etc.
+
+C++ introduced classes, and the following syntax:
+
+.. code-block:: c++
+
+    Foo* foo = new Foo();
+    ...
+    delete foo;
+
+``new`` both allocates memory and calls the constructor, while ``delete`` calls
+the destructor then releases the memory. Many of the problems in the C example
+go away, but there is still the problem of leaking the resource by omitting the
+``delete`` call, and the issue of calling ``delete`` twice on the same memory
+address.
+
+To address these issues, smart pointers were introduced in the language:
+
+.. code-block:: c++
+
+    std::shared_ptr<Foo> foo(new Foo());
+
+Smart pointers encapsulate reference counting (how many ``shared_ptr`` objects
+point to the same memory address), and automatically release the resource when
+the last reference goes away. This gets rid of most problems, but there is an
+even better way of allocating heap objects:
+
+.. code-block:: c++
+
+    auto foo = std::make_shared<Foo>();
+
+``make_shared`` has the advantage of improved performance, by allocating memory
+in a single operation for both the object and the shared pointer's own control
+block [#]_. It also prevents leaks due to interleaving [#]_. So as the C++
+language evolved, new constructs appeared to address potential problems. Keeping
+up to date with these updates, and incorporating them into your code will reduce
+the opportunity for bugs, make the code more concise, and thus more readable.
+
+Beautiful Code
+~~~~~~~~~~~~~~
+
+I encourage you to not stop at writing *working* code, rather strive to write
+*beautiful* code. I have the following quote from `Apprenticeship Patterns <http://www.goodreads.com/book/show/5608045-apprenticeship-patterns>`_
+on the wall behind my monitors, so I can see it while I work:
+
+    There's always a better/faster/smarter way to do what you're currently doing
+
+So don't stop as soon as something works, ask yourself *is this the best way to
+implement this?*
+
+Key takeaways:
+
+- Come up with good names
+- Write meaningful comments
+- Keep up to date with your language
+- Don't just write working code, write beautiful code.
+
+Epilogue
+--------
+
+As I was working on putting together the talk that inspired this post, I
+realized there are a few more rules of thumb which I could cover. The current
+working draft is:
+
+- Write safe code
+- Write leakproof code
+- Write responsive code
+- Write testable code
+
+Sometime in the future I hope to continue the series with the above, in the
+meantime, I'll leave you with this one sentence summary:
+
+    Always code as if the person who ends up maintaining your code is a violent psychopath who
+    knows where you live
+
+    Source: http://blog.codinghorror.com/coding-for-violent-psychopaths/
+
 ----
 
-.. [*] At the time of this writing, there is an `active proposals <https://github.com/dotnet/roslyn/issues/7626>`_
+.. [#] At the time of this writing, there is an `active proposals <https://github.com/dotnet/roslyn/issues/7626>`_
    to extend the C# language with an ``immutable`` keyword.
 
-.. [*] C# has a ``PureAttribue`` in the ``System.Diagnostics.Contracts``
+.. [#] C# has a ``PureAttribue`` in the ``System.Diagnostics.Contracts``
    namespace (purity not compiler-enforced) and there is an `active proposal <https://github.com/dotnet/roslyn/issues/7561>`_
    to add a keyword for it too.
+
+.. [#] This is a non-binding requirement in the standard, meaning a standard
+   library implementation doesn't *have to* do this, but most implementations
+   will. You can read more about it `here <http://en.cppreference.com/w/cpp/memory/shared_ptr/make_shared>`_.
+
+.. [#] Interleaving occurs since call order is not guaranteed. For example, in
+   ``bar(std::share_ptr<Foo>(new foo()), baz())``, there is no guarantee that
+   call order will be ``new foo()``, then the shared pointer's constructor, then
+   ``baz()``. Calls might get interleaved and executed as ``new foo()``, then
+   ``baz()``, then the shared pointer constructor, in which case an exception
+   thrown by ``baz()`` would leak the newly allocated ``Foo`` object, since the
+   shared pointer didn't get ownership of it yet.
 
 .. comments::
