@@ -28,7 +28,7 @@
         <script>window.jQuery || document.write('<script src="../../../_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
         <script src="../../../_static/plugins.js"></script>
         <script src="../../../_static/main.js"></script>
-        <link rel="next" title="Hello World" href="../../../2015/12/28/hello_world.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
+        <link rel="next" title="Hello World" href="../../../2015/12/28/hello-world.html" /><link rel="prev" title="Clean Code - Part 2" href="../07/clean-code-part-2.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
         VERSION:     '1.5',
@@ -514,7 +514,7 @@ the list of squares:</p>
                 <span class="n">Select</span><span class="p">(</span><span class="n">number</span> <span class="p">=&gt;</span> <span class="n">number</span> <span class="p">*</span> <span class="n">number</span><span class="p">);</span>
 </pre></div>
 </div>
-<p>Fewer lines of code and no branching whatsoever <a class="footnote-reference" href="#id2" id="id1">[1]</a>. <span class="docutils literal"><span class="pre">Where</span></span> and <span class="docutils literal"><span class="pre">Select</span></span>
+<p>Fewer lines of code and no branching whatsoever <a class="footnote-reference" href="#id2" id="id1">[*]</a>. <span class="docutils literal"><span class="pre">Where</span></span> and <span class="docutils literal"><span class="pre">Select</span></span>
 are generic algorithms, and their arguments are the predicates we use. This makes
 the intent of the code clear at a glance - we are filtering the collection with
 a predicate (<span class="docutils literal"><span class="pre">number</span> <span class="pre">=&gt;</span> <span class="pre">number</span> <span class="pre">%</span> <span class="pre">2</span> <span class="pre">!=</span> <span class="pre">0</span></span>) and applying a transformation to it
@@ -554,7 +554,7 @@ library functions ran slightly faster.</p>
 <table class="docutils footnote" frame="void" id="id2" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Cyclomatic complexity of this is actually higher when computed by looking
+<tr><td class="label"><a class="fn-backref" href="#id1">[*]</a></td><td>Cyclomatic complexity of this is actually higher when computed by looking
 at basic blocks (eg. from Visual Studio&#8217;s <span class="docutils literal"><span class="pre">Analyze</span></span> menu), since the compiler
 will automatically add a finally block to dispose of the Linq-returned
 IEnumerables in case of exception. That being said, I prefer
@@ -569,8 +569,8 @@ compiler-generated complexity to developer-generated complexity.</td></tr>
         
         
         </div><ul class="related clearfix">
-            <li class="left"></li>
-            <li class="right"><a href="../../../2015/12/28/hello_world.html">Hello World</a> &raquo; </li>
+            <li class="left"> &laquo; <a href="../07/clean-code-part-2.html">Clean Code - Part 2</a></li>
+            <li class="right"><a href="../../../2015/12/28/hello-world.html">Hello World</a> &raquo; </li>
         </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "vladris";    var disqus_identifier = "2016/01/04/clean-code-part-1";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article></div> <!-- #main --></div> <!-- #main-container -->
 
         <div class="footer-container" role="contentinfo"><div style="text-align: center; color: #93a4ad">

@@ -5,8 +5,284 @@
         <link>http://vladris.com/blog/</link>
         <description></description>
         <language>en-us</language>
-        <pubDate>Mon, 04 Jan 2016 00:00:00 -0800</pubDate>
+        <pubDate>Thu, 07 Jan 2016 00:00:00 -0800</pubDate>
         
+        <item>
+            <link>http://vladris.com/blog/2016/01/07/clean-code-part-2.html</link>
+            <guid>http://vladris.com/blog/2016/01/07/clean-code-part-2.html</guid>
+            <title><![CDATA[Clean Code - Part 2]]></title>
+            <description><![CDATA[<h1>Clean Code - Part 2</h1>
+<p>In <a class="reference external" href="http://vladris.com/blog/2016/01/04/clean-code-part-1">Part 1</a> I talked about writing less code and
+writing simple code. In this post I will cover writing stateless code and
+writing readable code.</p>
+<div class="section" id="write-stateless-code">
+<h2>Write Stateless Code</h2>
+<blockquote>
+<div><p>A <strong>pure function</strong> is a <strong>function</strong> where the return value is only
+determined by its input values, without observable side effects. This is
+how <strong>functions</strong> in math work: <span class="docutils literal"><span class="pre">Math.cos(x)</span></span> will, for the same value
+of <span class="docutils literal"><span class="pre">x</span></span>, always return the same result.</p>
+<p><em>Source:</em> <a class="reference external" href="http://www.sitepoint.com/functional-programming-pure-functions/">http://www.sitepoint.com/functional-programming-pure-functions/</a></p>
+</div></blockquote>
+<p>Things break when a program gets into a “bad state”. There are a couple of ways
+to make this less likely to happen: making data immutable and writing functions
+that don’t have side-effects (<em>pure</em> functions).</p>
+<div class="section" id="immutable-data">
+<h3>Immutable data</h3>
+<p>If something shouldn’t change, mark it as immutable and let the compiler enforce
+that. A good rule of thumb is to mark things as <span class="docutils literal"><span class="pre">const</span></span> (<span class="docutils literal"><span class="pre">const&amp;</span></span>,
+<span class="docutils literal"><span class="pre">const*</span></span> etc.) and/or <span class="docutils literal"><span class="pre">readonly</span></span> by default, and make them mutable only when
+truly needed <a class="footnote-reference" href="#id5" id="id1">[1]</a>.</p>
+<p>A simple example:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="k">struct</span> <span class="n">StringUtil</span>
+<span class="p">{</span>
+    <span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">Concat1</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str1</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str2</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">str1</span> <span class="o">+</span> <span class="n">str2</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">Concat2</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str1</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str2</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">str1</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">str2</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>Both <span class="docutils literal"><span class="pre">StringUtil::Concat1</span></span> and <span class="docutils literal"><span class="pre">StringUtil::Concat2</span></span> return the same thing
+for the same input, the difference being that <span class="docutils literal"><span class="pre">Concat2</span></span>, as opposed to
+<span class="docutils literal"><span class="pre">Concat1</span></span>, modifies its first argument. In a bigger function, such a change
+might be introduced accidentally and have unexpected consequences down the line.</p>
+<p>A simple way to address this is by explicitly marking the arguments as
+<span class="docutils literal"><span class="pre">const</span></span>:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="k">struct</span> <span class="n">StringUtil</span>
+<span class="p">{</span>
+    <span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">Concat1</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str1</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str2</span><span class="p">)</span>
+    <span class="p">{</span>
+         <span class="k">return</span> <span class="n">str1</span> <span class="o">+</span> <span class="n">str2</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">Concat2</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str1</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str2</span><span class="p">)</span>
+    <span class="p">{</span>
+         <span class="k">return</span> <span class="n">str1</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">str2</span><span class="p">);</span> <span class="c1">// Won't compile - can't call append on str1</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>In this case, <span class="docutils literal"><span class="pre">Concat2</span></span> won’t compile, so we can rely on the compiler to
+eliminate this type of unintended behavior.</p>
+<p>Another example: a simple <span class="docutils literal"><span class="pre">UpCase</span></span> function which calls <span class="docutils literal"><span class="pre">toupper</span></span> on each
+character of the given string, upcasing it in place:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="kt">void</span> <span class="nf">UpCase</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">string</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">while</span> <span class="p">(</span><span class="o">*</span><span class="n">string</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="o">*</span><span class="n">string</span> <span class="o">=</span> <span class="n">toupper</span><span class="p">(</span><span class="o">*</span><span class="n">string</span><span class="p">);</span>
+        <span class="n">string</span><span class="o">++</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>Calling it with</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="kt">char</span><span class="o">*</span> <span class="n">myString</span> <span class="o">=</span> <span class="s">"Foo"</span><span class="p">;</span>
+<span class="p">...</span>
+<span class="n">UpCase</span><span class="p">(</span><span class="n">myString</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>will lead to a crash at runtime - the function will try to call <span class="docutils literal"><span class="pre">toupper</span></span> on
+the characters of <span class="docutils literal"><span class="pre">myString</span></span>. The problem is that <span class="docutils literal"><span class="pre">myString</span></span> is a <span class="docutils literal"><span class="pre">char*</span></span>
+to a string literal which gets compiled into the read-only data segment of the
+binary. This cannot be modified.</p>
+<p>To catch this type of errors at compile-time, we again only need to mark the
+immutable data as such:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">myString</span> <span class="o">=</span> <span class="s">"Foo"</span><span class="p">;</span>
+<span class="p">...</span>
+<span class="n">UpCase</span><span class="p">(</span><span class="n">myString</span><span class="p">);</span> <span class="c1">// Won't compile - can't call UpCase on myString</span>
+</pre></div>
+</div>
+<p>In contrast with the previous example, the argument to <span class="docutils literal"><span class="pre">UpCase</span></span> is mutable by
+design (the API is modifying the string in-place), but marking <span class="docutils literal"><span class="pre">myString</span></span> as
+<span class="docutils literal"><span class="pre">const</span></span> tells the complier this is non-mutable data, so it can’t be used with
+this API.</p>
+</div>
+<div class="section" id="pure-functions">
+<h3>Pure functions</h3>
+<p>Another way to reduce states is to use pure functions. Unfortunately there isn’t
+a lot of syntax-level support for this in C++ and C# (C++ supports <span class="docutils literal"><span class="pre">const</span></span>
+member functions, which guarantee at compile time that calling the member
+function on an instance of the type won’t change the attributes of that
+instance) <a class="footnote-reference" href="#id6" id="id2">[2]</a></p>
+<p>This goes back to the recommendation from Part 1 of using generic algorithms and
+predicates rather than implementing raw loops. In many cases, traversal state is
+encapsulated in the library algorithm or in an iterator, and predicates ideally
+don’t have side-effects.</p>
+<div class="highlight-c#"><div class="highlight"><pre><span class="kt">var</span> <span class="n">squares</span> <span class="p">=</span> <span class="n">numbers</span><span class="p">.</span>
+                <span class="n">Where</span><span class="p">(</span><span class="n">number</span> <span class="p">=&gt;</span> <span class="n">number</span> <span class="p">%</span> <span class="m">2</span> <span class="p">!=</span> <span class="m">0</span><span class="p">).</span>
+                <span class="n">Select</span><span class="p">(</span><span class="n">number</span> <span class="p">=&gt;</span> <span class="n">number</span> <span class="p">*</span> <span class="n">number</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Above code (also from Part 1) doesn’t hold any state: traversal is handled by
+the Linq methods, the predicates are pure.</p>
+<p>In general, try to encapsulate state in parts of the code built to manage state,
+and keep the rest stateless. Note that immutable data and pure functions are
+also an advantage in concurrent applications, since they can’t generate race
+conditions.</p>
+<p>Key takeaways:</p>
+<ul class="simple">
+<li>Prefer pure functions to stateful functions and, if state is needed, keep it
+contained</li>
+<li>By default mark everything as <span class="docutils literal"><span class="pre">const</span></span> (or <span class="docutils literal"><span class="pre">readonly</span></span>), and only remove
+the constraint when mutability is explicitly needed</li>
+</ul>
+</div>
+</div>
+<div class="section" id="write-readable-code">
+<h2>Write Readable Code</h2>
+<blockquote>
+<div><p>In computer science, the <strong>expressive power</strong> (also called
+<strong>expressiveness</strong> or expressivity) of a language is the breadth of ideas
+that can be represented and communicated in that language [...]</p>
+<ul class="simple">
+<li>regardless of ease (theoretical expressivity)</li>
+<li><strong>concisely and readily</strong> (practical expressivity)</li>
+</ul>
+<p><em>Source:</em> <a class="reference external" href="https://en.wikipedia.org/wiki/Expressive_power_(computer_science">https://en.wikipedia.org/wiki/Expressive_power_(computer_science</a>)</p>
+</div></blockquote>
+<p>Code is read many more times than it is written/modified, so it should be
+optimized for readability. What I mean by this is making the intent of the code
+clear at a glance - this includes giving good descriptive names to variables,
+functions, and types, adding useful comments where appropriate (a comment should
+describe what the code does if it is non-obvious; a comment like <span class="docutils literal"><span class="pre">foo();</span> <span class="pre">//</span> <span class="pre">calls</span> <span class="pre">foo()</span></span>
+is not a useful comment), and in general structure the code for easy reading.</p>
+<p>For a counterexample, think back on a piece of code you read that elicited a
+WTF. That’s the kind of code you don’t want to write.</p>
+<p>I won’t insist much here, since there are countless books and industry best
+practices for improving code readability.</p>
+<p>Another way to make the code more readable is to have a good knowledge of the
+language you are using. The strength of a language lies in its particularities,
+so use them whenever appropriate. This means writing <a class="reference external" href="http://stackoverflow.com/questions/84102/what-is-idiomatic-code">idiomatic code</a>,
+which implies knowledge of the language idioms. Don’t write C++ code like C
+code, write it like C++ code. Don’t write C# code as C++, write it as C# etc.</p>
+<p>Also, keep up to date on the language. Language syntax evolves to address needs,
+so in general modern syntax introduces simpler, better ways to implement things
+than old syntax. Take object allocation and initialization in C++ as an example:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="n">Foo</span><span class="o">*</span> <span class="n">foo</span> <span class="o">=</span> <span class="p">(</span><span class="n">Foo</span><span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">Foo</span><span class="p">));</span>
+<span class="n">init</span><span class="p">(</span><span class="n">foo</span><span class="p">);</span>
+<span class="p">...</span>
+<span class="n">deinit</span><span class="p">(</span><span class="n">foo</span><span class="p">);</span>
+<span class="n">free</span><span class="p">(</span><span class="n">foo</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>This is the C way of allocating and initializing a structure on the heap, then
+deinitializing and freeing it. Allocation and initialization are separate steps,
+with opportunity to leak both memory (by omitting the <span class="docutils literal"><span class="pre">free</span></span> call) and
+managed resources (by omitting the <span class="docutils literal"><span class="pre">deinit</span></span> call). Not to mention opportunity
+to end up with an initialized struct (by omitting the <span class="docutils literal"><span class="pre">init</span></span> call), or
+accidental double-initialization, double-deinitialization, double-free etc.</p>
+<p>C++ introduced classes, and the following syntax:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">Foo</span><span class="o">*</span> <span class="n">foo</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Foo</span><span class="p">();</span>
+<span class="p">...</span>
+<span class="k">delete</span> <span class="n">foo</span><span class="p">;</span>
+</pre></div>
+</div>
+<p><span class="docutils literal"><span class="pre">new</span></span> both allocates memory and calls the constructor, while <span class="docutils literal"><span class="pre">delete</span></span> calls
+the destructor then releases the memory. Many of the problems in the C example
+go away, but there is still the problem of leaking the resource by omitting the
+<span class="docutils literal"><span class="pre">delete</span></span> call, and the issue of calling <span class="docutils literal"><span class="pre">delete</span></span> twice on the same memory
+address.</p>
+<p>To address these issues, smart pointers were introduced in the language:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span> <span class="n">foo</span><span class="p">(</span><span class="k">new</span> <span class="n">Foo</span><span class="p">());</span>
+</pre></div>
+</div>
+<p>Smart pointers encapsulate reference counting (how many <span class="docutils literal"><span class="pre">shared_ptr</span></span> objects
+point to the same memory address), and automatically release the resource when
+the last reference goes away. This gets rid of most problems, but there is an
+even better way of allocating heap objects:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="k">auto</span> <span class="n">foo</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">();</span>
+</pre></div>
+</div>
+<p><span class="docutils literal"><span class="pre">make_shared</span></span> has the advantage of improved performance, by allocating memory
+in a single operation for both the object and the shared pointer’s own control
+block <a class="footnote-reference" href="#id7" id="id3">[3]</a>. It also prevents leaks due to interleaving <a class="footnote-reference" href="#id8" id="id4">[4]</a>. So as the C++
+language evolved, new constructs appeared to address potential problems. Keeping
+up to date with these updates, and incorporating them into your code will reduce
+the opportunity for bugs, make the code more concise, and thus more readable.</p>
+<div class="section" id="beautiful-code">
+<h3>Beautiful Code</h3>
+<p>I encourage you to not stop at writing <em>working</em> code, rather strive to write
+<em>beautiful</em> code. I have the following quote from <a class="reference external" href="http://www.goodreads.com/book/show/5608045-apprenticeship-patterns">Apprenticeship Patterns</a>
+on the wall behind my monitors, so I can see it while I work:</p>
+<blockquote>
+<div>There’s always a better/faster/smarter way to do what you’re currently doing</div></blockquote>
+<p>So don’t stop as soon as something works, ask yourself <em>is this the best way to
+implement this?</em></p>
+<p>Key takeaways:</p>
+<ul class="simple">
+<li>Come up with good names</li>
+<li>Write meaningful comments</li>
+<li>Keep up to date with your language</li>
+<li>Don’t just write working code, write beautiful code.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="epilogue">
+<h2>Epilogue</h2>
+<p>As I was working on putting together the talk that inspired this post, I
+realized there are a few more rules of thumb which I could cover. The current
+working draft is:</p>
+<ul class="simple">
+<li>Write safe code</li>
+<li>Write leakproof code</li>
+<li>Write responsive code</li>
+<li>Write testable code</li>
+</ul>
+<p>Sometime in the future I hope to continue the series with the above, in the
+meantime, I’ll leave you with this one sentence summary:</p>
+<blockquote>
+<div><p>Always code as if the person who ends up maintaining your code is a violent psychopath who
+knows where you live</p>
+<p>Source: <a class="reference external" href="http://blog.codinghorror.com/coding-for-violent-psychopaths/">http://blog.codinghorror.com/coding-for-violent-psychopaths/</a></p>
+</div></blockquote>
+<hr class="docutils"/>
+<table class="docutils footnote" frame="void" id="id5" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>At the time of this writing, there is an <a class="reference external" href="https://github.com/dotnet/roslyn/issues/7626">active proposals</a>
+to extend the C# language with an <span class="docutils literal"><span class="pre">immutable</span></span> keyword.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id6" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>C# has a <span class="docutils literal"><span class="pre">PureAttribue</span></span> in the <span class="docutils literal"><span class="pre">System.Diagnostics.Contracts</span></span>
+namespace (purity not compiler-enforced) and there is an <a class="reference external" href="https://github.com/dotnet/roslyn/issues/7561">active proposal</a>
+to add a keyword for it too.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id7" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[3]</a></td><td>This is a non-binding requirement in the standard, meaning a standard
+library implementation doesn’t <em>have to</em> do this, but most implementations
+will. You can read more about it <a class="reference external" href="http://en.cppreference.com/w/cpp/memory/shared_ptr/make_shared">here</a>.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id8" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[4]</a></td><td>Interleaving occurs since call order is not guaranteed. For example, in
+<span class="docutils literal"><span class="pre">bar(std::share_ptr&lt;Foo&gt;(new</span> <span class="pre">foo()),</span> <span class="pre">baz())</span></span>, there is no guarantee that
+call order will be <span class="docutils literal"><span class="pre">new</span> <span class="pre">foo()</span></span>, then the shared pointer’s constructor, then
+<span class="docutils literal"><span class="pre">baz()</span></span>. Calls might get interleaved and executed as <span class="docutils literal"><span class="pre">new</span> <span class="pre">foo()</span></span>, then
+<span class="docutils literal"><span class="pre">baz()</span></span>, then the shared pointer constructor, in which case an exception
+thrown by <span class="docutils literal"><span class="pre">baz()</span></span> would leak the newly allocated <span class="docutils literal"><span class="pre">Foo</span></span> object, since the
+shared pointer didn’t get ownership of it yet.</td></tr>
+</tbody>
+</table>
+</div>
+]]></description>
+             <pubDate>Thu, 07 Jan 2016 00:00:00 -0800</pubDate>
+        </item>
+    
         <item>
             <link>http://vladris.com/blog/2016/01/04/clean-code-part-1.html</link>
             <guid>http://vladris.com/blog/2016/01/04/clean-code-part-1.html</guid>
@@ -479,7 +755,7 @@ the list of squares:</p>
                 <span class="n">Select</span><span class="p">(</span><span class="n">number</span> <span class="p">=&gt;</span> <span class="n">number</span> <span class="p">*</span> <span class="n">number</span><span class="p">);</span>
 </pre></div>
 </div>
-<p>Fewer lines of code and no branching whatsoever <a class="footnote-reference" href="#id2" id="id1">[1]</a>. <span class="docutils literal"><span class="pre">Where</span></span> and <span class="docutils literal"><span class="pre">Select</span></span>
+<p>Fewer lines of code and no branching whatsoever <a class="footnote-reference" href="#id2" id="id1">[*]</a>. <span class="docutils literal"><span class="pre">Where</span></span> and <span class="docutils literal"><span class="pre">Select</span></span>
 are generic algorithms, and their arguments are the predicates we use. This makes
 the intent of the code clear at a glance - we are filtering the collection with
 a predicate (<span class="docutils literal"><span class="pre">number</span> <span class="pre">=&gt;</span> <span class="pre">number</span> <span class="pre">%</span> <span class="pre">2</span> <span class="pre">!=</span> <span class="pre">0</span></span>) and applying a transformation to it
@@ -519,7 +795,7 @@ library functions ran slightly faster.</p>
 <table class="docutils footnote" frame="void" id="id2" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Cyclomatic complexity of this is actually higher when computed by looking
+<tr><td class="label"><a class="fn-backref" href="#id1">[*]</a></td><td>Cyclomatic complexity of this is actually higher when computed by looking
 at basic blocks (eg. from Visual Studio’s <span class="docutils literal"><span class="pre">Analyze</span></span> menu), since the compiler
 will automatically add a finally block to dispose of the Linq-returned
 IEnumerables in case of exception. That being said, I prefer
@@ -532,8 +808,8 @@ compiler-generated complexity to developer-generated complexity.</td></tr>
         </item>
     
         <item>
-            <link>http://vladris.com/blog/2015/12/28/hello_world.html</link>
-            <guid>http://vladris.com/blog/2015/12/28/hello_world.html</guid>
+            <link>http://vladris.com/blog/2015/12/28/hello-world.html</link>
+            <guid>http://vladris.com/blog/2015/12/28/hello-world.html</guid>
             <title><![CDATA[Hello World]]></title>
             <description><![CDATA[<h1>Hello World</h1>
 <div class="code python highlight-python"><div class="highlight"><pre><span class="k">print</span><span class="p">(</span><span class="s">"Hello World!"</span><span class="p">)</span>
