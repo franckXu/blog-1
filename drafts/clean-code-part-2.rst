@@ -1,6 +1,10 @@
 Clean Code - Part 2
 ===================
 
+In `Part 1 <../04/clean-code-part-1/>`_ I talked about writing less code and
+writing simple code. In this post I will cover writing stateless code and
+writing readable code.
+
 Write Stateless Code
 --------------------
 
@@ -131,12 +135,9 @@ Above code (also from Part 1) doesn't hold any state: traversal is handled by
 the Linq methods, the predicates are pure.
 
 In general, try to encapsulate state in parts of the code built to manage state,
-and keep the rest stateless. Functional languages are great at keeping functions
-pure and data immutable, the tradeoff there being that transformations incur
-data copy, which comes with a performance penalty.
-
-Note that immutable data and pure functions are also an advantage in concurrent
-applications, since they can't generate race conditions.
+and keep the rest stateless. Note that immutable data and pure functions are
+also an advantage in concurrent applications, since they can't generate race
+conditions.
 
 Key takeaways:
 
