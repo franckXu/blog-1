@@ -22,7 +22,7 @@ Write Less Code
     lines of code for companies not using automated testing such as static
     analysis.
 
-    *Source:* http://www.infoq.com/news/2012/03/Defects-Open-Source-Commercial
+    *Source:* `InfoQ <http://www.infoq.com/news/2012/03/Defects-Open-Source-Commercial>`_
 
 A great way to have fewer bugs is to have fewer lines of code! What I mean by
 this is that churning out many lines of code is by no means a measure of
@@ -262,7 +262,7 @@ First, a few notes on cyclomatic complexity from Wikipedia:
     has 9 edges, 8 nodes, and 1 connected component, so the cyclomatic
     complexity of the program is 9 - 8 + 2 * 1 = 3.
 
-    *Source:* https://en.wikipedia.org/wiki/Cyclomatic_complexity
+    *Source:* `Wikipedia <https://en.wikipedia.org/wiki/Cyclomatic_complexity>`_
 
 The cyclomatic complexity of any piece of code should be minimized. This can be
 achieved by avoiding branching, namely, whenever possible, avoiding conditional

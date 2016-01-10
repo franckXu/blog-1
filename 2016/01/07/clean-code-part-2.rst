@@ -13,7 +13,7 @@ Write Stateless Code
     how **functions** in math work: ``Math.cos(x)`` will, for the same value
     of ``x``, always return the same result.
 
-    *Source:* http://www.sitepoint.com/functional-programming-pure-functions/
+    *Source:* `SitePoint <http://www.sitepoint.com/functional-programming-pure-functions/>`_
 
 Things break when a program gets into a "bad state". There are a couple of ways
 to make this less likely to happen: making data immutable and writing functions
@@ -156,7 +156,7 @@ Write Readable Code
     - regardless of ease (theoretical expressivity)
     - **concisely and readily** (practical expressivity)
 
-    *Source:* https://en.wikipedia.org/wiki/Expressive_power_(computer_science)
+    *Source:* `Wikipedia <https://en.wikipedia.org/wiki/Expressive_power_(computer_science)>`_
 
 Code is read many more times than it is written/modified, so it should be
 optimized for readability. What I mean by this is making the intent of the code
@@ -269,7 +269,7 @@ meantime, I'll leave you with this one sentence summary:
     Always code as if the person who ends up maintaining your code is a violent psychopath who
     knows where you live
 
-    Source: http://blog.codinghorror.com/coding-for-violent-psychopaths/
+    *Source:* `Coding Horror <http://blog.codinghorror.com/coding-for-violent-psychopaths/>`_
 
 ----
 
