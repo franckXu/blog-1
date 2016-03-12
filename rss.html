@@ -5,8 +5,405 @@
         <link>http://vladris.com/blog/</link>
         <description></description>
         <language>en-us</language>
-        <pubDate>Thu, 07 Jan 2016 00:00:00 -0800</pubDate>
+        <pubDate>Fri, 11 Mar 2016 00:00:00 -0800</pubDate>
         
+        <item>
+            <link>http://vladris.com/blog/2016/03/11/arguments-and-smart-pointers.html</link>
+            <guid>http://vladris.com/blog/2016/03/11/arguments-and-smart-pointers.html</guid>
+            <title><![CDATA[Arguments and Smart Pointers]]></title>
+            <description><![CDATA[<h1>Arguments and Smart Pointers</h1>
+<p>For efficiency reasons, C++ had a myriad of ways to pass data around. A
+function can take arguments in several forms:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="n">T</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="n">T</span><span class="o">*</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="n">T</span><span class="o">&amp;</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="n">T</span><span class="o">**</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="n">T</span><span class="o">&amp;&amp;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>No to mention adding <span class="docutils literal"><span class="pre">const</span></span> and smart pointers into the mix.</p>
+<p>And speaking of pointers, we have raw pointers, <span class="docutils literal"><span class="pre">unique_ptr</span></span>, <span class="docutils literal"><span class="pre">shared_ptr,</span></span>
+<span class="docutils literal"><span class="pre">CComPtr</span></span>/<span class="docutils literal"><span class="pre">ComPtr</span></span> (for Windows COM objects), and, if you are working in
+older codebases, <span class="docutils literal"><span class="pre">auto_ptr</span></span>, and maybe even some homebrewed refcounted
+pointers.</p>
+<p>All of this might seem a bit daunting and make C++ seem more complicated than
+it really is. One way to think about it is from the ownership perspective:
+objects are resources and the key question is “who owns this resource?”. This
+should dictate both how a particular resource is allocated (and released) and
+the shape function arguments should take. Lifetime is also an important
+consideration - a resource shouldn’t be released while other components expect
+it to be available, but it should be released as soon as it is no longer
+needed.</p>
+<p>In this post I will try to cover the various ways in which resources can be
+allocated, owned, and passed around.</p>
+<div class="section" id="stack-objects-and-passing-arguments">
+<h2>Stack Objects and Passing Arguments</h2>
+<p>The simplest, clearest thing to do is allocate objects on the stack. A stack
+object doesn’t involve any pointers:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">Bar</span> <span class="n">bar</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The variable <span class="docutils literal"><span class="pre">bar</span></span> of type <span class="docutils literal"><span class="pre">Bar</span></span> is created on the stack. Once the stack
+frame is popped (once the function is done executing, either through a normal
+return or due to an exception) the object goes away. This is the easiest, safest
+thing to do. The only reasons we wouldn’t always do this are time and space
+requirements: lifetime-wise, we might want to somehow use <span class="docutils literal"><span class="pre">bar</span></span> after
+<span class="docutils literal"><span class="pre">foo()</span></span> returns - for example we might want to pass it around to some other
+object that wants to use at a later time; in terms of space, stack memory is
+more limited than the heap, so large objects are better kept on the heap to
+avoid overflow.</p>
+<div class="section" id="pass-by-value">
+<h3>Pass by value</h3>
+<p>One way to get around the lifetime requirement is to pass the object by value:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="kt">void</span> <span class="nf">do_suff</span><span class="p">(</span><span class="n">Bar</span> <span class="n">bar</span><span class="p">);</span> <span class="c1">// hands bar off to some other object</span>
+
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">Bar</span> <span class="n">bar</span><span class="p">;</span>
+    <span class="n">do_suff</span><span class="p">(</span><span class="n">bar</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Let’s assume for this example that <span class="docutils literal"><span class="pre">do_suff</span></span> takes the argument and sticks it
+into some global object which will use it as some future time.</p>
+<p>The above code will simply create a copy of the object, so whatever <span class="docutils literal"><span class="pre">do_suff</span></span>
+gets won’t be the original resource which gets freed once the function returns,
+rather a copy of it. Copying an object costs both run time and space, but if
+neither are a big concern, this is a great, safe way of ensuring resources don’t
+get released before we’re done with them.</p>
+</div>
+<div class="section" id="move">
+<h3>Move</h3>
+<p>C++11 introduces a cheaper way of achieving this, through move semantics:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="kt">void</span> <span class="nf">do_suff</span><span class="p">(</span><span class="n">Bar</span><span class="o">&amp;&amp;</span> <span class="n">bar</span><span class="p">);</span> <span class="c1">// hands bar off to some other object</span>
+
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">Bar</span> <span class="n">bar</span><span class="p">;</span>
+    <span class="n">do_suff</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">bar</span><span class="p">));</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>With move semantics, the resource is actually <em>moved</em> into the <span class="docutils literal"><span class="pre">do_suff</span></span>
+function. Once this happens, the original object is left in an undefined state
+and shouldn’t be used anymore. This approach is usually employed when we have a
+sink argument - we <em>sink</em> <span class="docutils literal"><span class="pre">bar</span></span> to its final resting place somewhere and
+<span class="docutils literal"><span class="pre">foo()</span></span> no longer cares about it after passing it down to <span class="docutils literal"><span class="pre">do_stuff</span></span>.</p>
+<p>One thing to keep in mind is that <span class="docutils literal"><span class="pre">move</span></span> is not magic, so <span class="docutils literal"><span class="pre">Bar</span></span> needs to
+declare a <a class="reference external" href="http://en.cppreference.com/w/cpp/language/move_constructor">move constructor</a>
+in order for this to do what we expect it to do. If Bar doesn’t declare a move
+constructor, the above becomes a simple copy.</p>
+</div>
+<div class="section" id="pass-by-reference">
+<h3>Pass by reference</h3>
+<p>On the flipside, when we care about the size, so that we don’t want to create a
+copy of the object, but we aren’t worried about the lifetime - meaning the
+object we pass to <span class="docutils literal"><span class="pre">do_stuff</span></span> won’t have to outlive the function call, we can
+pass by reference:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="kt">void</span> <span class="nf">do_suff</span><span class="p">(</span><span class="k">const</span> <span class="n">Bar</span><span class="o">&amp;</span> <span class="n">bar</span><span class="p">);</span> <span class="c1">// bar is only used within do_suff</span>
+
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">Bar</span> <span class="n">bar</span><span class="p">;</span>
+    <span class="n">do_suff</span><span class="p">(</span><span class="n">bar</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Note the <span class="docutils literal"><span class="pre">const</span></span> above - this means <span class="docutils literal"><span class="pre">do_suff</span></span> will use <span class="docutils literal"><span class="pre">bar</span></span> but won’t
+modify it. By default, arguments should be marked as <span class="docutils literal"><span class="pre">const</span></span> unless the
+function does indeed need to alter the object. Regardless of constness, in this
+case we pass a reference to <span class="docutils literal"><span class="pre">bar</span></span> as an argument, which is very cheap (a
+reference has the same size as a pointer). The only caveat is that <span class="docutils literal"><span class="pre">do_stuff</span></span>
+should not pass this to some other object that outlives the function call (eg. a
+global object which tries to use it later), because as soon as <span class="docutils literal"><span class="pre">foo</span></span> returns,
+the reference becomes invalid.</p>
+</div>
+<div class="section" id="pass-by-pointer">
+<h3>Pass by pointer</h3>
+<p>A pointer argument would look like this:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="kt">void</span> <span class="nf">do_stuff</span><span class="p">(</span><span class="k">const</span> <span class="n">Bar</span><span class="o">*</span> <span class="n">bar</span><span class="p">);</span>
+
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">Bar</span> <span class="n">bar</span><span class="p">;</span>
+    <span class="n">do_stuff</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bar</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>A good rule of thumb is to not do this. The difference between passing by
+reference and by pointer in this case is that a pointer can be null, while a
+reference can’t. So passing by pointer here automatically brings the need to
+perform null checks to ensure bad things don’t happen. You would need to make a
+very good argument to convince me during code review that using a pointer
+instead of a reference is appropriate. Unless working against a legacy API which
+can’t be changed, I highly discourage use of raw pointers.</p>
+</div>
+<div class="section" id="summary">
+<h3>Summary</h3>
+<p>In summary, when designing an API:</p>
+<ol class="arabic simple">
+<li>Take argument by value if copying it is not a concern</li>
+<li>Take argument by <span class="docutils literal"><span class="pre">const&amp;</span></span> if it’s not a sink argument, meaning we don’t
+need to refer to it passed the function call</li>
+<li>Take argument by reference (<span class="docutils literal"><span class="pre">&amp;</span></span>) if 2) but the API needs to modify it</li>
+<li>Take argument by <span class="docutils literal"><span class="pre">&amp;&amp;</span></span> if it’s a sink argument, the type has a move
+constructor, and copying it is expensive</li>
+<li>Don’t pass raw pointers around</li>
+</ol>
+</div>
+</div>
+<div class="section" id="heap-objects-and-smart-pointers">
+<h2>Heap Objects and Smart Pointers</h2>
+<p>In all of the examples above, <span class="docutils literal"><span class="pre">bar</span></span> was an object created on the stack. This
+works great in some cases, but some objects are simply too big to fit on the
+stack, or it doesn’t make sense for them to do so (if, for example, we want to
+vary their size at runtime). In this case, we allocate the object on the heap
+and keep a pointer to it.</p>
+<p>Once we start working with heap objects, ownership becomes even more important:
+unlike stack objects, which get automatically destroyed when their stack frame
+gets popped, heap objects need to be explicitly deleted. This responsibility
+should be with the <em>owner</em> of the object.</p>
+<div class="section" id="unique-pointer">
+<h3>Unique pointer</h3>
+<p>A unique pointer (<span class="docutils literal"><span class="pre">std::unique_ptr</span></span>) is a wrapper around a raw pointer which
+will automatically delete the heap object when it goes out of scope itself:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">auto</span> <span class="n">ptrBar</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Bar</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="p">}</span> <span class="c1">// ptrBar goes out of scope =&gt; heap object gets deleted</span>
+</pre></div>
+</div>
+<p>The above call to <span class="docutils literal"><span class="pre">make_unique</span></span> allocates an instance of Bar on the heap and
+wraps the pointer to it into the unique pointer <span class="docutils literal"><span class="pre">ptrBar</span></span>. Now <span class="docutils literal"><span class="pre">ptrBar</span></span>
+<em>owns</em> the object and as soon as ptrBar goes out of scope, the heap object is
+also deleted.</p>
+<p>Unique pointers cannot be copied, so we can never accidentally have more than
+one single <span class="docutils literal"><span class="pre">unique_ptr</span></span> pointing to the same heap object:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="k">auto</span> <span class="n">ptrBar</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Bar</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="p">...</span>
+<span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Bar</span><span class="o">&gt;</span> <span class="n">ptrBar2</span> <span class="o">=</span> <span class="n">ptrBar</span><span class="p">;</span> <span class="c1">// Won't compile</span>
+</pre></div>
+</div>
+<p>Of course, if we <em>really</em> want to, we can get the raw pointer out of <span class="docutils literal"><span class="pre">ptrBar</span></span>
+using <span class="docutils literal"><span class="pre">get()</span></span> and we can initialize a <span class="docutils literal"><span class="pre">unique_ptr</span></span> from a raw pointer -</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="c1">// Please don't do this</span>
+<span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Bar</span><span class="o">&gt;</span> <span class="n">ptrBar2</span><span class="p">(</span><span class="n">ptrBar</span><span class="p">.</span><span class="n">get</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>but this is very bad - now both pointers think they have sole ownership of the
+resource, and as soon as one goes out of scope, using the other one leads to
+undefined behavior. In general, the same way there are very few good reasons to
+use raw pointers, there are very few good reasons to call <span class="docutils literal"><span class="pre">get()</span></span> on a smart
+pointer.</p>
+</div>
+<div class="section" id="shared-pointer">
+<h3>Shared pointer</h3>
+<p>Sometimes, we do need to have several pointers pointing to the same heap object.
+In this case, we can use shared pointers. Shared pointers pointing to the same
+heap object keep a common reference count. Whenever a new shared pointer is
+created for that particular heap object, the reference count is incremented.
+Whenever a shared pointer for that heap object goes out of scope, the reference
+count is decremented. Once the last shared pointer goes out of scope, the heap
+object is deleted.</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">auto</span> <span class="n">ptrBar1</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Bar</span><span class="o">&gt;</span><span class="p">();</span>
+    <span class="c1">// one pointer to a Bar object on the heap (ref count = 1)</span>
+    <span class="p">{</span>
+        <span class="k">auto</span> <span class="n">ptrBar2</span><span class="p">(</span><span class="n">ptrBar1</span><span class="p">);</span>
+        <span class="c1">// second shared pointer (ref count = 2)</span>
+    <span class="p">}</span>
+    <span class="c1">// ptrBar2 goes out of scope (ref count = 1)</span>
+<span class="p">}</span>
+<span class="c1">// ptrBar1 goes out of scope (ref count = 0) =&gt; heap object is deleted</span>
+</pre></div>
+</div>
+<p>Shared pointers incur a bit more overhead than unique pointers - reference
+counting needs to be atomic to account for multi-threaded environments, which
+comes with a runtime cost. The reference count itself also needs to be stored
+somewhere, which is a small space cost. Unique pointers don’t have these time
+and space costs since they don’t need to count references - there is always only
+one pointer to the object.</p>
+<p>Costs aside, shared pointers also don’t make the ownership clear - there are
+several instances “owning” the heap resource at the same time, which can
+potentially alter it and step on each other’s toes. In general, prefer unique
+pointers to shared pointers whenever possible.</p>
+</div>
+<div class="section" id="raw-pointer">
+<h3>Raw pointer</h3>
+<p>Avoid using raw pointers. Raw pointers don’t express ownership, so they don’t
+offer the same guarantees that a) the resource pointed to gets properly cleaned
+up and b) the resource pointed to is still valid at a given time. This leads to
+dereferencing invalid memory and double-deletes (trying to free the same heap
+object multiple times), which means undefined behavior. Also, don’t mix smart
+and raw pointers - the smart pointers will keep doing their job happily, with
+the potential of making the raw pointers invalid.</p>
+</div>
+<div class="section" id="com-pointers">
+<h3>COM pointers</h3>
+<p>On Windows, COM uses a different reference counting mechanism: the base
+<span class="docutils literal"><span class="pre">IUnknown</span></span> interface declares <span class="docutils literal"><span class="pre">AddRef</span></span> and <span class="docutils literal"><span class="pre">Release</span></span> methods, which
+implementations are expected to use to keep track of the reference count.
+<span class="docutils literal"><span class="pre">CComPtr</span></span> (in ATL) and <span class="docutils literal"><span class="pre">ComPtr</span></span> (in WRL) are the COM smart pointers. They
+call <span class="docutils literal"><span class="pre">AddRef</span></span> and <span class="docutils literal"><span class="pre">Release</span></span> on the owned object, and the owned object is
+supposed to delete itself once its reference count drops to 0. Note that COM
+uses a slightly different mechanism than the standard library shared pointers -
+instead of the smart pointer keeping track of the reference count in the control
+block and deleting the object once the last reference goes away, COM objects are
+expected to keep track of their reference count themselves through the
+<span class="docutils literal"><span class="pre">AddRef</span></span> and <span class="docutils literal"><span class="pre">Release</span></span> methods and self-delete when the last reference goes
+away (through <span class="docutils literal"><span class="pre">Release</span></span> call). The COM smart pointers only need to call
+<span class="docutils literal"><span class="pre">Release</span></span> when they go out of scope.</p>
+<p>It’s not a good idea to have both standard library and COM pointers point to the
+same object, as each might decide to delete the object at different times -
+<span class="docutils literal"><span class="pre">shared_ptr</span></span> looks at the <span class="docutils literal"><span class="pre">shared_ptr</span></span> refcount while COM objects look at
+their internal reference count. So a <span class="docutils literal"><span class="pre">shared_ptr</span></span> might decide to delete an
+object while a <span class="docutils literal"><span class="pre">ComPtr</span></span> still expects it to be valid or vice-versa. In
+general, when working with COM objects, use COM smart pointers.</p>
+</div>
+<div class="section" id="auto-ptr">
+<h3>auto_ptr</h3>
+<p><span class="docutils literal"><span class="pre">auto_ptr</span></span> is a deprecated smart pointer. Unless working with an old compiler
+and standard library, use <span class="docutils literal"><span class="pre">unique_ptr</span></span> or <span class="docutils literal"><span class="pre">shared_ptr</span></span> instead.</p>
+</div>
+<div class="section" id="other-smart-pointers">
+<h3>Other smart pointers</h3>
+<p>Old code bases might have custom smart pointer implementations, for the simple
+fact that automatic memory management is always a good idea, and there is C++
+code that predates the introduction of smart pointers into the standard library.
+When interoperating with legacy code, use whatever works, but when writing new
+code, do prefer standard library smart pointers to homebrewed ones.</p>
+</div>
+<div class="section" id="id1">
+<h3>Summary</h3>
+<p>In summary, when creating objects:</p>
+<ol class="arabic simple">
+<li>Create them on the stack if feasible (note that standard library types
+like <span class="docutils literal"><span class="pre">std::vector</span></span> and <span class="docutils literal"><span class="pre">std::string</span></span> internally keep their data on
+the heap, but they fit perfectly well on the stack, so you don’t need to
+create an <span class="docutils literal"><span class="pre">std::vector</span></span> on the heap just because you are planning to
+store a lot of elements in it - the vector manages a heap array
+internally already).</li>
+<li>Use a <span class="docutils literal"><span class="pre">unique_ptr</span></span> when creating them on the heap, to make ownership
+obvious.</li>
+<li>Use a <span class="docutils literal"><span class="pre">shared_ptr</span></span> only when <span class="docutils literal"><span class="pre">unique_ptr</span></span> isn’t sufficient (review
+your design first, might be a design issue).</li>
+<li>Use COM smart pointers like <span class="docutils literal"><span class="pre">CComPtr</span></span> when dealing with COM.</li>
+<li>Don’t use <span class="docutils literal"><span class="pre">auto_ptr</span></span> or other old constructs unless working with legacy
+code/compiler.</li>
+<li>Don’t use raw pointers.</li>
+</ol>
+</div>
+</div>
+<div class="section" id="passing-smart-pointers-as-arguments">
+<h2>Passing Smart Pointers as Arguments</h2>
+<p>We covered passing arguments and smart pointers. Now combining the two, how do
+we pass heap objects as arguments? Turns out Herb Sutter has
+<a class="reference external" href="http://bit.ly/227Na5c">a great post</a> on this exact topic on his blog. I can’t
+hope to explain better than him, so go read his post. I will try to summarize:</p>
+<div class="section" id="pass-by-reference-the-pointed-to-type">
+<h3>Pass by reference the pointed-to type</h3>
+<p>Rather than forcing callers to use <span class="docutils literal"><span class="pre">unique_ptr</span></span> or <span class="docutils literal"><span class="pre">shared_ptr</span></span> by
+specifying the smart pointer type (which makes assumptions about ownership),
+just ask for a reference to the pointed-to-type:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="kt">void</span> <span class="nf">do_stuff</span><span class="p">(</span><span class="k">const</span> <span class="n">Bar</span><span class="o">&amp;</span> <span class="n">bar</span><span class="p">);</span>
+
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">auto</span> <span class="n">ptrBar</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Bar</span><span class="o">&gt;</span><span class="p">();</span>
+    <span class="n">do_stuff</span><span class="p">(</span><span class="o">*</span><span class="n">ptrBar</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Herb also mentions raw pointer to the underlying type if the argument can be
+null, but as I mentioned above, I’d rather stick to references and discourage
+use of raw pointers as a general rule of thumb.</p>
+</div>
+<div class="section" id="pass-smart-pointer-by-value">
+<h3>Pass smart pointer by value</h3>
+<p>Passing a <span class="docutils literal"><span class="pre">unique_ptr</span></span> by value implies a sink argument - since a
+<span class="docutils literal"><span class="pre">unique_ptr</span></span> cannot be copied, it has to be <span class="docutils literal"><span class="pre">std::move</span></span>‘d in. Interestingly,
+Scott Meyers has <a class="reference external" href="http://bit.ly/1WgkvEh">a post</a> on his blog where he
+disagrees with this and argues that arguments of move-only types should be
+specified as <span class="docutils literal"><span class="pre">&amp;&amp;</span></span>:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="kt">void</span> <span class="nf">do_stuff</span><span class="p">(</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Bar</span><span class="o">&gt;&amp;&amp;</span> <span class="n">ptrBar</span><span class="p">);</span> <span class="c1">// sink</span>
+
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">auto</span> <span class="n">ptrBar</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Bar</span><span class="o">&gt;</span><span class="p">();</span>
+    <span class="n">do_stuff</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">ptrBar</span><span class="p">));</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Passing a <span class="docutils literal"><span class="pre">shared_ptr</span></span> by value implies the function wants to partake in the
+ownership - in other words, will keep somewhere a reference to the object after
+the function returns, but unlike the above <span class="docutils literal"><span class="pre">unique_ptr</span></span> example, it won’t have
+exclusive ownership of the resource:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="kt">void</span> <span class="nf">do_stuff</span><span class="p">(</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Bar</span><span class="o">&gt;</span> <span class="n">ptrBar</span><span class="p">);</span>
+
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">auto</span> <span class="n">ptrBar</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Bar</span><span class="o">&gt;</span><span class="p">();</span>
+    <span class="n">do_stuff</span><span class="p">(</span><span class="n">ptrBar</span><span class="p">);</span> <span class="c1">// copy-constructs another shared_ptr which shares ownership of the heap object</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="pass-smart-pointer-by-reference">
+<h3>Pass smart pointer by reference</h3>
+<p>Only expect a smart pointer by non-const reference if the function is going to
+modify the smart pointer itself (eg. by making it point to a different object).
+In my experience, this is a rare occurrence.</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="c1">// Implies this function modifies the pointer itself.</span>
+<span class="kt">void</span> <span class="nf">do_stuff</span><span class="p">(</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Bar</span><span class="o">&gt;&amp;</span> <span class="n">ptrBar</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>There is no good reason to expect a <span class="docutils literal"><span class="pre">const&amp;</span></span> to a <span class="docutils literal"><span class="pre">unique_ptr</span></span>, just reference
+the underlying type:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="c1">// void do_stuff(const unique_ptr&lt;Bar&gt;&amp; ptrBar);</span>
+<span class="c1">// No reason to use the above as opposed to</span>
+<span class="kt">void</span> <span class="nf">do_stuff</span><span class="p">(</span><span class="k">const</span> <span class="n">Bar</span><span class="o">&amp;</span> <span class="n">bar</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Expect <span class="docutils literal"><span class="pre">const&amp;</span></span> to <span class="docutils literal"><span class="pre">shared_ptr</span></span> only if the function <em>might</em> create a copy
+of the smart pointer. If the function would never create a copy of the pointer,
+simply use <span class="docutils literal"><span class="pre">&amp;</span></span> to underlying type. If the function would always copy the
+pointer, expect <span class="docutils literal"><span class="pre">shared_ptr</span></span> by value.</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="c1">// Might or might not share ownership</span>
+<span class="kt">void</span> <span class="nf">do_stuff</span><span class="p">(</span><span class="k">const</span> <span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Bar</span><span class="o">&gt;&amp;</span> <span class="n">ptrBar</span><span class="p">);</span>
+
+<span class="c1">// Will never share ownership</span>
+<span class="kt">void</span> <span class="nf">do_stuff</span><span class="p">(</span><span class="k">const</span> <span class="n">Bar</span><span class="o">&amp;</span> <span class="n">bar</span><span class="p">);</span>
+
+<span class="c1">// Will always share ownership</span>
+<span class="kt">void</span> <span class="nf">do_stuff</span><span class="p">(</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Bar</span><span class="o">&gt;</span> <span class="n">ptrBar</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id2">
+<h3>Summary</h3>
+<p>A summary of the summary:</p>
+<ol class="arabic simple">
+<li>Take argument by <span class="docutils literal"><span class="pre">&amp;</span></span> to underlying type if you only care about the heap
+object, not about the pointer.</li>
+<li>Take <span class="docutils literal"><span class="pre">unqiue_ptr</span></span> by <span class="docutils literal"><span class="pre">&amp;&amp;</span></span> to transfer ownership.</li>
+<li>Take <span class="docutils literal"><span class="pre">shared_ptr</span></span> argument by value to partake in ownership.</li>
+<li>Take smart pointer by (non-const) reference only if you are going to
+modify the smart pointer itself.</li>
+<li>No need for <span class="docutils literal"><span class="pre">const&amp;</span></span> to <span class="docutils literal"><span class="pre">unique_ptr</span></span> (just take <span class="docutils literal"><span class="pre">&amp;</span></span> to underlying type)</li>
+<li>Take <span class="docutils literal"><span class="pre">const&amp;</span></span> to <span class="docutils literal"><span class="pre">shared_ptr</span></span> only if unknown whether function wants
+ownership (take by <span class="docutils literal"><span class="pre">&amp;</span></span> to underlying type if function never wants
+ownership, <span class="docutils literal"><span class="pre">shared_ptr</span></span> by value if function always wants ownership).</li>
+</ol>
+</div>
+</div>
+]]></description>
+             <pubDate>Fri, 11 Mar 2016 00:00:00 -0800</pubDate>
+        </item>
+    
         <item>
             <link>http://vladris.com/blog/2016/01/07/clean-code-part-2.html</link>
             <guid>http://vladris.com/blog/2016/01/07/clean-code-part-2.html</guid>
@@ -34,7 +431,7 @@ that. A good rule of thumb is to mark things as <span class="docutils literal"><
 <span class="docutils literal"><span class="pre">const*</span></span> etc.) and/or <span class="docutils literal"><span class="pre">readonly</span></span> by default, and make them mutable only when
 truly needed <a class="footnote-reference" href="#id5" id="id1">[1]</a>.</p>
 <p>A simple example:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">struct</span> <span class="n">StringUtil</span>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="k">struct</span> <span class="n">StringUtil</span>
 <span class="p">{</span>
     <span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">Concat1</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str1</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str2</span><span class="p">)</span>
     <span class="p">{</span>
@@ -54,7 +451,7 @@ for the same input, the difference being that <span class="docutils literal"><sp
 might be introduced accidentally and have unexpected consequences down the line.</p>
 <p>A simple way to address this is by explicitly marking the arguments as
 <span class="docutils literal"><span class="pre">const</span></span>:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">struct</span> <span class="n">StringUtil</span>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="k">struct</span> <span class="n">StringUtil</span>
 <span class="p">{</span>
     <span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">Concat1</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str1</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str2</span><span class="p">)</span>
     <span class="p">{</span>
@@ -72,7 +469,7 @@ might be introduced accidentally and have unexpected consequences down the line.
 eliminate this type of unintended behavior.</p>
 <p>Another example: a simple <span class="docutils literal"><span class="pre">UpCase</span></span> function which calls <span class="docutils literal"><span class="pre">toupper</span></span> on each
 character of the given string, upcasing it in place:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="kt">void</span> <span class="nf">UpCase</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">string</span><span class="p">)</span>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="kt">void</span> <span class="nf">UpCase</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">string</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">while</span> <span class="p">(</span><span class="o">*</span><span class="n">string</span><span class="p">)</span>
     <span class="p">{</span>
@@ -83,7 +480,7 @@ character of the given string, upcasing it in place:</p>
 </pre></div>
 </div>
 <p>Calling it with</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="kt">char</span><span class="o">*</span> <span class="n">myString</span> <span class="o">=</span> <span class="s">"Foo"</span><span class="p">;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="kt">char</span><span class="o">*</span> <span class="n">myString</span> <span class="o">=</span> <span class="s">"Foo"</span><span class="p">;</span>
 <span class="p">...</span>
 <span class="n">UpCase</span><span class="p">(</span><span class="n">myString</span><span class="p">);</span>
 </pre></div>
@@ -94,7 +491,7 @@ to a string literal which gets compiled into the read-only data segment of the
 binary. This cannot be modified.</p>
 <p>To catch this type of errors at compile-time, we again only need to mark the
 immutable data as such:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">myString</span> <span class="o">=</span> <span class="s">"Foo"</span><span class="p">;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">myString</span> <span class="o">=</span> <span class="s">"Foo"</span><span class="p">;</span>
 <span class="p">...</span>
 <span class="n">UpCase</span><span class="p">(</span><span class="n">myString</span><span class="p">);</span> <span class="c1">// Won't compile - can't call UpCase on myString</span>
 </pre></div>
@@ -115,7 +512,7 @@ instance) <a class="footnote-reference" href="#id6" id="id2">[2]</a></p>
 predicates rather than implementing raw loops. In many cases, traversal state is
 encapsulated in the library algorithm or in an iterator, and predicates ideally
 don’t have side-effects.</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="kt">var</span> <span class="n">squares</span> <span class="p">=</span> <span class="n">numbers</span><span class="p">.</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="kt">var</span> <span class="n">squares</span> <span class="p">=</span> <span class="n">numbers</span><span class="p">.</span>
                 <span class="n">Where</span><span class="p">(</span><span class="n">number</span> <span class="p">=&gt;</span> <span class="n">number</span> <span class="p">%</span> <span class="m">2</span> <span class="p">!=</span> <span class="m">0</span><span class="p">).</span>
                 <span class="n">Select</span><span class="p">(</span><span class="n">number</span> <span class="p">=&gt;</span> <span class="n">number</span> <span class="p">*</span> <span class="n">number</span><span class="p">);</span>
 </pre></div>
@@ -165,7 +562,7 @@ code, write it like C++ code. Don’t write C# code as C++, write it as C# etc.<
 <p>Also, keep up to date on the language. Language syntax evolves to address needs,
 so in general modern syntax introduces simpler, better ways to implement things
 than old syntax. Take object allocation and initialization in C++ as an example:</p>
-<div class="highlight-c"><div class="highlight"><pre><span class="n">Foo</span><span class="o">*</span> <span class="n">foo</span> <span class="o">=</span> <span class="p">(</span><span class="n">Foo</span><span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">Foo</span><span class="p">));</span>
+<div class="highlight-c"><div class="highlight"><pre><span/><span class="n">Foo</span><span class="o">*</span> <span class="n">foo</span> <span class="o">=</span> <span class="p">(</span><span class="n">Foo</span><span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">Foo</span><span class="p">));</span>
 <span class="n">init</span><span class="p">(</span><span class="n">foo</span><span class="p">);</span>
 <span class="p">...</span>
 <span class="n">deinit</span><span class="p">(</span><span class="n">foo</span><span class="p">);</span>
@@ -179,7 +576,7 @@ managed resources (by omitting the <span class="docutils literal"><span class="p
 to end up with an initialized struct (by omitting the <span class="docutils literal"><span class="pre">init</span></span> call), or
 accidental double-initialization, double-deinitialization, double-free etc.</p>
 <p>C++ introduced classes, and the following syntax:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="n">Foo</span><span class="o">*</span> <span class="n">foo</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Foo</span><span class="p">();</span>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="n">Foo</span><span class="o">*</span> <span class="n">foo</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Foo</span><span class="p">();</span>
 <span class="p">...</span>
 <span class="k">delete</span> <span class="n">foo</span><span class="p">;</span>
 </pre></div>
@@ -190,14 +587,14 @@ go away, but there is still the problem of leaking the resource by omitting the
 <span class="docutils literal"><span class="pre">delete</span></span> call, and the issue of calling <span class="docutils literal"><span class="pre">delete</span></span> twice on the same memory
 address.</p>
 <p>To address these issues, smart pointers were introduced in the language:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span> <span class="n">foo</span><span class="p">(</span><span class="k">new</span> <span class="n">Foo</span><span class="p">());</span>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span> <span class="n">foo</span><span class="p">(</span><span class="k">new</span> <span class="n">Foo</span><span class="p">());</span>
 </pre></div>
 </div>
 <p>Smart pointers encapsulate reference counting (how many <span class="docutils literal"><span class="pre">shared_ptr</span></span> objects
 point to the same memory address), and automatically release the resource when
 the last reference goes away. This gets rid of most problems, but there is an
 even better way of allocating heap objects:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">auto</span> <span class="n">foo</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">();</span>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="k">auto</span> <span class="n">foo</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">();</span>
 </pre></div>
 </div>
 <p><span class="docutils literal"><span class="pre">make_shared</span></span> has the advantage of improved performance, by allocating memory
@@ -321,7 +718,7 @@ already does what needs to be done. Case in point, we refactored some code for
 a project (C#), extracted some interfaces, componentized things, and wrote a
 bunch of unit tests. All of this was great, except we ended up with a bunch of
 handcrafted stub classes: for</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="k">interface</span> <span class="n">IMyComponent</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="k">interface</span> <span class="n">IMyComponent</span>
 <span class="p">{</span>
     <span class="k">void</span> <span class="nf">Foo</span><span class="p">();</span>
     <span class="kt">int</span> <span class="nf">Bar</span><span class="p">();</span>
@@ -330,7 +727,7 @@ handcrafted stub classes: for</p>
 </pre></div>
 </div>
 <p>we had</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="k">class</span> <span class="nc">MyComponentStub</span> <span class="p">:</span> <span class="n">IMyComponent</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="k">class</span> <span class="nc">MyComponentStub</span> <span class="p">:</span> <span class="n">IMyComponent</span>
 <span class="p">{</span>
     <span class="k">public</span> <span class="k">void</span> <span class="nf">Foo</span><span class="p">()</span>
     <span class="p">{</span>
@@ -352,7 +749,7 @@ handcrafted stub classes: for</p>
 <p>and so on. Implementing these stubs was tedious, needless work - we integrated
 <a class="reference external" href="https://github.com/Moq/moq4">Moq</a> , a mocking library, and the above code
 turned into:</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="k">using</span> <span class="nn">Moq</span><span class="p">;</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="k">using</span> <span class="nn">Moq</span><span class="p">;</span>
 <span class="p">...</span>
 <span class="kt">var</span> <span class="n">myComponentStub</span> <span class="p">=</span> <span class="n">Mock</span><span class="p">.</span><span class="n">Of</span><span class="p">&lt;</span><span class="n">IMyComponent</span><span class="p">&gt;();</span>
 </pre></div>
@@ -368,7 +765,7 @@ replace a lot of code.</p>
 talk, one of the best tech talks I’ve seen. The example he gives in the talk
 (from the Chrome codebase) shows how a couple of lines of STL code can be used
 instead of a whole convoluted function:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="kt">void</span> <span class="n">PanelBar</span><span class="o">::</span><span class="n">RepositionExpandedPanels</span><span class="p">(</span><span class="n">Panel</span><span class="o">*</span> <span class="n">fixed_panel</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="kt">void</span> <span class="n">PanelBar</span><span class="o">::</span><span class="n">RepositionExpandedPanels</span><span class="p">(</span><span class="n">Panel</span><span class="o">*</span> <span class="n">fixed_panel</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">CHECK</span><span class="p">(</span><span class="n">fixed_panel</span><span class="p">);</span>
 
   <span class="c1">// First, find the index of the fixed panel.</span>
@@ -484,7 +881,7 @@ instead of a whole convoluted function:</p>
 </pre></div>
 </div>
 <p>becomes:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="kt">void</span> <span class="n">PanelBar</span><span class="o">::</span><span class="n">RepositionExpandedPanels</span><span class="p">(</span><span class="n">Panel</span><span class="o">*</span> <span class="n">fixed_panel</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="kt">void</span> <span class="n">PanelBar</span><span class="o">::</span><span class="n">RepositionExpandedPanels</span><span class="p">(</span><span class="n">Panel</span><span class="o">*</span> <span class="n">fixed_panel</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">CHECK</span><span class="p">(</span><span class="n">fixed_panel</span><span class="p">);</span>
 
   <span class="c1">// First, find the index of the fixed panel.</span>
@@ -541,7 +938,7 @@ less opportunities for bugs.</p>
 exceptions instead of propagating errors through return values.</p>
 <p>Here is an example of error code propagation through return values using the
 Windows API’s <span class="docutils literal"><span class="pre">HRESULT</span></span>:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="n">HRESULT</span> <span class="nf">foo</span><span class="p">();</span> <span class="c1">// Does some work and returns an HRESULT</span>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="n">HRESULT</span> <span class="nf">foo</span><span class="p">();</span> <span class="c1">// Does some work and returns an HRESULT</span>
 <span class="n">HRESULT</span> <span class="nf">bar</span><span class="p">();</span> <span class="c1">// Does some work and returns an HRESULT</span>
 
 <span class="n">HRESULT</span> <span class="nf">baz</span><span class="p">()</span>
@@ -572,7 +969,7 @@ Windows API’s <span class="docutils literal"><span class="pre">HRESULT</span><
 </pre></div>
 </div>
 <p>This can be replaced with the more concise and much easier to read:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="kt">void</span> <span class="nf">foo</span><span class="p">();</span> <span class="c1">// Does some work, might throw</span>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="kt">void</span> <span class="nf">foo</span><span class="p">();</span> <span class="c1">// Does some work, might throw</span>
 <span class="kt">void</span> <span class="nf">bar</span><span class="p">();</span> <span class="c1">// Does some work, might throw</span>
 
 <span class="kt">void</span> <span class="nf">baz</span><span class="p">()</span>
@@ -583,7 +980,7 @@ Windows API’s <span class="docutils literal"><span class="pre">HRESULT</span><
     <span class="p">...</span> <span class="c1">// Some more work here which might fail (and throw)</span>
 <span class="p">}</span>
 
-<span class="n">try</span>
+<span class="k">try</span>
 <span class="p">{</span>
     <span class="n">baz</span><span class="p">();</span>
     <span class="c1">// :)</span>
@@ -605,7 +1002,7 @@ the public API boundary.</p>
 instead of checking for null. For example, take an <span class="docutils literal"><span class="pre">IActivity</span></span> interface on
 which we can log success or failure, and an <span class="docutils literal"><span class="pre">ActivityScope</span></span> which can retrieve
 the current activity from a context:</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="k">interface</span> <span class="n">IActivity</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="k">interface</span> <span class="n">IActivity</span>
 <span class="p">{</span>
     <span class="k">void</span> <span class="nf">LogSuccess</span><span class="p">();</span>
     <span class="k">void</span> <span class="nf">LogFailure</span><span class="p">();</span>
@@ -628,7 +1025,7 @@ the current activity from a context:</p>
 </div>
 <p>With this implementation, all clients of the API have to make sure <span class="docutils literal"><span class="pre">GetCurrentActivity()</span></span>
 returns an object as opposed to null. All callers look like this:</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="n">ActivityScope</span> <span class="n">activityScope</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ActivityScope</span><span class="p">();</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="n">ActivityScope</span> <span class="n">activityScope</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ActivityScope</span><span class="p">();</span>
 <span class="n">activityScope</span><span class="p">.</span><span class="n">CreateActivity</span><span class="p">();</span>
 
 <span class="p">...</span> <span class="c1">// Do a bunch of stuff</span>
@@ -645,7 +1042,7 @@ calls to <span class="docutils literal"><span class="pre">GetCurrentActivity</sp
 Null Object alternative for this is to provide a <span class="docutils literal"><span class="pre">NullActivity</span></span>, for which
 <span class="docutils literal"><span class="pre">LogSuccess</span></span> and <span class="docutils literal"><span class="pre">LogFailure</span></span> don’t do anything. <span class="docutils literal"><span class="pre">ActivityScope</span></span> can return
 <span class="docutils literal"><span class="pre">NullActivity</span></span> instead of null if there is no <span class="docutils literal"><span class="pre">Activity</span></span> in the context:</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="k">class</span> <span class="nc">NullActivity</span> <span class="p">:</span> <span class="n">IActivity</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="k">class</span> <span class="nc">NullActivity</span> <span class="p">:</span> <span class="n">IActivity</span>
 <span class="p">{</span>
     <span class="k">public</span> <span class="k">void</span> <span class="nf">LogSuccess</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span>
     <span class="k">public</span> <span class="k">void</span> <span class="nf">LogFailure</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span>
@@ -669,11 +1066,11 @@ Null Object alternative for this is to provide a <span class="docutils literal">
 </div>
 <p>Now callers don’t need to worry about getting back a null, and can use the API
 like this:</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="n">activityScope</span><span class="p">.</span><span class="n">GetCurrentActivity</span><span class="p">().</span><span class="n">LogSuccess</span><span class="p">();</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="n">activityScope</span><span class="p">.</span><span class="n">GetCurrentActivity</span><span class="p">().</span><span class="n">LogSuccess</span><span class="p">();</span>
 </pre></div>
 </div>
 <p>Yet another way to reduce branching is when it used for mapping between two types:</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="n">a</span> <span class="p">==</span> <span class="n">IdType</span><span class="p">.</span><span class="n">Foo</span><span class="p">)</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="k">if</span> <span class="p">(</span><span class="n">a</span> <span class="p">==</span> <span class="n">IdType</span><span class="p">.</span><span class="n">Foo</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="n">b</span> <span class="p">=</span> <span class="s">"Foo string"</span><span class="p">;</span>
 <span class="p">}</span>
@@ -687,7 +1084,7 @@ like this:</p>
 <p>A pattern like this (which can also take the form of a big switch/case statement)
 can usually be replaced with indexing into an array or looking up the
 corresponding value in a hash map:</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="n">Dictionary</span><span class="p">&lt;</span><span class="n">IdType</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;</span> <span class="n">IdTypeToStringMap</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Dictionary</span><span class="p">&lt;</span><span class="n">IdType</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;()</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="n">Dictionary</span><span class="p">&lt;</span><span class="n">IdType</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;</span> <span class="n">IdTypeToStringMap</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Dictionary</span><span class="p">&lt;</span><span class="n">IdType</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;()</span>
 <span class="p">{</span>
     <span class="p">{</span> <span class="n">IdType</span><span class="p">.</span><span class="n">Foo</span><span class="p">,</span> <span class="s">"Foo"</span> <span class="p">},</span>
     <span class="p">{</span> <span class="n">IdType</span><span class="p">.</span><span class="n">Bar</span><span class="p">,</span> <span class="s">"Bar"</span> <span class="p">},</span>
@@ -705,14 +1102,14 @@ data (<span class="docutils literal"><span class="pre">IdTypeToStringMap</span><
 <p>This goes back to the C++ Seasoning talk, namely the <em>No Raw Loops</em> guideline. Here’s
 a C# example: given a list of numbers, we want to get the square of all the odd
 numbers in the list.</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="kt">var</span> <span class="n">numbers</span> <span class="p">=</span> <span class="k">new</span> <span class="n">List</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;</span> <span class="p">{</span> <span class="m">6</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">2</span><span class="p">,</span> <span class="m">7</span><span class="p">,</span> <span class="m">3</span><span class="p">,</span> <span class="m">4</span><span class="p">,</span> <span class="m">9</span><span class="p">,</span> <span class="m">5</span><span class="p">,</span> <span class="m">8</span> <span class="p">};</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="kt">var</span> <span class="n">numbers</span> <span class="p">=</span> <span class="k">new</span> <span class="n">List</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;</span> <span class="p">{</span> <span class="m">6</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">2</span><span class="p">,</span> <span class="m">7</span><span class="p">,</span> <span class="m">3</span><span class="p">,</span> <span class="m">4</span><span class="p">,</span> <span class="m">9</span><span class="p">,</span> <span class="m">5</span><span class="p">,</span> <span class="m">8</span> <span class="p">};</span>
 
 <span class="c1">// Get the squares of all odd numbers</span>
 </pre></div>
 </div>
 <p>One way to do this is to maintain a list of numbers, iterate over the list, check
 if numbers are odd, and if so, square them and add them to the list:</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="c1">// Get the squares of all odd numbers</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="c1">// Get the squares of all odd numbers</span>
 <span class="n">IEnumerable</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;</span> <span class="n">SquareOdds</span><span class="p">(</span><span class="n">IEnumerable</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;</span> <span class="n">numbers</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="kt">var</span> <span class="n">squares</span> <span class="p">=</span> <span class="k">new</span> <span class="n">List</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;();</span>
@@ -733,7 +1130,7 @@ if numbers are odd, and if so, square them and add them to the list:</p>
 </div>
 <p>A neater way to do this is to use a generator instead of manually maintaining
 the list of squares:</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="c1">// Get the squares of all odd numbers</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="c1">// Get the squares of all odd numbers</span>
 <span class="n">IEnumerable</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;</span> <span class="n">SquareOdds</span><span class="p">(</span><span class="n">IEnumerable</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;</span> <span class="n">numbers</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">foreach</span> <span class="p">(</span><span class="kt">int</span> <span class="n">number</span> <span class="k">in</span> <span class="n">numbers</span><span class="p">)</span>
@@ -749,7 +1146,7 @@ the list of squares:</p>
 </pre></div>
 </div>
 <p>That being said, what I would actually recommend is using Linq:</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="c1">// Get the squares of all odd numbers</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="c1">// Get the squares of all odd numbers</span>
 <span class="kt">var</span> <span class="n">squares</span> <span class="p">=</span> <span class="n">numbers</span><span class="p">.</span>
                 <span class="n">Where</span><span class="p">(</span><span class="n">number</span> <span class="p">=&gt;</span> <span class="n">number</span> <span class="p">%</span> <span class="m">2</span> <span class="p">!=</span> <span class="m">0</span><span class="p">).</span>
                 <span class="n">Select</span><span class="p">(</span><span class="n">number</span> <span class="p">=&gt;</span> <span class="n">number</span> <span class="p">*</span> <span class="n">number</span><span class="p">);</span>
@@ -812,7 +1209,7 @@ compiler-generated complexity to developer-generated complexity.</td></tr>
             <guid>http://vladris.com/blog/2015/12/28/hello-world.html</guid>
             <title><![CDATA[Hello World]]></title>
             <description><![CDATA[<h1>Hello World</h1>
-<div class="code python highlight-python"><div class="highlight"><pre><span class="k">print</span><span class="p">(</span><span class="s">"Hello World!"</span><span class="p">)</span>
+<div class="code python highlight-python"><div class="highlight"><pre><span/><span class="k">print</span><span class="p">(</span><span class="s2">"Hello World!"</span><span class="p">)</span>
 </pre></div>
 </div>
 ]]></description>
