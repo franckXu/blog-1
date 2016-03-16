@@ -102,7 +102,7 @@ sink argument - we *sink* ``bar`` to its final resting place somewhere and
 One thing to keep in mind is that ``move`` is not magic, so ``Bar`` needs to
 declare a `move constructor <http://en.cppreference.com/w/cpp/language/move_constructor>`_
 in order for this to do what we expect it to do. If Bar doesn't declare a move
-constructor, the above becomes a simple copy.
+constructor, the above becomes a simple copy [#]_.
 
 Pass by reference
 ~~~~~~~~~~~~~~~~~
@@ -444,5 +444,11 @@ A summary of the summary:
 6. Take ``const&`` to ``shared_ptr`` only if unknown whether function wants
    ownership (take by ``&`` to underlying type if function never wants
    ownership, ``shared_ptr`` by value if function always wants ownership).
+
+----
+
+.. [#] Move constructors can be implicitly declared by the compiler if certain
+   conditions are met, see `here <http://en.cppreference.com/w/cpp/language/move_constructor#Implicitly-declared_move_constructor>`_
+   for details.
 
 .. comments::

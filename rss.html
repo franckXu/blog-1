@@ -95,7 +95,7 @@ sink argument - we <em>sink</em> <span class="docutils literal"><span class="pre
 <p>One thing to keep in mind is that <span class="docutils literal"><span class="pre">move</span></span> is not magic, so <span class="docutils literal"><span class="pre">Bar</span></span> needs to
 declare a <a class="reference external" href="http://en.cppreference.com/w/cpp/language/move_constructor">move constructor</a>
 in order for this to do what we expect it to do. If Bar doesn’t declare a move
-constructor, the above becomes a simple copy.</p>
+constructor, the above becomes a simple copy <a class="footnote-reference" href="#id4" id="id1">[1]</a>.</p>
 </div>
 <div class="section" id="pass-by-reference">
 <h3>Pass by reference</h3>
@@ -277,7 +277,7 @@ code that predates the introduction of smart pointers into the standard library.
 When interoperating with legacy code, use whatever works, but when writing new
 code, do prefer standard library smart pointers to homebrewed ones.</p>
 </div>
-<div class="section" id="id1">
+<div class="section" id="id2">
 <h3>Summary</h3>
 <p>In summary, when creating objects:</p>
 <ol class="arabic simple">
@@ -383,7 +383,7 @@ pointer, expect <span class="docutils literal"><span class="pre">shared_ptr</spa
 </pre></div>
 </div>
 </div>
-<div class="section" id="id2">
+<div class="section" id="id3">
 <h3>Summary</h3>
 <p>A summary of the summary:</p>
 <ol class="arabic simple">
@@ -398,6 +398,15 @@ modify the smart pointer itself.</li>
 ownership (take by <span class="docutils literal"><span class="pre">&amp;</span></span> to underlying type if function never wants
 ownership, <span class="docutils literal"><span class="pre">shared_ptr</span></span> by value if function always wants ownership).</li>
 </ol>
+<hr class="docutils"/>
+<table class="docutils footnote" frame="void" id="id4" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Move constructors can be implicitly declared by the compiler if certain
+conditions are met, see <a class="reference external" href="http://en.cppreference.com/w/cpp/language/move_constructor#Implicitly-declared_move_constructor">here</a>
+for details.</td></tr>
+</tbody>
+</table>
 </div>
 </div>
 ]]></description>
