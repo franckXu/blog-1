@@ -1,3 +1,5 @@
+.. _clean_code_1:
+
 Clean Code - Part 1
 ===================
 

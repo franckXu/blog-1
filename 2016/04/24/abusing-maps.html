@@ -1,0 +1,327 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="Vlad's Tech Blog">
+        <meta name="viewport" content="width=device-width">
+        <title>(Ab)using Maps &mdash; Blog</title>
+            <link rel="stylesheet" href="../../../_static/normalize.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/sphinx.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/main.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/flat.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+            <link rel="stylesheet" href="../../../_static/font-awesome.min.css" type="text/css">
+        <link rel="shortcut icon" href="../../../_static/tinkerer.ico" /><!-- Load modernizr and JQuery -->
+        <script src="../../../_static/vendor/modernizr-2.6.2.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="../../../_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
+        <script src="../../../_static/plugins.js"></script>
+        <script src="../../../_static/main.js"></script>
+        <link rel="next" title="Arguments and Smart Pointers" href="../../03/11/arguments-and-smart-pointers.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script><script type="text/javascript" src="../../../_static/underscore.js"></script><script type="text/javascript" src="../../../_static/doctools.js"></script><script type="text/javascript" src="../../../_static/disqus.js"></script><script type="text/javascript" src="../../../_static/google_analytics.js"></script><link rel="stylesheet" href="../../../_static/extra.css" type="text/css" /></head>
+    <body role="document">
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+      <div id="container"><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>April 24, 2016</span>
+        </div>
+    <div class="section" id="ab-using-maps">
+<h1>(Ab)using Maps</h1>
+<div class="section" id="mapping-pattern">
+<h2>Mapping pattern</h2>
+<p>Using hash maps (or dictionaries, or lookups) is a very natural way of coding in
+some languages, especially dynamic languages, where usually an object can be
+treated as a map itself, to which attributes and methods can be added or removed
+at runtime.</p>
+<p>In practice though, maps are often used to convert a value of one type into a
+value of a different type. It is not uncommon to have very small maps like</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">unordered_map</span><span class="o">&lt;</span><span class="n">Foo</span><span class="p">,</span> <span class="n">Bar</span><span class="o">&gt;</span> <span class="n">fooBarMap</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">{</span> <span class="n">foo1</span><span class="p">,</span> <span class="n">bar1</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="n">foo2</span><span class="p">,</span> <span class="n">bar2</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="n">foo3</span><span class="p">,</span> <span class="n">bar3</span> <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="p">...</span>
+
+<span class="k">auto</span> <span class="n">bar</span> <span class="o">=</span> <span class="n">fooBarMap</span><span class="p">[</span><span class="n">foo</span><span class="p">];</span>
+</pre></div>
+</div>
+<p>Here it is useful to make a distinction between the pattern and the data
+structure. The coding pattern itself is great - mapping a value from a type to
+a value of another type should definitely be declarative. Below is a
+counterexample of non-declarative mapping:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">Bar</span> <span class="nf">barFromFoo</span><span class="p">(</span><span class="k">const</span> <span class="n">Foo</span><span class="o">&amp;</span> <span class="n">foo</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">foo</span> <span class="o">==</span> <span class="n">foo1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">bar1</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">foo</span> <span class="o">==</span> <span class="n">foo2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">bar2</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">foo</span> <span class="o">==</span> <span class="n">foo3</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">bar3</span><span class="p">;</span>
+    <span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This is really ugly. As I mentioned in <a class="reference internal" href="../../01/04/clean-code-part-1.html#clean-code-1"><span>Clean Code - Part 1</span></a>, branching should be
+avoided whenever possible, and this is a good opportunity to use a declarative
+approach as opposed to a bunch of branching logic. That being said, while the
+mapping pattern is great, in C++ the data structure most developers default to
+is not the optimal one for this.</p>
+</div>
+<div class="section" id="the-problem-with-unordered-map">
+<h2>The problem with unordered_map</h2>
+<p>If you are coding in C++, odds are you care a little bit about the runtime
+footprint of your code. In that case, you might be surprised to learn that,
+while an <span class="docutils literal"><span class="pre">unordered_map</span></span> in C++ (or a lookup or hash map or dictionary in any
+other language) has an average lookup cost of <span class="docutils literal"><span class="pre">O(1)</span></span>, there are better ways to
+implement the above pattern.</p>
+<p>A map in C++ is implemented as a red-black tree containing buckets of hashed
+values. Calling <span class="docutils literal"><span class="pre">at()</span></span> on a map implies the given key has to be hashed and
+the tree traversed to find the value. Calling <span class="docutils literal"><span class="pre">[]</span></span> on an inexistent key will
+add it to the data structure, which might trigger a rebalancing of the tree.
+There is a lot of work happening under the hood, and while this makes sense for
+an <span class="docutils literal"><span class="pre">unordered_map</span></span> of arbitrarily large size, for small lookups it is a lot
+of overhead.</p>
+</div>
+<div class="section" id="alternatives">
+<h2>Alternatives</h2>
+<p>An alternative to <span class="docutils literal"><span class="pre">unordered_map</span></span> provided by the boost library is
+<span class="docutils literal"><span class="pre">flat_map</span></span> <a class="footnote-reference" href="#id3" id="id1">[1]</a>. This has similar semantics to an <span class="docutils literal"><span class="pre">unordered_map</span></span>, but the
+key-values are stored in a contiguous data structure so traversing it is more
+efficient than walking a tree.</p>
+<p>In general, there are a couple of approaches for keeping a hash map in a linear
+data structure:</p>
+<ul class="simple">
+<li>The keys can be kept sorted, which has <span class="docutils literal"><span class="pre">O(N)</span></span> worst case insertion since it
+might require all elements to be moved to fit a new one and <span class="docutils literal"><span class="pre">O(logN)</span></span> lookup
+(binary search)</li>
+<li>The keys can be kept unsorted, which has <span class="docutils literal"><span class="pre">O(1)</span></span> insertion (simple append) but
+<span class="docutils literal"><span class="pre">O(N)</span></span> lookup (linear search)</li>
+</ul>
+<p>For very small-sized lookups, the cost of hashing itself might out-weight a
+linear traversal, so for a small N</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">unordered_map</span><span class="o">&lt;</span><span class="n">Foo</span><span class="p">,</span> <span class="n">Bar</span><span class="o">&gt;</span> <span class="n">fooBarMap</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">{</span> <span class="n">foo1</span><span class="p">,</span> <span class="n">bar1</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="n">foo2</span><span class="p">,</span> <span class="n">bar2</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="n">foo3</span><span class="p">,</span> <span class="n">bar3</span> <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="p">...</span>
+
+<span class="k">auto</span> <span class="n">bar</span> <span class="o">=</span> <span class="n">fooBarMap</span><span class="p">[</span><span class="n">foo</span><span class="p">];</span>
+</pre></div>
+</div>
+<p>performs worse than</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="n">Foo</span><span class="p">,</span> <span class="n">Bar</span><span class="o">&gt;&gt;</span> <span class="n">fooBarMap</span> <span class="o">=</span> <span class="p">{{</span>
+    <span class="p">{</span> <span class="n">foo1</span><span class="p">,</span> <span class="n">bar1</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="n">foo2</span><span class="p">,</span> <span class="n">bar2</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="n">foo3</span><span class="p">,</span> <span class="n">bar3</span> <span class="p">}</span>
+<span class="p">}};</span>
+
+<span class="p">...</span>
+
+<span class="k">auto</span> <span class="n">bar</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">find_if</span><span class="p">(</span>
+    <span class="n">fooBarMap</span><span class="p">.</span><span class="n">cbegin</span><span class="p">(),</span>
+    <span class="n">fooBarMap</span><span class="p">.</span><span class="n">cend</span><span class="p">(),</span>
+    <span class="p">[](</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="n">elem</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">elem</span> <span class="o">==</span> <span class="n">foo</span><span class="p">;</span> <span class="p">});</span>
+</pre></div>
+</div>
+<p>On my machine (using MSVC 2015 STL implementation), for an N of 5, <span class="docutils literal"><span class="pre">find_if</span></span>
+on a vector is about twice as fast as the equivalent <span class="docutils literal"><span class="pre">unordered_map</span></span> lookup.</p>
+</div>
+<div class="section" id="initialization-cost">
+<h2>Initialization cost</h2>
+<p>There&#8217;s event more hidden cost: <span class="docutils literal"><span class="pre">std::vector</span></span> manages a dynamic array which is
+allocated on the heap. Having an <span class="docutils literal"><span class="pre">std::vector</span></span> initialized with key-values as
+described above, even if more efficent than an <span class="docutils literal"><span class="pre">unordered_map</span></span>, still has
+some associated cost in terms of heap allocations (albeit smaller than
+<span class="docutils literal"><span class="pre">unordered_map</span></span>). <span class="docutils literal"><span class="pre">std::array</span></span> is a much better suited container for cases
+when the key-values are known at compile time, as <span class="docutils literal"><span class="pre">std::array</span></span> simply wraps a
+regular array which is not allocated on the heap. So a more efficient (in terms
+of initialization cost) way of declaring such a look up is</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">arrray</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="n">Foo</span><span class="p">,</span> <span class="n">Bar</span><span class="o">&gt;</span><span class="p">,</span> <span class="mi">3</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">{{</span>
+    <span class="p">{</span> <span class="n">foo1</span><span class="p">,</span> <span class="n">bar1</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="n">foo2</span><span class="p">,</span> <span class="n">bar2</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="n">foo3</span><span class="p">,</span> <span class="n">bar3</span> <span class="p">}</span>
+<span class="p">}};</span>
+</pre></div>
+</div>
+<p>We can still apply the <span class="docutils literal"><span class="pre">std::find_if</span></span> algorithm on this array, but we skip a
+heap allocation. Depending on the template types used, we might be able to skip
+any allocations whatsoever (if both types are trivial <a class="footnote-reference" href="#id4" id="id2">[2]</a>). For example, note
+that <span class="docutils literal"><span class="pre">std::string</span></span>, similarly to a vector, wraps a heap-allocated <span class="docutils literal"><span class="pre">char*</span></span>
+and constructing it requires heap allocations. <span class="docutils literal"><span class="pre">const</span> <span class="pre">char*</span></span> to a string
+literal on the other hand is just a pointer to the <span class="docutils literal"><span class="pre">.rodata</span></span> segment. So this</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span> <span class="n">Bar</span><span class="o">&gt;</span><span class="p">,</span> <span class="mi">3</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">{{</span>
+    <span class="p">{</span> <span class="s">&quot;foo1&quot;</span><span class="p">,</span> <span class="n">bar1</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="s">&quot;foo2&quot;</span><span class="p">,</span> <span class="n">bar2</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="s">&quot;foo3&quot;</span><span class="p">,</span> <span class="n">bar3</span> <span class="p">}</span>
+<span class="p">}};</span>
+</pre></div>
+</div>
+<p>performs three heap allocations (for <span class="docutils literal"><span class="pre">&quot;foo1&quot;</span></span>, <span class="docutils literal"><span class="pre">&quot;foo2&quot;</span></span>, and <span class="docutils literal"><span class="pre">&quot;foo3&quot;</span></span>),
+while the (mostly) equivalent</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span><span class="p">,</span> <span class="n">Bar</span><span class="o">&gt;</span><span class="p">,</span> <span class="mi">3</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">{{</span>
+    <span class="p">{</span> <span class="s">&quot;foo1&quot;</span><span class="p">,</span> <span class="n">bar1</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="s">&quot;foo2&quot;</span><span class="p">,</span> <span class="n">bar2</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="s">&quot;foo3&quot;</span><span class="p">,</span> <span class="n">bar3</span> <span class="p">}</span>
+<span class="p">}};</span>
+</pre></div>
+</div>
+<p>shouldn&#8217;t perform any allocations.</p>
+</div>
+<div class="section" id="associative-array">
+<h2>associative_array</h2>
+<p>Since in practice maps are often used to implement the above described pattern
+of mapping a value from one type to a value of a different type for a small
+set of known values, it would be great to combine the efficiency of an array
+with the nice lookup semantics of an <span class="docutils literal"><span class="pre">unordered_map</span></span> conatiner.</p>
+<p>I propose a generic container of the following shape:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span>
+    <span class="k">typename</span> <span class="n">TKey</span><span class="p">,</span>
+    <span class="k">typename</span> <span class="n">T</span><span class="p">,</span>
+    <span class="kt">size_t</span> <span class="n">N</span><span class="p">,</span>
+    <span class="k">typename</span> <span class="n">KeyEqual</span> <span class="o">=</span> <span class="n">key_equal</span><span class="o">&lt;</span><span class="n">TKey</span><span class="o">&gt;&gt;</span>
+<span class="k">struct</span> <span class="n">associative_array</span>
+<span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="n">TKey</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;</span> <span class="n">m_array</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>
+    <span class="p">...</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p><span class="docutils literal"><span class="pre">keq_equal</span></span> should simply resolve to <span class="docutils literal"><span class="pre">==</span></span> for most types, but be
+specialized for strings types (to use <span class="docutils literal"><span class="pre">strcmp</span></span>, <span class="docutils literal"><span class="pre">wcscmp</span></span> etc.) and allow
+clients to specialize their own <span class="docutils literal"><span class="pre">key_equal</span></span> when needed.</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span> <span class="k">struct</span> <span class="n">key_equal</span>
+<span class="p">{</span>
+    <span class="kt">bool</span> <span class="k">operator</span><span class="p">(</span><span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">lhs</span><span class="p">,</span> <span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">lhs</span> <span class="o">==</span> <span class="n">rhs</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">template</span> <span class="o">&lt;&gt;</span> <span class="k">struct</span> <span class="n">key_equal</span><span class="o">&lt;</span><span class="kt">char</span><span class="o">*&gt;</span>
+<span class="p">{</span>
+    <span class="kt">bool</span> <span class="k">operator</span><span class="p">(</span><span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">lhs</span><span class="p">,</span> <span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">strcmp</span><span class="p">(</span><span class="n">lhs</span><span class="p">,</span> <span class="n">rhs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+<span class="p">...</span>
+<span class="c1">// specializations for wchar_t and const variations of the above</span>
+</pre></div>
+</div>
+<p>Satisfying the container concept is fairly easy (eg. <span class="docutils literal"><span class="pre">size()</span></span> would return
+<span class="docutils literal"><span class="pre">N</span></span>, iterators over the member array are trivial to implement etc.), the only
+interesting methods are <span class="docutils literal"><span class="pre">find()</span></span>, <span class="docutils literal"><span class="pre">at()</span></span>, and <span class="docutils literal"><span class="pre">operator[]</span></span>:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="p">...</span>
+<span class="k">struct</span> <span class="n">associative_array</span>
+<span class="p">{</span>
+    <span class="p">...</span>
+    <span class="n">iterator</span> <span class="n">find</span><span class="p">(</span><span class="k">const</span> <span class="n">TKey</span><span class="o">&amp;</span> <span class="n">key</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">find_if</span><span class="p">(</span>
+            <span class="n">begin</span><span class="p">(),</span>
+            <span class="n">end</span><span class="p">(),</span>
+            <span class="p">[</span><span class="o">&amp;</span><span class="p">](</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="n">elem</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">KeyEqual</span><span class="p">{}(</span><span class="n">key</span><span class="p">,</span> <span class="n">elem</span><span class="p">.</span><span class="n">first</span><span class="p">);</span> <span class="p">});</span>
+    <span class="p">}</span>
+
+    <span class="n">T</span><span class="o">&amp;</span> <span class="n">at</span><span class="p">(</span><span class="k">const</span> <span class="n">TKey</span><span class="o">&amp;</span> <span class="n">key</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">auto</span> <span class="n">it</span> <span class="o">=</span> <span class="n">find</span><span class="p">(</span><span class="n">key</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">it</span> <span class="o">==</span> <span class="n">end</span><span class="p">())</span>
+            <span class="k">throw</span> <span class="n">std</span><span class="o">::</span><span class="n">out_of_range</span><span class="p">(</span><span class="s">&quot;...&quot;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="n">it</span><span class="o">-&gt;</span><span class="n">second</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="n">T</span><span class="o">&amp;</span> <span class="k">operator</span><span class="p">[](</span><span class="k">const</span> <span class="n">TKey</span><span class="o">&amp;</span> <span class="n">key</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">find</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">second</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="p">...</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p><span class="docutils literal"><span class="pre">find()</span></span> wraps <span class="docutils literal"><span class="pre">std::find_if</span></span> leveraging <span class="docutils literal"><span class="pre">KeyEqual</span></span> (with default
+implementation as <span class="docutils literal"><span class="pre">key_equal</span></span>), <span class="docutils literal"><span class="pre">at()</span></span> wraps a bounds-checked <span class="docutils literal"><span class="pre">find</span></span>,
+while <span class="docutils literal"><span class="pre">operator[]</span></span> does not check bounds. <span class="docutils literal"><span class="pre">const</span></span> implementations of the
+above are also needed (identical except returning <span class="docutils literal"><span class="pre">const</span> <span class="pre">T&amp;</span></span>).</p>
+<p>Such a container would have similar semantics to <span class="docutils literal"><span class="pre">std::unordered_map</span></span> (minus
+the ability to add elements given a key not already present in the container)
+and the same performance profile of <span class="docutils literal"><span class="pre">std::array</span></span>:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">associative_array</span><span class="o">&lt;</span><span class="n">Foo</span><span class="p">,</span> <span class="n">Bar</span><span class="p">,</span> <span class="mi">3</span><span class="o">&gt;</span> <span class="n">fooBarMap</span> <span class="o">=</span> <span class="p">{{</span>
+    <span class="p">{</span> <span class="n">foo1</span><span class="p">,</span> <span class="n">bar1</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="n">foo2</span><span class="p">,</span> <span class="n">bar2</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="n">foo3</span><span class="p">,</span> <span class="n">bar3</span> <span class="p">}</span>
+<span class="p">}};</span>
+
+<span class="p">...</span>
+
+<span class="k">auto</span> <span class="n">bar</span> <span class="o">=</span> <span class="n">fooBarMap</span><span class="p">[</span><span class="n">foo</span><span class="p">];</span>
+</pre></div>
+</div>
+<p>Note the only syntax difference between above and <span class="docutils literal"><span class="pre">unordered_map</span></span> is the
+container type, the extra size <span class="docutils literal"><span class="pre">N</span></span> which needs to be specified at
+declaration time, and an extra pair of curly braces. In practice, this should
+have a significantly better lookup time than an unordered_map for a small N
+(linear time, but since N is small and no hashing or heap traversal occurs,
+should clock better than a map lookup) and virtually zero initialization time
+- depending on the <span class="docutils literal"><span class="pre">TKey</span></span> and <span class="docutils literal"><span class="pre">T</span></span> types used, it is possible to declare
+an <span class="docutils literal"><span class="pre">associative_array</span></span> as a <span class="docutils literal"><span class="pre">constexpr</span></span> fully evaluated at compile-time.</p>
+<hr class="docutils" />
+<table class="docutils footnote" frame="void" id="id3" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Boost <span class="docutils literal"><span class="pre">flat_map</span></span> documentation is <a class="reference external" href="http://www.boost.org/doc/libs/1_56_0/doc/html/boost/container/flat_map.html">here</a>.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id4" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>For more details on trivial types, see the <a class="reference external" href="http://www.cplusplus.com/reference/type_traits/is_trivial/">is_trivial type trait</a>.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+    <div class="postmeta">
+        <div class="author">
+            <span>Posted by Vlad Rișcuția</span>
+        </div>
+        
+        
+        </div><ul class="related clearfix">
+            <li class="left"></li>
+            <li class="right"><a href="../../03/11/arguments-and-smart-pointers.html">Arguments and Smart Pointers</a> &raquo; </li>
+        </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "vladris";    var disqus_identifier = "2016/04/24/abusing-maps";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article></div> <!-- #main --></div> <!-- #main-container -->
+
+        <div class="footer-container" role="contentinfo"><div style="text-align: center; color: #93a4ad">
+    By Vlad Rișcuția | <a href="http://feeds.feedburner.com/vladris">Subscribe</a> | <a href="http://vladris.com/blog/archive">Archive</a>
+</div></div> <!-- footer-container -->
+
+      </div> <!--! end of #container --><!--[if lt IE 7 ]>
+          <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+          <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+        <![endif]-->
+    </body>
+</html>
