@@ -99,7 +99,7 @@ results):
             lesser  = filter (< p) xs
             greater = filter (>= p) xs
 
-In C++, one way to implement quicksort is this:
+In C++, one way to implement quicksort is this [#]_:
 
 .. code-block:: c++
 
@@ -366,6 +366,9 @@ functional style which avoids the complex loops of the C implementation
 proposed on the Haskell wiki.
 
 ----
+
+.. [#] We can also use ``bind(less<>{}, placeholders::_1, *f)`` and have a
+       curried ``less`` instead of a lambda predicate.
 
 .. [#] Haskell is an awesome language and I'm not trying to bash on it here, or
        write a C++ vs Haskell post. I was simply inspired by the Haskell wiki
