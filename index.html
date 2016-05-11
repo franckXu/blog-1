@@ -131,7 +131,7 @@ results):</p>
     <span class="n">greater</span> <span class="ow">=</span> <span class="n">filter</span> <span class="p">(</span><span class="o">&gt;=</span> <span class="n">p</span><span class="p">)</span> <span class="n">xs</span>
 </pre></div>
 </div>
-<p>In C++, one way to implement quicksort is this:</p>
+<p>In C++, one way to implement quicksort is this <a class="footnote-reference" href="#id4" id="id2">[1]</a>:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span/><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">I</span><span class="o">&gt;</span> <span class="kt">void</span> <span class="n">quicksort</span><span class="p">(</span><span class="n">I</span> <span class="n">f</span><span class="p">,</span> <span class="n">I</span> <span class="n">l</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">f</span> <span class="o">==</span> <span class="n">l</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
@@ -189,7 +189,7 @@ last element:</p>
 <p>This might arguably sound like cheating a bit, since we introduced
 <span class="docutils literal"><span class="pre">stable_partition</span></span>. On the other hand, <span class="docutils literal"><span class="pre">stable_partition</span></span> is a standard
 algorithm and the Haskell implementation uses <span class="docutils literal"><span class="pre">filter</span></span> itself. I will stop
-the Haskell comparison here <a class="footnote-reference" href="#id3" id="id2">[1]</a> and attempt to decompose further, so in the end
+the Haskell comparison here <a class="footnote-reference" href="#id5" id="id3">[2]</a> and attempt to decompose further, so in the end
 we have a quicksort built out of nice functional building blocks.</p>
 <p>So far we have a recursive quicksort implementation which uses
 <span class="docutils literal"><span class="pre">stable_partition</span></span>. How would we go about implementing <span class="docutils literal"><span class="pre">stable_partition</span></span>?
@@ -352,10 +352,17 @@ implementations of these algorithms):</p>
 functional style which avoids the complex loops of the C implementation
 proposed on the Haskell wiki.</p>
 <hr class="docutils"/>
-<table class="docutils footnote" frame="void" id="id3" rules="none">
+<table class="docutils footnote" frame="void" id="id4" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td>Haskell is an awesome language and I’m not trying to bash on it here, or
+<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td>We can also use <span class="docutils literal"><span class="pre">bind(less&lt;&gt;{},</span> <span class="pre">placeholders::_1,</span> <span class="pre">*f)</span></span> and have a
+curried <span class="docutils literal"><span class="pre">less</span></span> instead of a lambda predicate.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id5" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td>Haskell is an awesome language and I’m not trying to bash on it here, or
 write a C++ vs Haskell post. I was simply inspired by the Haskell wiki
 page about quicksort and started thinking about a modern C++ way of
 approaching the same problem.</td></tr>
