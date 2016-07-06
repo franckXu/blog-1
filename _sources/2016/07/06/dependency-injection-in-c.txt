@@ -495,8 +495,8 @@ we could have something like this:
         return std::make_unique<Car<V6Engine>>();
     }
 
-Test would remain like in the example above, where we work against a ``Car``
-type (not an ``ICar``) which we instantiate with a ``MockEngine``.
+Test would remain the same as in the example above, where we worked against a
+``Car`` type (not an ``ICar``) which we instantiate with a ``MockEngine``.
 
 With this approach:
 
