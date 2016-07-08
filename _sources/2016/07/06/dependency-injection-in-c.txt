@@ -440,7 +440,7 @@ header file and we have to make this publicly visible.
 Hybrid Approach
 ---------------
 
-We can use a hybrid approach if we don't need an extrnally injected ``Engine``.
+We can use a hybrid approach if we don't need an externally injected ``Engine``.
 Say our component provides a ``V8Engine``, a ``V6Engine``, and we have a
 ``MockEngine`` used during testing. We have the same componentization
 requirements but don't need to expose all the details to consumers. In that case
