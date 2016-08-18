@@ -4,6 +4,7 @@ Sitemap
 .. toctree::
    :maxdepth: 1
 
+   2016/08/17/concepts-and-modules
    2016/07/06/dependency-injection-in-c
    2016/05/07/deconstructing-quicksort
    2016/04/24/abusing-maps
