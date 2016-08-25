@@ -142,7 +142,7 @@ are concepts. Here is how an engine concept would look like::
 
     template <typename TEngine>
     concept bool Engine() {
-        retrun requires(TEngine engine) {
+        return requires(TEngine engine) {
             { engine.Start() };
             { engine.Stop() };
         }
@@ -275,7 +275,7 @@ look like in the not too far future::
 
     export template <typename TEngine>
     concept bool Engine() {
-        retrun requires(TEngine engine) {
+        return requires(TEngine engine) {
             { engine.Start() };
             { engine.Stop() };
         }
