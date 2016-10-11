@@ -342,7 +342,15 @@ rhs of our type::
     {
         filter_t(Predicate pred) : _pred(pred) { }
 
-        Predicate _pred;
+        template<typename T>
+        auto operator()(std::experimental::generator<T> gen) const
+        {
+            for (auto&& item : gen)
+                if (_pred(item))
+                    co_yield item;
+        }
+
+        const Predicate _pred;
     };
 
     template <typename T, typename Predicate>
@@ -350,10 +358,9 @@ rhs of our type::
         std::experimental::generator<T> lhs,
         const filter_t<Predicate>& rhs)
     {
-        for (auto&& item : lhs)
-            if (rhs._pred(item))
-                co_yield item;
+        return rhs(std::move(lhs));
     }
+
 
 Here, ``filter_t`` holds the ``Predicate`` we want to use, and ``operator|``
 applies it on the given ``generator``. This works, but we wouldn’t be able to
@@ -376,7 +383,18 @@ would be::
     {
         take_n_t(int n) : _n(n) { }
 
-        int _n;
+        template <typename T>
+        auto operator()(std::experimental::generator<T> gen) const
+        {
+            int i = 0;
+            for (auto&& item : gen)
+                if (i++ < _n)
+                    co_yield item;
+                else
+                    return;
+        }
+
+        const int _n;
     };
 
     template <typename T>
@@ -384,12 +402,7 @@ would be::
         std::experimental::generator<T> lhs,
         const take_n_t& rhs)
     {
-        int i = 0;
-        for (auto&& item : lhs)
-            if (i++ < rhs._n)
-                co_yield item;
-            else
-                return;
+        return rhs(std::move(lhs));
     }
 
     auto take_n(int n)
@@ -402,7 +415,15 @@ would be::
     {
         filter_t(Predicate pred) : _pred(pred) { }
 
-        Predicate _pred;
+        template<typename T>
+        auto operator()(std::experimental::generator<T> gen) const
+        {
+            for (auto&& item : gen)
+                if (_pred(item))
+                    co_yield item;
+        }
+
+        const Predicate _pred;
     };
 
     template <typename T, typename Predicate>
@@ -410,9 +431,7 @@ would be::
         std::experimental::generator<T> lhs,
         const filter_t<Predicate>& rhs)
     {
-        for (auto&& item : lhs)
-            if (rhs._pred(item))
-                co_yield item;
+        return rhs(std::move(lhs));
     }
 
     template <typename Predicate>
@@ -426,7 +445,14 @@ would be::
     {
         map_t(BinaryOperation op) : _op(op) { }
 
-        BinaryOperation _op;
+        template <typename T>
+        auto operator()(std::experimental::generator<T> gen) const
+        {
+            for (auto&& item : gen)
+                co_yield _op(item);
+        }
+
+        const BinaryOperation _op;
     };
 
     template <typename T, typename BinaryOperation>
@@ -434,8 +460,7 @@ would be::
         std::experimental::generator<T> lhs,
         const map_t<BinaryOperation>& rhs)
     {
-        for (auto&& item : lhs)
-            co_yield rhs._op(item);
+        return rhs(std::move(lhs));
     }
 
     template <typename BinaryOperation>
@@ -443,6 +468,7 @@ would be::
     {
         return map_t<BinaryOperation>(op);
     }
+
 
 With this approach, we can apply our algorithms over a generator without having
 to introduce a different type. They also compose very nicely, the only slightly
