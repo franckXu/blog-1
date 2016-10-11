@@ -337,7 +337,15 @@ rhs of our type:</p>
 <span class="p">{</span>
     <span class="n">filter_t</span><span class="p">(</span><span class="n">Predicate</span> <span class="n">pred</span><span class="p">)</span> <span class="o">:</span> <span class="n">_pred</span><span class="p">(</span><span class="n">pred</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
 
-    <span class="n">Predicate</span> <span class="n">_pred</span><span class="p">;</span>
+    <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+    <span class="k">auto</span> <span class="k">operator</span><span class="p">()(</span><span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">gen</span><span class="p">)</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="nl">item</span> <span class="p">:</span> <span class="n">gen</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">_pred</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
+                <span class="n">co_yield</span> <span class="n">item</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">const</span> <span class="n">Predicate</span> <span class="n">_pred</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Predicate</span><span class="o">&gt;</span>
@@ -345,9 +353,7 @@ rhs of our type:</p>
     <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">lhs</span><span class="p">,</span>
     <span class="k">const</span> <span class="n">filter_t</span><span class="o">&lt;</span><span class="n">Predicate</span><span class="o">&gt;&amp;</span> <span class="n">rhs</span><span class="p">)</span>
 <span class="p">{</span>
-    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="nl">item</span> <span class="p">:</span> <span class="n">lhs</span><span class="p">)</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">rhs</span><span class="p">.</span><span class="n">_pred</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
-            <span class="n">co_yield</span> <span class="n">item</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">rhs</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">lhs</span><span class="p">));</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -371,7 +377,18 @@ would be:</p>
 <span class="p">{</span>
     <span class="n">take_n_t</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="o">:</span> <span class="n">_n</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
 
-    <span class="kt">int</span> <span class="n">_n</span><span class="p">;</span>
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+    <span class="k">auto</span> <span class="k">operator</span><span class="p">()(</span><span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">gen</span><span class="p">)</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="nl">item</span> <span class="p">:</span> <span class="n">gen</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">i</span><span class="o">++</span> <span class="o">&lt;</span> <span class="n">_n</span><span class="p">)</span>
+                <span class="n">co_yield</span> <span class="n">item</span><span class="p">;</span>
+            <span class="k">else</span>
+                <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">const</span> <span class="kt">int</span> <span class="n">_n</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
@@ -379,12 +396,7 @@ would be:</p>
     <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">lhs</span><span class="p">,</span>
     <span class="k">const</span> <span class="n">take_n_t</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">)</span>
 <span class="p">{</span>
-    <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="nl">item</span> <span class="p">:</span> <span class="n">lhs</span><span class="p">)</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">i</span><span class="o">++</span> <span class="o">&lt;</span> <span class="n">rhs</span><span class="p">.</span><span class="n">_n</span><span class="p">)</span>
-            <span class="n">co_yield</span> <span class="n">item</span><span class="p">;</span>
-        <span class="k">else</span>
-            <span class="k">return</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">rhs</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">lhs</span><span class="p">));</span>
 <span class="p">}</span>
 
 <span class="k">auto</span> <span class="n">take_n</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span>
@@ -397,7 +409,15 @@ would be:</p>
 <span class="p">{</span>
     <span class="n">filter_t</span><span class="p">(</span><span class="n">Predicate</span> <span class="n">pred</span><span class="p">)</span> <span class="o">:</span> <span class="n">_pred</span><span class="p">(</span><span class="n">pred</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
 
-    <span class="n">Predicate</span> <span class="n">_pred</span><span class="p">;</span>
+    <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+    <span class="k">auto</span> <span class="k">operator</span><span class="p">()(</span><span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">gen</span><span class="p">)</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="nl">item</span> <span class="p">:</span> <span class="n">gen</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">_pred</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
+                <span class="n">co_yield</span> <span class="n">item</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">const</span> <span class="n">Predicate</span> <span class="n">_pred</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Predicate</span><span class="o">&gt;</span>
@@ -405,9 +425,7 @@ would be:</p>
     <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">lhs</span><span class="p">,</span>
     <span class="k">const</span> <span class="n">filter_t</span><span class="o">&lt;</span><span class="n">Predicate</span><span class="o">&gt;&amp;</span> <span class="n">rhs</span><span class="p">)</span>
 <span class="p">{</span>
-    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="nl">item</span> <span class="p">:</span> <span class="n">lhs</span><span class="p">)</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">rhs</span><span class="p">.</span><span class="n">_pred</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
-            <span class="n">co_yield</span> <span class="n">item</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">rhs</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">lhs</span><span class="p">));</span>
 <span class="p">}</span>
 
 <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Predicate</span><span class="o">&gt;</span>
@@ -421,7 +439,14 @@ would be:</p>
 <span class="p">{</span>
     <span class="n">map_t</span><span class="p">(</span><span class="n">BinaryOperation</span> <span class="n">op</span><span class="p">)</span> <span class="o">:</span> <span class="n">_op</span><span class="p">(</span><span class="n">op</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
 
-    <span class="n">BinaryOperation</span> <span class="n">_op</span><span class="p">;</span>
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+    <span class="k">auto</span> <span class="k">operator</span><span class="p">()(</span><span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">gen</span><span class="p">)</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="nl">item</span> <span class="p">:</span> <span class="n">gen</span><span class="p">)</span>
+            <span class="n">co_yield</span> <span class="n">_op</span><span class="p">(</span><span class="n">item</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">const</span> <span class="n">BinaryOperation</span> <span class="n">_op</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="p">,</span> <span class="k">typename</span> <span class="n">BinaryOperation</span><span class="o">&gt;</span>
@@ -429,8 +454,7 @@ would be:</p>
     <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">lhs</span><span class="p">,</span>
     <span class="k">const</span> <span class="n">map_t</span><span class="o">&lt;</span><span class="n">BinaryOperation</span><span class="o">&gt;&amp;</span> <span class="n">rhs</span><span class="p">)</span>
 <span class="p">{</span>
-    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="nl">item</span> <span class="p">:</span> <span class="n">lhs</span><span class="p">)</span>
-        <span class="n">co_yield</span> <span class="n">rhs</span><span class="p">.</span><span class="n">_op</span><span class="p">(</span><span class="n">item</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">rhs</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">lhs</span><span class="p">));</span>
 <span class="p">}</span>
 
 <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">BinaryOperation</span><span class="o">&gt;</span>
