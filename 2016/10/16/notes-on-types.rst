@@ -85,8 +85,9 @@ makes them more terse. That being said, the
 `Hindley-Milner algorithm W <https://en.wikipedia.org/wiki/Hindley%E2%80%93Milner_type_system>`_
 can infer the types of a program in linear time with respect to the source size.
 So while Python is starting to support type annotations for better static
-analysis, C++ has better and better type inference, while in Haskell (which has
-one of the strongest static type systems) type annotations are mostly optional.
+analysis and TypeScript provides a way for writing type-safe JavaScript, C++ has
+better and better type inference, while in Haskell (which has one of the
+strongest static type systems) type annotations are mostly optional.
 
 Strong Typing vs Weak Typing
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -632,10 +633,8 @@ Further Reading
 Ben Dean had an excellent talk at CppCon this year, `Using Types Effectively
 <https://www.youtube.com/watch?v=ojZbFIQSdl8>`_. Another great talk about type
 design from CppCon is `C++, Abstract Algebra and Practical Applications
-<https://www.youtube.com/watch?v=632a-DMM5J0>`_ by Robert Ramey. Sean Parent
-also touches on the topic during his `BoostCon Keynote
-<https://www.youtube.com/watch?v=giNtMitSdfQ>`_ this year. And then there is
-Bartosz Milewski `excellent blog <https://bartoszmilewski.com/>`_ about Haskell,
+<https://www.youtube.com/watch?v=632a-DMM5J0>`_ by Robert Ramey. And then there
+is Bartosz Milewski `blog <https://bartoszmilewski.com/>`_ about Haskell,
 C++, and category theory.
 
 .. comments::
