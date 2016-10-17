@@ -4,6 +4,7 @@ Sitemap
 .. toctree::
    :maxdepth: 1
 
+   2016/10/16/notes-on-types
    2016/10/09/composable-generators
    2016/08/17/concepts-and-modules
    2016/07/06/dependency-injection-in-c
