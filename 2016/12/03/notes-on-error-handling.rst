@@ -6,8 +6,7 @@ Notes on Error Handling
 I recently read Joe Duffy's excellent blog post
 `The Error Model <http://joeduffyblog.com/2016/02/07/the-error-model/>`_. Joe
 worked on Midori and has some great insights on error model design. I wanted to
-write down a couple of personal notes on error handling. There is still a fair
-ammount of
+write down a couple of personal notes on error handling.
 
 Using the Type System
 ---------------------
