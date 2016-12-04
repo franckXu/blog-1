@@ -43,6 +43,340 @@
         <![endif]-->
 
       <div id="container"><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>December 03, 2016</span>
+        </div>
+        <div class="section">
+            <h1><a href="2016/12/03/notes-on-error-handling.html">Notes on Error Handling</a></h1>
+<p>I recently read Joe Duffy’s excellent blog post
+<a class="reference external" href="http://joeduffyblog.com/2016/02/07/the-error-model/">The Error Model</a>. Joe
+worked on Midori and has some great insights on error model design. I wanted to
+write down a couple of personal notes on error handling. There is still a fair
+ammount of</p>
+<div class="section" id="using-the-type-system">
+<h2>Using the Type System</h2>
+<p>Before even talking about error scenarios, it’s worth pointing out that there
+are categories of errors where the type system helps if not to eliminate them,
+at least to scope them and prevent them from propagating unchecked throughout
+the system.</p>
+<div class="section" id="arguments">
+<h3>Arguments</h3>
+<p>In many cases, an error means the value of some variable has an invalid value.
+If this invalid value is passed down to called functions, it can manifests
+itself deep in the stack when it could’ve been caught earlier. A simple example
+would be move directions for a game - let’s say the player can move <span class="docutils literal"><span class="pre">Up</span></span>,
+<span class="docutils literal"><span class="pre">Down</span></span>, <span class="docutils literal"><span class="pre">Left</span></span>, or <span class="docutils literal"><span class="pre">Right</span></span>. This can be encoded as:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="k">const</span> <span class="kt">int</span> <span class="n">UP</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">int</span> <span class="n">LEFT</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">int</span> <span class="n">DOWN</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">int</span> <span class="n">RIGHT</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+
+<span class="p">...</span>
+
+<span class="kt">void</span> <span class="n">move</span><span class="p">(</span><span class="kt">int</span> <span class="n">direction</span><span class="p">,</span> <span class="n">player</span> <span class="n">player</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">switch</span> <span class="p">(</span><span class="n">direction</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">case</span> <span class="nl">UP</span><span class="p">:</span> <span class="n">player</span><span class="p">.</span><span class="n">move_up</span><span class="p">();</span> <span class="k">break</span><span class="p">;</span>
+        <span class="k">case</span> <span class="nl">LEFT</span><span class="p">:</span> <span class="n">player</span><span class="p">.</span><span class="n">move_left</span><span class="p">();</span> <span class="k">break</span><span class="p">;</span>
+        <span class="k">case</span> <span class="nl">DOWN</span><span class="p">:</span> <span class="n">player</span><span class="p">.</span><span class="n">move_down</span><span class="p">();</span> <span class="k">break</span><span class="p">;</span>
+        <span class="k">case</span> <span class="nl">RIGHT</span><span class="p">:</span> <span class="n">player</span><span class="p">.</span><span class="n">move_right</span><span class="p">();</span> <span class="k">break</span><span class="p">;</span>
+        <span class="k">default</span><span class="o">:</span>
+            <span class="c1">// direction should only be 0, 1, 2, 3</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>but ultimately a caller can still pass any int value to this function which
+would end up in the default branch as a direction the code doesn’t know how to
+handle. The alternative is, of course:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="k">enum</span> <span class="k">class</span> <span class="nc">direction</span>
+<span class="p">{</span>
+    <span class="n">up</span><span class="p">,</span>
+    <span class="n">left</span><span class="p">,</span>
+    <span class="n">down</span><span class="p">,</span>
+    <span class="n">right</span>
+<span class="p">};</span>
+
+<span class="p">...</span>
+
+<span class="kt">void</span> <span class="n">move</span><span class="p">(</span><span class="n">direction</span> <span class="n">direction</span><span class="p">,</span> <span class="n">player</span> <span class="n">player</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>In this case, the type system ensures direction can only possibly hold one of
+the allowed values. This is a trivial example but there are many more
+interesting ones. Take for example some connection which, if opened, can receive
+data and close and, if not opened, can be opened. This can be modelled like
+this:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="k">struct</span> <span class="n">connection</span>
+<span class="p">{</span>
+    <span class="k">auto</span> <span class="n">open</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">is_opened</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/* error, connection already opened */</span> <span class="p">}</span>
+        <span class="p">...</span>
+    <span class="p">};</span>
+
+    <span class="k">auto</span> <span class="nf">close</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">is_opened</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/* error, connection not opened */</span> <span class="p">}</span>
+        <span class="p">...</span>
+    <span class="p">}</span>
+
+    <span class="k">auto</span> <span class="nf">receive</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">is_opened</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/* error, connection not opened */</span> <span class="p">}</span>
+        <span class="p">...</span>
+    <span class="p">}</span>
+
+<span class="k">private</span><span class="o">:</span>
+    <span class="kt">bool</span> <span class="n">is_opened</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>Here we have to handle various cases where we try to perform an open-connection
+operation on a connection that hasn’t been opened yet, and vice-versa. Another
+way to model this (as of C++17) is using a variant and separate types for open
+and closed connections:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="k">struct</span> <span class="n">opened_connection</span>
+<span class="p">{</span>
+    <span class="k">auto</span> <span class="n">close</span><span class="p">()</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+    <span class="k">auto</span> <span class="n">receive</span><span class="p">()</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="n">closed_connection</span>
+<span class="p">{</span>
+    <span class="k">auto</span> <span class="n">open</span><span class="p">()</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">using</span> <span class="n">connection</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">variant</span><span class="o">&lt;</span><span class="n">closed_connection</span><span class="p">,</span> <span class="n">opened_connection</span><span class="o">&gt;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Here, as long as we have a <span class="docutils literal"><span class="pre">closed_connection</span></span> instance, we can only perform
+closed-connection operations and as long as we have an <span class="docutils literal"><span class="pre">open_connection</span></span>
+instance, we can only perform opened-connection operations. The error states we
+had to handle above go away as the type system ensures we can never call
+<span class="docutils literal"><span class="pre">receive</span></span> on a closed connection etc.</p>
+</div>
+<div class="section" id="return-values">
+<h3>Return Values</h3>
+<p>The type system can also be leveraged to embellish return types as an
+alternative to using return codes. For example, assume we have a function which
+parses a phone number provided by the user into some <span class="docutils literal"><span class="pre">phone_number_t</span></span> used
+internally. There are a few ways to implement this:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="n">phone_number_t</span> <span class="nf">parse_phone_number</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">input</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">phone_number_t</span><span class="o">::</span><span class="n">is_valid</span><span class="p">(</span><span class="n">input</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">phone_number_t</span><span class="o">::</span><span class="n">from_string</span><span class="p">(</span><span class="n">input</span><span class="p">);</span> <span class="c1">// assume we can construct a phone_number_t from a valid string</span>
+    <span class="k">else</span>
+        <span class="k">throw</span> <span class="n">invalid_phone_number</span> <span class="p">{</span> <span class="p">};</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This is not ideal though, since exception should really be exceptional (more on
+this below), and user providing invalid input should be a completely valid
+scenario. The alternative would be to use a return code:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="kt">bool</span> <span class="nf">parse_phone_number</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">input</span><span class="p">,</span> <span class="n">phone_number_t</span><span class="o">&amp;</span> <span class="n">output</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">phone_number_t</span><span class="o">::</span><span class="n">is_valid</span><span class="p">(</span><span class="n">input</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+
+    <span class="n">output</span> <span class="o">=</span> <span class="n">phone_number_t</span><span class="o">::</span><span class="n">from_string</span><span class="p">(</span><span class="n">input</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This works, but calling code is uglier:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="k">auto</span> <span class="n">phone_number</span> <span class="o">=</span> <span class="n">parse_phone_number</span><span class="p">(</span><span class="n">input</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>now becomes:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="n">phone_number_t</span> <span class="n">phone_number</span><span class="p">;</span>
+<span class="kt">bool</span> <span class="n">result</span> <span class="o">=</span> <span class="n">parse_phone_number</span><span class="p">(</span><span class="n">input</span><span class="p">,</span> <span class="n">phone_number</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>We can also end up in a bad state if we forget to check the return value. The
+alternative is to encode the information that we either have a
+<span class="docutils literal"><span class="pre">phone_number_t</span></span> or an invalid number in a type. In C++ we have (as of C++17)
+<span class="docutils literal"><span class="pre">optional&lt;T&gt;</span></span> for this:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="n">optional</span><span class="o">&lt;</span><span class="n">phone_number_t</span><span class="o">&gt;</span> <span class="n">parse_phone_number</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">input</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">phone_number_t</span><span class="o">::</span><span class="n">is_valid</span><span class="p">(</span><span class="n">input</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">nullopt</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">phone_number_t</span><span class="o">::</span><span class="n">from_string</span><span class="p">(</span><span class="n">input</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This is not quite a return error code and cannot really be ignored - there is no
+implicit case from <span class="docutils literal"><span class="pre">optional&lt;T&gt;</span></span> to <span class="docutils literal"><span class="pre">T</span></span>, so callers need to explicitly
+handle the case when the operation failed. Calling this is as natural as the
+throwing version, but does not rely on exceptions <a class="footnote-reference" href="#id3" id="id1">[1]</a>. This is also called
+<em>monadic error handling</em> and is widely employed by functional languages. I find
+this a good alternative to throwing exceptions as long as it is well scoped and
+error checks don’t have to pollute too many functions in the call stack.</p>
+</div>
+</div>
+<div class="section" id="preconditions">
+<h2>Preconditions</h2>
+<p>Preconditions are conditions that should be satisfied upon entering a function
+to ensure the function works as expected. When a function is called but the
+preconditions are not met, it is not an error, it is a developer bug. The
+recommended way of handling such a situation is, if possible, to crash
+immediately. The reason for crashing is that calling a function with
+preconditions not being met means the system is an invalid state and attempting
+recovery is usually not worth it. Crashing on the other hand would provide
+developers with dumps to help understand how the system got into this state and
+fix the underlying bug.</p>
+<p>The alternative to this is undefined behavior - calling a function without
+meeting the preconditions cannot guarantee anything about the execution of the
+function. Undefined behavior is used extensively throughout the C++ standard
+<a class="footnote-reference" href="#id4" id="id2">[2]</a>. While failing fast is the preferred approach, sometimes it is unfeasible
+to check preconditions at runtime: for example a precondition of binary search
+is that it searches over an ordered range. Performing a binary search takes
+logarithmic time but validating that a range is ordered takes linear time, so
+adding this check would negatively impact the run time of the algorithm. In this
+case, it is OK to say that we cannot provide any guarantees on what the function
+will do. Debug-time asserts are a middle ground solution, since we can afford to
+perform more expensive checks in debug builds to deterministically fail when
+preconditions are not met. That being said, if the check is not prohibitively
+expensive, it should be performed on all build flavors and immediately fail (via
+<span class="docutils literal"><span class="pre">std::terminate</span></span> or equivalent).</p>
+<p>What should not be done is treating such a state as an error - this is a bug in
+the code and throwing an exception or returning some error result would just
+leak the bug and make it impact more of the system. There really isn’t anything
+useful to do with such an error - it only tells us that there is an issue in the
+code and we are now in a state we should never be in. At this point we don’t
+know which component originated the error and we cannot deterministically
+recover - we might abort the current operation but there is no guarantee that
+this would bring us back to a valid state. We are in undefined behavior land,
+where crashing is the best option.</p>
+</div>
+<div class="section" id="recoverable-errors">
+<h2>Recoverable Errors</h2>
+<p>We covered several ways to handle errors by either eliminating invalid states at
+compile-time or by failing fast when in an invalid state. There are, on the
+other hand, classes of errors from which we can legitimately recover, which
+brings us to exception and error codes.</p>
+<div class="section" id="exceptions">
+<h3>Exceptions</h3>
+<p>I am a big fan of handling exceptional states using exceptions over returning
+error codes. For one, the code is more readable: instead of reserving the return
+type of a function to signal success or failure and resort to out parameters,
+functions can be declared in a natural way. We also end up with less code
+overall as instead of having to check error codes inside all functions in the
+call stack in order to propagate back an error, we simply throw it from the top
+of the stack and catch it where we can deal with it. This approach also composes
+better - take, for example, a generic algorithm that takes some throwing
+function. Since we supply the predicate, we know what exception it can throw and
+we can catch it in the code that invokes the generic algorithm, keeping this
+invisible to the algorithm:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">InputIt</span><span class="p">,</span> <span class="k">typename</span> <span class="n">UnaryFunction</span><span class="o">&gt;</span>
+<span class="kt">void</span> <span class="n">for_each</span><span class="p">(</span><span class="n">InputIt</span> <span class="n">first</span><span class="p">,</span> <span class="n">InputIt</span> <span class="n">last</span><span class="p">,</span> <span class="n">UnaryFunction</span> <span class="n">f</span><span class="p">)</span> <span class="k">noexcept</span><span class="p">(</span><span class="k">noexcept</span><span class="p">(</span><span class="n">UnaryFunction</span><span class="p">))</span>
+<span class="p">{</span>
+    <span class="k">for</span> <span class="p">(;</span> <span class="n">first</span> <span class="o">!=</span> <span class="n">last</span><span class="p">;</span> <span class="o">++</span><span class="n">first</span><span class="p">)</span>
+        <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">first</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>If our predicate returns an error code instead, the generic algorithm must be
+aware of this:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">InputIt</span><span class="p">,</span> <span class="k">typename</span> <span class="n">UnaryFunction</span><span class="o">&gt;</span>
+<span class="k">auto</span> <span class="n">for_each</span><span class="p">(</span><span class="n">InputIt</span> <span class="n">first</span><span class="p">,</span> <span class="n">InputIt</span> <span class="n">last</span><span class="p">,</span> <span class="n">UnaryFunction</span> <span class="n">f</span><span class="p">)</span> <span class="k">noexcept</span>
+<span class="p">{</span>
+    <span class="k">for</span> <span class="p">(;</span> <span class="n">first</span> <span class="o">!=</span> <span class="n">last</span><span class="p">;</span> <span class="o">++</span><span class="n">first</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">auto</span> <span class="n">result</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">first</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">result</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Note that here we are also making an assumption that 0 means success, which is
+an arbitrary decision for a plug-in function.</p>
+<p>That being said, I want to reiterate that exceptions should only be used for
+exceptional cases. The readability advantage gained with exceptions is lost if
+they are abused. It’s great if the callee throws one or two exception types
+which the caller catches and handles. On the other hand, if we have to resort to
+catch-all <span class="docutils literal"><span class="pre">catch</span> <span class="pre">(...)</span></span> and we have so many possible exception types coming
+out of a function that we can’t keep track of them, the code actually becomes
+harder to reason about.</p>
+<p>An example and a counter-example: when reading a file with a set schema
+generated by our application, we expect it to be in a valid format. If it isn’t,
+it means some data corruption occurred but this should really be an exceptional
+case. If we encounter such data corruption, we can throw an exception and let
+the caller handle the fact that we cannot interpret this file. On the other
+hand, when reading user input, we should never throw an exception if input is
+not conforming - this should be a much more common scenario of user error.</p>
+</div>
+<div class="section" id="return-codes">
+<h3>Return Codes</h3>
+<p>There are cases which are not exceptional enough to warrant an exception but
+where some error information needs to be propagated through the call stack.
+Take, for example, a compiler which encounters an invalid token while parsing a
+file. Since this is user input, it should not be treated as an exception. On the
+other hand, simply using an optional and failing to parse without providing
+additional information is also not ideal. In this case we probably want to
+return additional information around the encountered error.</p>
+<p>In this case we would return the error rather than throw it, but I would still
+prefer an embellished type like Rust’s <span class="docutils literal"><span class="pre">Result</span></span> and return an
+<span class="docutils literal"><span class="pre">std::variant&lt;T,</span> <span class="pre">Error&gt;</span></span> (as of C++17). In general I consider bad practice
+returning an <span class="docutils literal"><span class="pre">int</span></span> or an <span class="docutils literal"><span class="pre">HRESULT</span></span> which would afterwards have to be decoded
+to understand the actual error. For simple cases, if no other information
+besides success/failure has to be returned, a <span class="docutils literal"><span class="pre">bool</span></span> would suffice, or an
+<span class="docutils literal"><span class="pre">enum</span></span> or <span class="docutils literal"><span class="pre">struct</span></span> which contains the expected error information. Such an
+error type can be composed with a valid return type using a variant which brings
+us back to monadic error-handling.</p>
+<p>My general rule of thumb is to use exceptions for really exceptional situations,
+which keeps the code cleaner as long as the number of exception types is
+managable, and use monadic error handling when errors are expected, as long as
+these can be scoped to a limited number of functions (repeated error checking
+all over the place is messy, error-prone, and makes code hard to read).</p>
+</div>
+</div>
+<div class="section" id="summary">
+<h2>Summary</h2>
+<p>We went over various ways of handling errors:</p>
+<ul class="simple">
+<li>Declaring types that restrict the range of values a variable can take to
+eliminate invalid states at compile-time</li>
+<li>Monadic error handling using embelished return types</li>
+<li>Failing fast when preconditions of a function are not met</li>
+<li>Throwing exceptions in exceptional cases</li>
+<li>Returning strongly typed errors when errors are not exceptional</li>
+</ul>
+<p>There is still a fair amount of controversy around what is <em>the right way</em> of
+handling errors. My personal take on this is that there are tradeoffs that come
+with each approach and rather than saying “always use exceptions” or “never use
+exceptions”, it’s more a matter of choosing <em>the right tool for the job</em>. I
+tried to list some of the possible approaches with their pros and cons, and how
+I employ them. Your mileage may vary depending on your specific language,
+runtime, problem domain, application type etc.</p>
+<hr class="docutils"/>
+<table class="docutils footnote" frame="void" id="id3" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>This is the recommended way of <a class="reference external" href="https://doc.rust-lang.org/book/error-handling.html">handling errors in Rust</a>.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id4" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>See Chandler Carruth’s CppCon talk <a class="reference external" href="https://www.youtube.com/watch?v=yG1OZ69H_-o">Garbage In, Garbage Out</a>.</td></tr>
+</tbody>
+</table>
+</div>
+
+        </div>
+        <div class="postmeta">
+        
+        
+        
+        <div class="comments">
+            <a href="http://vladris.com/blog/2016/12/03/notes-on-error-handling.html#disqus_thread" data-disqus-identifier="2016/12/03/notes-on-error-handling">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>October 16, 2016</span>
         </div>
         <div class="section">
