@@ -28,7 +28,7 @@
         <script>window.jQuery || document.write('<script src="_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
         <script src="_static/plugins.js"></script>
         <script src="_static/main.js"></script>
-        <link rel="alternate" type="application/rss+xml" title="RSS" href="rss.html" /><script type="text/javascript">
+        <link rel="next" title="Older" href="page2.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
         VERSION:     '1.5',
@@ -2342,6 +2342,340 @@ internally).</p>
         <div class="comments">
             <a href="http://vladris.com/blog/2016/07/06/dependency-injection-in-c.html#disqus_thread" data-disqus-identifier="2016/07/06/dependency-injection-in-c">Leave a comment</a>
         </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
+            <span>May 07, 2016</span>
+        </div>
+        <div class="section">
+            <h1><a href="2016/05/07/deconstructing-sort.html">Deconstructing Sort</a></h1>
+<div class="section" id="sort-in-haskell-and-c">
+<h2>Sort in Haskell and C</h2>
+<p>The <a class="reference external" href="https://wiki.haskell.org/Introduction">Introduction on the Haskell wiki</a>
+shows how quicksort can be implemented in Haskell compared to C. The Haskell
+implementation looks like this:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span/><span class="nf">quicksort</span> <span class="ow">::</span> <span class="kt">Ord</span> <span class="n">a</span> <span class="ow">=&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
+<span class="nf">quicksort</span> <span class="kt">[]</span>     <span class="ow">=</span> <span class="kt">[]</span>
+<span class="nf">quicksort</span> <span class="p">(</span><span class="n">p</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="n">quicksort</span> <span class="n">lesser</span><span class="p">)</span> <span class="o">++</span> <span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">++</span> <span class="p">(</span><span class="n">quicksort</span> <span class="n">greater</span><span class="p">)</span>
+    <span class="kr">where</span>
+        <span class="n">lesser</span>  <span class="ow">=</span> <span class="n">filter</span> <span class="p">(</span><span class="o">&lt;</span> <span class="n">p</span><span class="p">)</span> <span class="n">xs</span>
+        <span class="n">greater</span> <span class="ow">=</span> <span class="n">filter</span> <span class="p">(</span><span class="o">&gt;=</span> <span class="n">p</span><span class="p">)</span> <span class="n">xs</span>
+</pre></div>
+</div>
+<p>The proposed C implementation looks like this:</p>
+<div class="highlight-c"><div class="highlight"><pre><span/><span class="c1">// To sort array a[] of size n: qsort(a,0,n-1)</span>
+<span class="kt">void</span> <span class="nf">qsort</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">[],</span> <span class="kt">int</span> <span class="n">lo</span><span class="p">,</span> <span class="kt">int</span> <span class="n">hi</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">int</span> <span class="n">h</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">t</span><span class="p">;</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="n">lo</span> <span class="o">&lt;</span> <span class="n">hi</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="n">lo</span><span class="p">;</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">hi</span><span class="p">;</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">hi</span><span class="p">];</span>
+
+    <span class="k">do</span> <span class="p">{</span>
+      <span class="k">while</span> <span class="p">((</span><span class="n">l</span> <span class="o">&lt;</span> <span class="n">h</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">p</span><span class="p">))</span>
+          <span class="n">l</span> <span class="o">=</span> <span class="n">l</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+      <span class="k">while</span> <span class="p">((</span><span class="n">h</span> <span class="o">&gt;</span> <span class="n">l</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">h</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">p</span><span class="p">))</span>
+          <span class="n">h</span> <span class="o">=</span> <span class="n">h</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">l</span> <span class="o">&lt;</span> <span class="n">h</span><span class="p">)</span> <span class="p">{</span>
+          <span class="n">t</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">l</span><span class="p">];</span>
+          <span class="n">a</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">h</span><span class="p">];</span>
+          <span class="n">a</span><span class="p">[</span><span class="n">h</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="n">l</span> <span class="o">&lt;</span> <span class="n">h</span><span class="p">);</span>
+
+    <span class="n">a</span><span class="p">[</span><span class="n">hi</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">l</span><span class="p">];</span>
+    <span class="n">a</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">;</span>
+
+    <span class="n">qsort</span><span class="p">(</span> <span class="n">a</span><span class="p">,</span> <span class="n">lo</span><span class="p">,</span> <span class="n">l</span><span class="o">-</span><span class="mi">1</span> <span class="p">);</span>
+    <span class="n">qsort</span><span class="p">(</span> <span class="n">a</span><span class="p">,</span> <span class="n">l</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">hi</span> <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Ugly. Hard to read. Not very expressive. To quote the wiki page:</p>
+<blockquote>
+<div>Whereas the C program describes the particular steps the machine must make
+to perform a sort – with most code dealing with the low-level details of
+data manipulation – the Haskell program encodes the sorting algorithm at a
+much higher level, with improved brevity and clarity as a result (at the
+cost of efficiency unless compiled by a very smart compiler).</div></blockquote>
+<p>So the above C implementation doesn’t really make the algorithm obvious, rather
+it outlines the steps the machine needs to take to implement it. Can we do
+better in C++? The main disadvantage of Haskell, as outlined on the wiki, is
+that it doesn’t perform the sort in-place, so lots of data gets allocated and
+freed while running the sort. It is also not quite a quicksort implementation,
+because it is stable.</p>
+<p>How would an in-place stable sort implementation look like in C++? Could we
+write it so that the algorithm stands out?</p>
+</div>
+<div class="section" id="id1">
+<h2>Deconstructing Sort</h2>
+<p>So how does sort work? Given a list of elements, we pick a pivot element,
+partitions the list so that all elements smaller than the pivot go to its left
+and the elements larger than the pivot go to its right, then the algorithm is
+recursively applied to the left and right lists. An empty list is already
+sorted, so that’s where the recursion stops.</p>
+<p>Let’s review the Haskell implementation. We stop when the list is empty:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span/><span class="nf">quicksort</span> <span class="kt">[]</span>     <span class="ow">=</span> <span class="kt">[]</span>
+</pre></div>
+</div>
+<p>For a non-empty list, pick the head as the pivot and recursively apply the
+function to elements lesser and greater than the pivot (concatenating back the
+results):</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span/><span class="nf">quicksort</span> <span class="p">(</span><span class="n">p</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="n">quicksort</span> <span class="n">lesser</span><span class="p">)</span> <span class="o">++</span> <span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">++</span> <span class="p">(</span><span class="n">quicksort</span> <span class="n">greater</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><span class="docutils literal"><span class="pre">lesser</span></span> and <span class="docutils literal"><span class="pre">greater</span></span> are obtained by filtering the list using <span class="docutils literal"><span class="pre">&lt;</span> <span class="pre">p</span></span> and
+<span class="docutils literal"><span class="pre">&gt;=</span> <span class="pre">p</span></span> as predicates:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span/><span class="kr">where</span>
+    <span class="n">lesser</span>  <span class="ow">=</span> <span class="n">filter</span> <span class="p">(</span><span class="o">&lt;</span> <span class="n">p</span><span class="p">)</span> <span class="n">xs</span>
+    <span class="n">greater</span> <span class="ow">=</span> <span class="n">filter</span> <span class="p">(</span><span class="o">&gt;=</span> <span class="n">p</span><span class="p">)</span> <span class="n">xs</span>
+</pre></div>
+</div>
+<p>In C++, one way to implement an equivalent stable sort is this <a class="footnote-reference" href="#id4" id="id2">[1]</a>:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">I</span><span class="o">&gt;</span> <span class="kt">void</span> <span class="n">sort</span><span class="p">(</span><span class="n">I</span> <span class="n">f</span><span class="p">,</span> <span class="n">I</span> <span class="n">l</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">f</span> <span class="o">==</span> <span class="n">l</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+
+    <span class="k">auto</span> <span class="n">p</span> <span class="o">=</span> <span class="n">stable_partition</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span>
+        <span class="p">[</span><span class="n">pivot</span> <span class="o">=</span> <span class="o">*</span><span class="n">f</span><span class="p">](</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="n">elem</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">elem</span> <span class="o">&lt;</span> <span class="n">pivot</span><span class="p">;</span> <span class="p">});</span>
+
+    <span class="n">sort</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">p</span><span class="p">);</span>
+    <span class="n">sort</span><span class="p">(</span><span class="o">++</span><span class="n">p</span><span class="p">,</span> <span class="n">l</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Pretty concise. We use iterators, so <span class="docutils literal"><span class="pre">I</span></span> here would be an iterator over the
+container we want to sort. <span class="docutils literal"><span class="pre">f</span></span> and <span class="docutils literal"><span class="pre">l</span></span> are the iterators to the start and
+end of the range. Note iterators denote half-open ranges <span class="docutils literal"><span class="pre">[f,</span> <span class="pre">l)</span></span>, so <span class="docutils literal"><span class="pre">l</span></span>
+does not have to point to a valid element (it points to “after the last element
+in the range”).</p>
+<p>We introduced <span class="docutils literal"><span class="pre">stable_partition</span></span>, an algorithm which, given a range and a
+predicate, partitions the range such that the elements which satisfy the
+predicate appear before the elements which don’t satisfy the predicate. It is
+stable because it won’t change the relative order of elements in either of the
+two groups. For example, applying <span class="docutils literal"><span class="pre">stable_partition</span></span> to <span class="docutils literal"><span class="pre">5</span> <span class="pre">4</span> <span class="pre">3</span> <span class="pre">2</span> <span class="pre">1</span></span> with
+the predicate <span class="docutils literal"><span class="pre">&lt;</span> <span class="pre">3</span></span> would always yield <span class="docutils literal"><span class="pre">2</span> <span class="pre">1</span> <span class="pre">5</span> <span class="pre">4</span> <span class="pre">3</span></span> - first group is <span class="docutils literal"><span class="pre">2</span> <span class="pre">1</span></span>
+(<span class="docutils literal"><span class="pre">&lt;</span> <span class="pre">3</span></span>), second group is <span class="docutils literal"><span class="pre">5</span> <span class="pre">4</span> <span class="pre">3</span></span> (<span class="docutils literal"><span class="pre">&gt;=</span> <span class="pre">3</span></span>) and the relative order of
+elements in each group is the same as in the initial range (<span class="docutils literal"><span class="pre">2</span></span> before <span class="docutils literal"><span class="pre">1</span></span>,
+<span class="docutils literal"><span class="pre">5</span></span> before <span class="docutils literal"><span class="pre">4</span></span> before <span class="docutils literal"><span class="pre">3</span></span>). <span class="docutils literal"><span class="pre">stable_partition</span></span> returns an iterator to
+the first element not satisfying the predicate (in this case the iterator would
+point to <span class="docutils literal"><span class="pre">5</span></span>).</p>
+<p>Line by line, if the range is empty, stop:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="k">if</span> <span class="p">(</span><span class="n">f</span> <span class="o">==</span> <span class="n">l</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Get an iterator to the position of the pivot element, using <span class="docutils literal"><span class="pre">stable_partition</span></span>
+and the predicate “less than the value of the pivot”:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="k">auto</span> <span class="n">p</span> <span class="o">=</span> <span class="n">stable_partition</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span>
+    <span class="p">[</span><span class="n">pivot</span> <span class="o">=</span> <span class="o">*</span><span class="n">f</span><span class="p">](</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="n">elem</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">elem</span> <span class="o">&lt;</span> <span class="n">pivot</span><span class="p">;</span> <span class="p">});</span>
+</pre></div>
+</div>
+<p>The lambda captures the value of <span class="docutils literal"><span class="pre">*f</span></span> and uses it in the predicate
+<span class="docutils literal"><span class="pre">elem</span> <span class="pre">&lt;</span> <span class="pre">pivot</span></span>. After this step, our range is partitioned and we have an
+iterator to the new position of the pivot. We need to recursively sort the
+range from the first element up to the pivot:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="n">sort</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">p</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Then we also need to sort the range from the element next to the pivot up to the
+last element:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="n">sort</span><span class="p">(</span><span class="o">++</span><span class="n">p</span><span class="p">,</span> <span class="n">l</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Done.</p>
+</div>
+<div class="section" id="stable-partition">
+<h2>Stable Partition</h2>
+<p>This might arguably sound like cheating a bit, since we introduced
+<span class="docutils literal"><span class="pre">stable_partition</span></span>. On the other hand, <span class="docutils literal"><span class="pre">stable_partition</span></span> is a standard
+algorithm and the Haskell implementation uses <span class="docutils literal"><span class="pre">filter</span></span> itself. I will stop
+the Haskell comparison here <a class="footnote-reference" href="#id5" id="id3">[2]</a> and attempt to decompose further, so in the end
+we have a sort built out of nice functional building blocks.</p>
+<p>So far we have a recursive sort implementation which uses <span class="docutils literal"><span class="pre">stable_partition</span></span>.
+How would we go about implementing <span class="docutils literal"><span class="pre">stable_partition</span></span>?
+Here is one way to do it:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">I</span><span class="p">,</span> <span class="k">typename</span> <span class="n">P</span><span class="o">&gt;</span> <span class="n">I</span> <span class="n">stable_partition</span><span class="p">(</span><span class="n">I</span> <span class="n">f</span><span class="p">,</span> <span class="n">I</span> <span class="n">l</span><span class="p">,</span> <span class="n">P</span> <span class="n">pred</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">f</span> <span class="o">==</span> <span class="n">l</span><span class="p">)</span> <span class="k">return</span> <span class="n">l</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">l</span> <span class="o">-</span> <span class="n">f</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="k">return</span> <span class="n">f</span> <span class="o">+</span> <span class="n">pred</span><span class="p">(</span><span class="o">*</span><span class="n">f</span><span class="p">)</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">auto</span> <span class="n">m</span> <span class="o">=</span> <span class="n">f</span> <span class="o">+</span> <span class="p">(</span><span class="n">l</span> <span class="o">-</span> <span class="n">f</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+
+    <span class="k">return</span> <span class="nf">rotate</span><span class="p">(</span><span class="n">stable_partition</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">pred</span><span class="p">),</span>
+                  <span class="n">m</span><span class="p">,</span>
+                  <span class="n">stable_partition</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">pred</span><span class="p">));</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This is a recursive implementation with the following basic idea: we stop if we
+have an empty range or a range with a single element. Otherwise we divide the
+range in two by finding the middle point. We then recursively partition the
+ranges left and right of the midpoint. After this is done, we have two consecutive
+ranges which are both partitioned, it’s just that the elements satisfying the
+predicate in the right range should come before the elements not satisfying the
+predicate in the left range. We need to rotate them around the midpoint.</p>
+<p>Let’s take as an example the range over <span class="docutils literal"><span class="pre">10</span> <span class="pre">1</span> <span class="pre">9</span> <span class="pre">2</span> <span class="pre">8</span> <span class="pre">3</span> <span class="pre">7</span> <span class="pre">4</span> <span class="pre">6</span> <span class="pre">5</span></span> and the
+predicate <span class="docutils literal"><span class="pre">&lt;</span> <span class="pre">7</span></span>. We would split this in two ranges around the midpoint:
+<span class="docutils literal"><span class="pre">10</span> <span class="pre">1</span> <span class="pre">9</span> <span class="pre">2</span> <span class="pre">8</span></span> and <span class="docutils literal"><span class="pre">3</span> <span class="pre">7</span> <span class="pre">4</span> <span class="pre">6</span> <span class="pre">5</span></span>. Assuming the sub-ranges get stable-partitioned,
+we end up with <span class="docutils literal"><span class="pre">1</span> <span class="pre">2</span> <span class="pre">|</span> <span class="pre">10</span> <span class="pre">9</span> <span class="pre">8</span></span> and <span class="docutils literal"><span class="pre">3</span> <span class="pre">4</span> <span class="pre">6</span> <span class="pre">5</span> <span class="pre">|</span> <span class="pre">7</span></span> (I’m using <span class="docutils literal"><span class="pre">|</span></span> to mark the
+partition point). Now sticking them back together, we have <span class="docutils literal"><span class="pre">1</span> <span class="pre">2</span> <span class="pre">|</span> <span class="pre">10</span> <span class="pre">9</span> <span class="pre">8</span> <span class="pre">|</span> <span class="pre">3</span> <span class="pre">4</span> <span class="pre">6</span> <span class="pre">5</span> <span class="pre">|</span> <span class="pre">7</span></span>
+but we would like to have <span class="docutils literal"><span class="pre">1</span> <span class="pre">2</span> <span class="pre">3</span> <span class="pre">4</span> <span class="pre">6</span> <span class="pre">5</span> <span class="pre">|</span> <span class="pre">10</span> <span class="pre">9</span> <span class="pre">8</span> <span class="pre">7</span></span> (note this is a stable
+partition, the elements aren’t supposed to get sorted, rather relative order is
+preserved). In other words, the first partition of the left range, <span class="docutils literal"><span class="pre">1</span> <span class="pre">2</span></span>, is
+OK, the last partition of the right range, <span class="docutils literal"><span class="pre">7</span></span> is OK, we only need to swap
+<span class="docutils literal"><span class="pre">10</span> <span class="pre">9</span> <span class="pre">8</span></span> with <span class="docutils literal"><span class="pre">3</span> <span class="pre">4</span> <span class="pre">6</span> <span class="pre">5</span></span>. This is done with a rotation.</p>
+<p><span class="docutils literal"><span class="pre">rotate</span></span> takes as arguments an iterator to the beginning of a range, an
+iterator to the element around which we want to rotate, and an iterator to the
+end of the range. It helps that <span class="docutils literal"><span class="pre">stable_partition</span></span> returns just the iterators
+we need to feed into <span class="docutils literal"><span class="pre">rotate</span></span> (the partition points of the left and right
+sub-ranges). Rotating them around the midpoint yields the stable partition of
+the whole range.</p>
+<p>Line by line, <span class="docutils literal"><span class="pre">stable_partition</span></span> of an empty range returns the iterator to
+the last element:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="k">if</span> <span class="p">(</span><span class="n">f</span> <span class="o">==</span> <span class="n">l</span><span class="p">)</span> <span class="k">return</span> <span class="n">l</span><span class="p">;</span>
+</pre></div>
+</div>
+<p><span class="docutils literal"><span class="pre">stable_partition</span></span> of a single element returns either <span class="docutils literal"><span class="pre">f</span></span> or <span class="docutils literal"><span class="pre">f</span> <span class="pre">+</span> <span class="pre">1</span></span>,
+depending on whether <span class="docutils literal"><span class="pre">*f</span></span> satisfies the predicate:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="k">if</span> <span class="p">(</span><span class="n">l</span> <span class="o">-</span> <span class="n">f</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="k">return</span> <span class="n">f</span> <span class="o">+</span> <span class="n">pred</span><span class="p">(</span><span class="n">f</span><span class="o">*</span><span class="p">)</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Next, we determine the midpoint, which is <span class="docutils literal"><span class="pre">f</span></span> + half the distance between
+<span class="docutils literal"><span class="pre">f</span></span> and <span class="docutils literal"><span class="pre">l</span></span>:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="k">auto</span> <span class="n">m</span> <span class="o">=</span> <span class="n">f</span> <span class="o">+</span> <span class="p">(</span><span class="n">l</span> <span class="o">-</span> <span class="n">f</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Then we recursively apply <span class="docutils literal"><span class="pre">stable_partition</span></span> to <span class="docutils literal"><span class="pre">[f,</span> <span class="pre">m)</span></span>, <span class="docutils literal"><span class="pre">[m,</span> <span class="pre">l)</span></span>, and
+rotate the partition points returned around the midpoint <span class="docutils literal"><span class="pre">m</span></span>:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="k">return</span> <span class="nf">rotate</span><span class="p">(</span><span class="n">stable_partition</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">pred</span><span class="p">),</span>
+              <span class="n">m</span><span class="p">,</span>
+              <span class="n">stable_partition</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">pred</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="rotate">
+<h2>Rotate</h2>
+<p><span class="docutils literal"><span class="pre">rotate</span></span> is also a standard algorithm, but let’s look at a possible
+implementation. Given the beginning and end iterators over a range, and an
+iterator within the range around which we want to rotate, we move the elements
+so that the first group appears after the second group and return an iterator
+to where the initial first element ends up in the final sequence.</p>
+<p>There are more efficient ways of rotating by swapping elements while making
+sure we don’t overlap ranges, but a neat way of doing a rotation is using
+reverse:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">I</span><span class="o">&gt;</span> <span class="n">I</span> <span class="n">rotate</span><span class="p">(</span><span class="n">I</span> <span class="n">f</span><span class="p">,</span> <span class="n">I</span> <span class="n">p</span><span class="p">,</span> <span class="n">I</span> <span class="n">l</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">reverse</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">p</span><span class="p">);</span>
+    <span class="n">reverse</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">l</span><span class="p">);</span>
+    <span class="n">reverse</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">l</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="n">l</span> <span class="o">-</span> <span class="n">p</span> <span class="o">+</span> <span class="n">f</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Given a pivot point <span class="docutils literal"><span class="pre">p</span></span> around which we want to rotate, we can perform the
+rotation by reversing first the range <span class="docutils literal"><span class="pre">[f,</span> <span class="pre">p)</span></span>, then the range <span class="docutils literal"><span class="pre">[p,</span> <span class="pre">l)</span></span>,
+then the whole range <span class="docutils literal"><span class="pre">[f,</span> <span class="pre">l)</span></span>.</p>
+<p>For example, given <span class="docutils literal"><span class="pre">E</span> <span class="pre">F</span> <span class="pre">G</span> <span class="pre">H</span> <span class="pre">I</span> <span class="pre">J</span> <span class="pre">A</span> <span class="pre">B</span> <span class="pre">C</span> <span class="pre">D</span></span>, we would like to rotate it so
+<span class="docutils literal"><span class="pre">A</span> <span class="pre">B</span> <span class="pre">C</span> <span class="pre">D</span></span> appears before <span class="docutils literal"><span class="pre">E</span> <span class="pre">F</span> <span class="pre">G</span> <span class="pre">H</span> <span class="pre">I</span> <span class="pre">J</span></span>. So marking the pivot point with <span class="docutils literal"><span class="pre">|</span></span>:
+<span class="docutils literal"><span class="pre">E</span> <span class="pre">F</span> <span class="pre">G</span> <span class="pre">H</span> <span class="pre">I</span> <span class="pre">J</span> <span class="pre">|</span> <span class="pre">A</span> <span class="pre">B</span> <span class="pre">C</span> <span class="pre">D</span></span>. First, we reverse the first group and end up with
+<span class="docutils literal"><span class="pre">J</span> <span class="pre">I</span> <span class="pre">H</span> <span class="pre">G</span> <span class="pre">F</span> <span class="pre">E</span> <span class="pre">|</span> <span class="pre">A</span> <span class="pre">B</span> <span class="pre">C</span> <span class="pre">D</span></span>. Next, we reverse the second group, and end up with
+<span class="docutils literal"><span class="pre">J</span> <span class="pre">I</span> <span class="pre">H</span> <span class="pre">G</span> <span class="pre">F</span> <span class="pre">E</span> <span class="pre">|</span> <span class="pre">D</span> <span class="pre">C</span> <span class="pre">B</span> <span class="pre">A</span></span>. Last, we reverse the whole range: <span class="docutils literal"><span class="pre">A</span> <span class="pre">B</span> <span class="pre">C</span> <span class="pre">D</span> <span class="pre">|</span> <span class="pre">E</span> <span class="pre">F</span> <span class="pre">G</span> <span class="pre">H</span> <span class="pre">I</span> <span class="pre">J</span></span>,
+which ends up with exactly what we wanted.</p>
+<p>I won’t go line by line over the above as the calls to reverse are trivial, the
+only thing worth noting is the returned iterator, determined by adding the
+distance between the pivot point and the end of the range to the iterator
+pointing to the beginning of the range. This is, in fact, the new position the
+initial first element takes (refer to the example above where first element is
+<span class="docutils literal"><span class="pre">E</span></span> with initial position <span class="docutils literal"><span class="pre">f</span></span> and final position <span class="docutils literal"><span class="pre">f</span> <span class="pre">+</span> <span class="pre">4</span></span>, 4 being the
+distance between the pivot and end of the range, namely the length of the range
+<span class="docutils literal"><span class="pre">A</span> <span class="pre">B</span> <span class="pre">C</span> <span class="pre">D</span></span>).</p>
+</div>
+<div class="section" id="reverse">
+<h2>Reverse</h2>
+<p>For completeness, let’s also provide a tail-recursive implementation of reverse:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">I</span><span class="o">&gt;</span> <span class="kt">void</span> <span class="n">reverse</span><span class="p">(</span><span class="n">I</span> <span class="n">f</span><span class="p">,</span> <span class="n">I</span> <span class="n">l</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">f</span> <span class="o">==</span> <span class="n">l</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">f</span> <span class="o">==</span> <span class="o">--</span><span class="n">l</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+
+    <span class="n">swap</span><span class="p">(</span><span class="o">*</span><span class="n">f</span><span class="p">,</span> <span class="o">*</span><span class="n">l</span><span class="p">);</span>
+
+    <span class="n">reverse</span><span class="p">(</span><span class="o">++</span><span class="n">f</span><span class="p">,</span> <span class="n">l</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>We swap the first and last elements, then recurse, stopping when we either have
+an empty range, or a range consisting of a single element, as it is meaningless
+to swap an element with itself. Note the check for swapping an element with
+itself could be pushed down to the <span class="docutils literal"><span class="pre">swap</span></span> function, but by design it isn’t
+because <span class="docutils literal"><span class="pre">swap</span></span> is used in many algorithms and performing this check on every
+call quickly becomes expensive.</p>
+<p>Line by line, we stop if we have an empty range:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="k">if</span> <span class="p">(</span><span class="n">f</span> <span class="o">==</span> <span class="n">l</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>We then decrement <span class="docutils literal"><span class="pre">l</span></span> so we have a closed range <span class="docutils literal"><span class="pre">[f,</span> <span class="pre">l]</span></span> to work with as
+opposed to the half open <span class="docutils literal"><span class="pre">[f,</span> <span class="pre">l)</span></span>. We check again that the range is not empty:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="k">if</span> <span class="p">(</span><span class="n">f</span> <span class="o">==</span> <span class="o">--</span><span class="n">l</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>It might be tempting to skip the first check and just perform this one, the
+problem is that if <span class="docutils literal"><span class="pre">f</span> <span class="pre">==</span> <span class="pre">l</span></span> and we call <span class="docutils literal"><span class="pre">--l</span></span> we are trying to move <span class="docutils literal"><span class="pre">l</span></span> to
+before the beginning of the range, which is undefined behavior.</p>
+<p>Once we have both <span class="docutils literal"><span class="pre">f</span></span> and <span class="docutils literal"><span class="pre">l</span></span> pointing to the beginning and end elements in
+the range, we swap their values:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="n">swap</span><span class="p">(</span><span class="o">*</span><span class="n">f</span><span class="p">,</span> <span class="o">*</span><span class="n">l</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Finally, we advance <span class="docutils literal"><span class="pre">f</span></span> and recurse. No need to decrement <span class="docutils literal"><span class="pre">l</span></span>, as by
+convention we expect a half open range <span class="docutils literal"><span class="pre">[f,</span> <span class="pre">l)</span></span> so we take care of decrementing
+<span class="docutils literal"><span class="pre">l</span></span> inside the function as explained above.</p>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="n">reverse</span><span class="p">(</span><span class="o">++</span><span class="n">f</span><span class="p">,</span> <span class="n">l</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="summary">
+<h2>Summary</h2>
+<p>We deconstructed sort in C++ and covered a few standard algorithms with
+naïve implementations (the standard library provides highly optimized
+implementations of these algorithms):</p>
+<ul class="simple">
+<li><span class="docutils literal"><span class="pre">sort</span></span> can be implemented recursively by relying on <span class="docutils literal"><span class="pre">stable_partition</span></span></li>
+<li><span class="docutils literal"><span class="pre">stable_partition</span></span> can be implemented recursively by relying on <span class="docutils literal"><span class="pre">rotate</span></span></li>
+<li><span class="docutils literal"><span class="pre">rotate</span></span> can be implemented as three calls to <span class="docutils literal"><span class="pre">reverse</span></span></li>
+<li><span class="docutils literal"><span class="pre">reverse</span></span> can be implemented recursively by relying on <span class="docutils literal"><span class="pre">swap</span></span></li>
+</ul>
+<p>The algorithms implemented above are all 4 lines long and are implemented in a
+functional style which avoids the complex loops of the C implementation
+proposed on the Haskell wiki.</p>
+<hr class="docutils"/>
+<table class="docutils footnote" frame="void" id="id4" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td>We can also use <span class="docutils literal"><span class="pre">bind(less&lt;&gt;{},</span> <span class="pre">placeholders::_1,</span> <span class="pre">*f)</span></span> and have a
+curried <span class="docutils literal"><span class="pre">less</span></span> instead of a lambda predicate.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id5" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td>Haskell is an awesome language and I’m not trying to bash on it here, or
+write a C++ vs Haskell post. I was simply inspired by the Haskell wiki
+page about sort and started thinking about a modern C++ way of
+approaching the same problem.</td></tr>
+</tbody>
+</table>
+</div>
+
+        </div>
+        <div class="postmeta">
+        
+        
+        
+        <div class="comments">
+            <a href="http://vladris.com/blog/2016/05/07/deconstructing-sort.html#disqus_thread" data-disqus-identifier="2016/05/07/deconstructing-sort">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>April 24, 2016</span>
         </div>
         <div class="section">
@@ -3827,23 +4161,12 @@ compiler-generated complexity to developer-generated complexity.</td></tr>
         
         <div class="comments">
             <a href="http://vladris.com/blog/2016/01/04/clean-code-part-1.html#disqus_thread" data-disqus-identifier="2016/01/04/clean-code-part-1">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>December 28, 2015</span>
-        </div>
-        <div class="section">
-            <h1><a href="2015/12/28/hello-world.html">Hello World</a></h1>
-<div class="code python highlight-python"><div class="highlight"><pre><span/><span class="k">print</span><span class="p">(</span><span class="s2">"Hello World!"</span><span class="p">)</span>
-</pre></div>
-</div>
-
-        </div>
-        <div class="postmeta">
-        
-        
-        
-        </div><div class="archive_link">
+        </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
-    </div></article></div> <!-- #main --></div> <!-- #main-container -->
+    </div><ul class="related clearfix">
+            <li class="left"></li>
+            <li class="right"><a href="page2.html">Older</a> &raquo; </li>
+        </ul></article></div> <!-- #main --></div> <!-- #main-container -->
 
         <div class="footer-container" role="contentinfo"><div style="text-align: center; color: #93a4ad">
     By Vlad Rișcuția | <a href="http://feeds.feedburner.com/vladris">Subscribe</a> | <a href="http://vladris.com/blog/archive">Archive</a>
