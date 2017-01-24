@@ -166,6 +166,99 @@ count in a multi-threaded environment needs to be performed atomically. Second,
 and most important, this memory management model does not handle *reference
 cycles*.
 
+Reference cycles occur when two heap objects hold references to each other even
+after no longer being reachable from the heap. In this case, a tracing garbage
+collector would mark the objects as being unreachable and deallocate them, but
+simple reference counting would not be able to identify this - from that point
+of view, each object is being referred to by another object thus it should not
+be collected. Example of reference cycle in Python:
+
+.. code-block:: python
+
+    class Foo: pass
+
+    a, b = Foo(), Foo()
+    a.other, b.other = b, a
+    # a.other holds a reference to b, b.other holds a reference to a
+    # even when a and b go out of scope, the "other" attributes still hold references
+    # to the objects so their reference count would not drop to 0
+
+A similar example in C++:
+
+.. code-block:: c++
+
+    struct Foo
+    {
+        std::shared_ptr<Foo> other;
+    };
+
+    ...
+
+    auto foo1 = std::make_shared<Foo>();
+    auto foo2 = std::make_shared<Foo>();
+
+    foo1->other = foo2;
+    foo2->other = foo1;
+    // there are two references to each Foo object: foo1 and foo2->other for the first
+    // object, foo2 and foo1->other for the second object. Even if the foo1 and foo2
+    // variables go out of scope, neither of the objects would be collected due to the
+    // extra reference
+
+Python a C++ solve this problem in different ways: Python supplements reference
+counting with a tracing garbage collector. So while most of the memory
+management is done via reference counting, a tracing garbage collector is still
+employed to clean up cycles like in the above example. This hybrid approach has
+he pros and cons of both of the mechanisms discussed above. C++ avoids the
+executions pauses a tracing garbage collectors would create by, instead,
+leveraging *weak references*. Weak or non-owning references point to an object
+but do not prevent it from being collected when all *strong* references go away.
+
+C++ avoids the executions pauses a tracing garbage collectors would create by,
+instead, leveraging *weak references*. Weak or non-owning references point to an
+object but do not prevent it from being collected when all *strong* references
+go away. There are several ways to express a non-owning reference, with
+different advantages and drawbacks:
+
+* A ``&`` reference has to be assigned on construction and cannot be re-assigned
+  after being bound to an object. If used after the underlying object was
+  destroyed, causes undefined behavior.
+* A ``*`` pointer can be ``nullptr``-initialized and assigned later or
+  re-assigned. Similarly, if used after the pointed-to object was destroyed,
+  causes undefined behavior.
+* A ``weak_ptr<T>`` is a standard library type implementing a non-owning
+  reference. A ``weak_ptr`` can be converted to a ``shared_ptr`` (using  its
+  ``lock()`` method). If there is no strong (``shared_ptr``) reference to an
+  object it gets destroyed, regardless of how many ``weak_ptr`` instances point
+  to it. But once a ``weak_ptr`` successfully locks an object, it creates a
+  strong reference which ensures the object is kept alive. The drawback of
+  using ``weak_ptr`` is additional overhead: the control block of a smart
+  pointer needs to store both strong and weak reference count (with similar
+  atomic reference counting), and, even if an object gets destroyed because all
+  strong references went out of scope, the control block stays alive until all
+  weak references go away too.
+
+Updating the ``Foo`` struct in the example above to use a ``weak_ptr`` instead,
+the reference cycle is avoided:
+
+.. code-block:: c++
+
+    struct Foo
+    {
+        std::weak_ptr<Foo> other;
+    };
+
+    ...
+
+    auto foo1 = std::make_shared<Foo>();
+    auto foo2 = std::make_shared<Foo>();
+
+    foo1->other = foo2;
+    foo2->other = foo1;
+    // now the two Foo objects have only one strong reference to them through
+    // the foo1 and foo2 variables The other pointers are weak references which
+    // won't prevent the objects from being destroyed when foo1 and foo2 go out
+    // of scope
+
 Ownership and Lifetimes
 ~~~~~~~~~~~~~~~~~~~~~~~
 
