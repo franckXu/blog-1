@@ -262,8 +262,128 @@ the reference cycle is avoided:
 Ownership and Lifetimes
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Ownership and lifetime concepts. C++ unique_ptr and refs. Pros and cons.
+An alternative way to think about heap objects is in terms of *ownership* and
+*lifetime*. In this model, a heap object is uniquely owned by some other object
+and gets freed automatically when the owner is destructed. In C++, this is
+achieved through ``unique_ptr``:
 
-Rust memory model.
+.. code-block:: c++
+
+    struct Foo { };
+
+    struct Bar
+    {
+        std::unique_ptr<Foo> foo { std::make_unique<Foo>(); }
+    }
+
+    ...
+
+    {
+        Bar bar; // this creates a Foo object on the heap, owned by bar
+    }
+    // the heap object gets freed once bar gets freed
+
+Ownership of the object can be transferred by moving the ``unique_ptr``. The
+main advantage of this model is that it has no overhead - unlike tracing memory
+which involves pausing execution or reference counting which involves atomic
+count of reference, a ``unique_ptr`` is just a wrapper over a pointer.
+
+Unique pointers cannot be copied though (by definition, otherwise there would
+no longer be unique ownership), so when other code needs to access the heap
+object, it would need to get a reference from the owning object:
+
+.. code-block:: c++
+
+    void UseFoo(const Foo& foo)
+    {
+        ...
+    }
+
+    ...
+
+    Bar bar;
+
+    UseFoo(*bar.foo);
+
+The problem with this approach is that if another object ends up holding on to a
+reference which outlives the owning object, the reference becomes dangling and
+refers to an object which was already freed. This becomes the equivalent of a
+use-after-free, so here is where the concept of *lifetime* becomes important:
+none of the non-owning references of a uniquely owned heap object should outlive
+the object.
+
+Unfortunately in C++ this has to be handled through sensical design and is
+mostly left up to the developer. Rust on the other hand provides strong static
+analysis and lifetime annotations to ensure such issues do not occur. In fact,
+the default in Rust is to have uniquely owned objects which can be "borrowed"
+when needed and static analysis ensures no dangling references appear. In C++:
+
+.. code-block:: c++
+
+    struct Foo { };
+
+    struct Bar{
+        Foo* foo;
+    };
+
+    ...
+
+    Bar bar;
+    {
+        Foo foo;
+        bar.foo = *foo;
+    }
+    // bar.foo is now a dangling pointer since Foo was freed
+
+The above example used a pointer for simplicity, since a reference (``Foo&``)
+needs to be bound at construction time, but same applies for references: once
+an object gets freed, references and non-owning pointers to it are left
+dangling. On the other hand, this does not compile in Rust:
+
+.. code-block:: rust
+
+    struct Foo {
+    }
+
+    struct Bar<'a> {
+        foo: &'a Foo
+    }
+
+    ...
+
+    let bar;
+    {
+        let foo = Foo {};
+        bar = Bar { foo: &foo };
+    }
+    // complier correctly shows `foo` dropped here while still borrowed
+
+In Rust, the compiler ensures dangling references ("borrowed" objects) do not
+exist once owning object goes out of scope.
+
+It seems that in most cases, the best approach to memory management is to use
+the latter model of ownership and lifetimes which comes with no runtime
+overhead and handle the dangling reference problem through static analysis. The
+advantages of this approach extend beyond the runtime cost of other automatic
+memory management techniques to a model which also works well in a
+multi-threaded environment, eg. if we only allow the owner of an object to
+modify it, we can eliminate certain data races. From a systems design
+perspective it is also an advantage to have a clear understanding of ownership
+throughout the system.
+
+Summary
+=======
+
+This post covered several memory management techniques, outlining their pros
+and cons:
+
+* Manual - human error prone
+* Automatic using a tracing garbage collector - safe but comes with runtime
+  overhead
+* Automatic using reference counting - smaller runtime cost than a tracing
+  garbage collector but needs additional mechanisms to deal with reference
+  cycles
+* Concepts of ownership and lifetime - no runtime overhead, but should be
+  supplemented by static analysis to avoid dangling references
 
 .. comments::
