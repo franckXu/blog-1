@@ -4,6 +4,7 @@ Sitemap
 .. toctree::
    :maxdepth: 1
 
+   2017/02/20/memory-management
    2016/12/03/notes-on-error-handling
    2016/10/16/notes-on-types
    2016/10/09/composable-generators
