@@ -353,7 +353,7 @@ not compile in Rust:
         let foo = Foo {};
         bar = Bar { foo: &foo };
     }
-    // complier correctly shows `foo` dropped here while still borrowed
+    // compiler correctly shows `foo` dropped here while still borrowed
 
 In Rust, the compiler ensures dangling references ("borrowed" objects) do not
 exist once owning object goes out of scope.
