@@ -167,7 +167,7 @@ and most important, this memory management model does not handle *reference
 cycles*.
 
 Reference cycles occur when two heap objects hold references to each other even
-after no longer being reachable from the heap. In this case, a tracing garbage
+after no longer being reachable from the stack. In this case, a tracing garbage
 collector would mark the objects as being unreachable and deallocate them, but
 simple reference counting would not be able to identify this - from that point
 of view, each object is being referred to by another object thus it should not
@@ -204,24 +204,20 @@ A similar example in C++:
     // variables go out of scope, neither of the objects would be collected due to the
     // extra reference
 
-Python a C++ solve this problem in different ways: Python supplements reference
+Python and C++ solve this problem in different ways: Python supplements reference
 counting with a tracing garbage collector. So while most of the memory
 management is done via reference counting, a tracing garbage collector is still
 employed to clean up cycles like in the above example. This hybrid approach has
 he pros and cons of both of the mechanisms discussed above. C++ avoids the
-executions pauses a tracing garbage collectors would create by, instead,
+execution pauses a tracing garbage collectors would create by, instead,
 leveraging *weak references*. Weak or non-owning references point to an object
 but do not prevent it from being collected when all *strong* references go away.
-
-C++ avoids the executions pauses a tracing garbage collectors would create by,
-instead, leveraging *weak references*. Weak or non-owning references point to an
-object but do not prevent it from being collected when all *strong* references
-go away. There are several ways to express a non-owning reference, with
-different advantages and drawbacks:
+There are several ways to express a non-owning reference, with different
+advantages and drawbacks:
 
 * A ``&`` reference has to be assigned on construction and cannot be re-assigned
   after being bound to an object. If used after the underlying object was
-  destroyed, causes undefined behavior.
+  destroyed, it causes undefined behavior.
 * A ``*`` pointer can be ``nullptr``-initialized and assigned later or
   re-assigned. Similarly, if used after the pointed-to object was destroyed,
   causes undefined behavior.
@@ -286,10 +282,10 @@ achieved through ``unique_ptr``:
 Ownership of the object can be transferred by moving the ``unique_ptr``. The
 main advantage of this model is that it has no overhead - unlike tracing memory
 which involves pausing execution or reference counting which involves atomic
-count of reference, a ``unique_ptr`` is just a wrapper over a pointer.
+count of references, a ``unique_ptr`` is just a wrapper over a pointer.
 
 Unique pointers cannot be copied though (by definition, otherwise there would
-no longer be unique ownership), so when other code needs to access the heap
+no longer denote unique ownership), so when other code needs to access the heap
 object, it would need to get a reference from the owning object:
 
 .. code-block:: c++
@@ -308,7 +304,7 @@ object, it would need to get a reference from the owning object:
 The problem with this approach is that if another object ends up holding on to a
 reference which outlives the owning object, the reference becomes dangling and
 refers to an object which was already freed. This becomes the equivalent of a
-use-after-free, so here is where the concept of *lifetime* becomes important:
+*use after free*, so here is where the concept of *lifetime* becomes important:
 none of the non-owning references of a uniquely owned heap object should outlive
 the object.
 
@@ -335,10 +331,11 @@ when needed and static analysis ensures no dangling references appear. In C++:
     }
     // bar.foo is now a dangling pointer since Foo was freed
 
-The above example used a pointer for simplicity, since a reference (``Foo&``)
-needs to be bound at construction time, but same applies for references: once
-an object gets freed, references and non-owning pointers to it are left
-dangling. On the other hand, this does not compile in Rust:
+The above example used a pointer for simplicity, since a ``&`` reference
+(``Foo&``) needs to be bound at construction time, but same applies for
+that type of reference: once an object gets freed, & references and
+non-owning pointers to it are left dangling. On the other hand, this does
+not compile in Rust:
 
 .. code-block:: rust
 
@@ -363,9 +360,9 @@ exist once owning object goes out of scope.
 
 It seems that in most cases, the best approach to memory management is to use
 the latter model of ownership and lifetimes which comes with no runtime
-overhead and handle the dangling reference problem through static analysis. The
-advantages of this approach extend beyond the runtime cost of other automatic
-memory management techniques to a model which also works well in a
+overhead and handle the dangling reference problem through static analysis.
+The advantages of this approach extend beyond the runtime cost of other
+automatic memory management techniques to a model which also works well in a
 multi-threaded environment, eg. if we only allow the owner of an object to
 modify it, we can eliminate certain data races. From a systems design
 perspective it is also an advantage to have a clear understanding of ownership

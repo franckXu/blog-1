@@ -195,7 +195,7 @@ count in a multi-threaded environment needs to be performed atomically. Second,
 and most important, this memory management model does not handle <em>reference
 cycles</em>.</p>
 <p>Reference cycles occur when two heap objects hold references to each other even
-after no longer being reachable from the heap. In this case, a tracing garbage
+after no longer being reachable from the stack. In this case, a tracing garbage
 collector would mark the objects as being unreachable and deallocate them, but
 simple reference counting would not be able to identify this - from that point
 of view, each object is being referred to by another object thus it should not
@@ -228,23 +228,20 @@ be collected. Example of reference cycle in Python:</p>
 <span class="c1">// extra reference</span>
 </pre></div>
 </div>
-<p>Python a C++ solve this problem in different ways: Python supplements reference
+<p>Python and C++ solve this problem in different ways: Python supplements reference
 counting with a tracing garbage collector. So while most of the memory
 management is done via reference counting, a tracing garbage collector is still
 employed to clean up cycles like in the above example. This hybrid approach has
 he pros and cons of both of the mechanisms discussed above. C++ avoids the
-executions pauses a tracing garbage collectors would create by, instead,
+execution pauses a tracing garbage collectors would create by, instead,
 leveraging <em>weak references</em>. Weak or non-owning references point to an object
-but do not prevent it from being collected when all <em>strong</em> references go away.</p>
-<p>C++ avoids the executions pauses a tracing garbage collectors would create by,
-instead, leveraging <em>weak references</em>. Weak or non-owning references point to an
-object but do not prevent it from being collected when all <em>strong</em> references
-go away. There are several ways to express a non-owning reference, with
-different advantages and drawbacks:</p>
+but do not prevent it from being collected when all <em>strong</em> references go away.
+There are several ways to express a non-owning reference, with different
+advantages and drawbacks:</p>
 <ul class="simple">
 <li>A <span class="docutils literal"><span class="pre">&amp;</span></span> reference has to be assigned on construction and cannot be re-assigned
 after being bound to an object. If used after the underlying object was
-destroyed, causes undefined behavior.</li>
+destroyed, it causes undefined behavior.</li>
 <li>A <span class="docutils literal"><span class="pre">*</span></span> pointer can be <span class="docutils literal"><span class="pre">nullptr</span></span>-initialized and assigned later or
 re-assigned. Similarly, if used after the pointed-to object was destroyed,
 causes undefined behavior.</li>
@@ -305,9 +302,9 @@ achieved through <span class="docutils literal"><span class="pre">unique_ptr</sp
 <p>Ownership of the object can be transferred by moving the <span class="docutils literal"><span class="pre">unique_ptr</span></span>. The
 main advantage of this model is that it has no overhead - unlike tracing memory
 which involves pausing execution or reference counting which involves atomic
-count of reference, a <span class="docutils literal"><span class="pre">unique_ptr</span></span> is just a wrapper over a pointer.</p>
+count of references, a <span class="docutils literal"><span class="pre">unique_ptr</span></span> is just a wrapper over a pointer.</p>
 <p>Unique pointers cannot be copied though (by definition, otherwise there would
-no longer be unique ownership), so when other code needs to access the heap
+no longer denote unique ownership), so when other code needs to access the heap
 object, it would need to get a reference from the owning object:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">UseFoo</span><span class="p">(</span><span class="k">const</span> <span class="n">Foo</span><span class="o">&amp;</span> <span class="n">foo</span><span class="p">)</span>
 <span class="p">{</span>
@@ -324,7 +321,7 @@ object, it would need to get a reference from the owning object:</p>
 <p>The problem with this approach is that if another object ends up holding on to a
 reference which outlives the owning object, the reference becomes dangling and
 refers to an object which was already freed. This becomes the equivalent of a
-use-after-free, so here is where the concept of <em>lifetime</em> becomes important:
+<em>use after free</em>, so here is where the concept of <em>lifetime</em> becomes important:
 none of the non-owning references of a uniquely owned heap object should outlive
 the object.</p>
 <p>Unfortunately in C++ this has to be handled through sensical design and is
@@ -348,10 +345,11 @@ when needed and static analysis ensures no dangling references appear. In C++:</
 <span class="c1">// bar.foo is now a dangling pointer since Foo was freed</span>
 </pre></div>
 </div>
-<p>The above example used a pointer for simplicity, since a reference (<span class="docutils literal"><span class="pre">Foo&amp;</span></span>)
-needs to be bound at construction time, but same applies for references: once
-an object gets freed, references and non-owning pointers to it are left
-dangling. On the other hand, this does not compile in Rust:</p>
+<p>The above example used a pointer for simplicity, since a <span class="docutils literal"><span class="pre">&amp;</span></span> reference
+(<span class="docutils literal"><span class="pre">Foo&amp;</span></span>) needs to be bound at construction time, but same applies for
+that type of reference: once an object gets freed, &amp; references and
+non-owning pointers to it are left dangling. On the other hand, this does
+not compile in Rust:</p>
 <div class="highlight-rust"><div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="n">Foo</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 
@@ -373,9 +371,9 @@ dangling. On the other hand, this does not compile in Rust:</p>
 exist once owning object goes out of scope.</p>
 <p>It seems that in most cases, the best approach to memory management is to use
 the latter model of ownership and lifetimes which comes with no runtime
-overhead and handle the dangling reference problem through static analysis. The
-advantages of this approach extend beyond the runtime cost of other automatic
-memory management techniques to a model which also works well in a
+overhead and handle the dangling reference problem through static analysis.
+The advantages of this approach extend beyond the runtime cost of other
+automatic memory management techniques to a model which also works well in a
 multi-threaded environment, eg. if we only allow the owner of an object to
 modify it, we can eliminate certain data races. From a systems design
 perspective it is also an advantage to have a clear understanding of ownership
