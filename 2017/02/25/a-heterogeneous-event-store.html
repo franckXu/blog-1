@@ -1,0 +1,370 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="Vlad's Tech Blog">
+        <meta name="viewport" content="width=device-width">
+        <title>A Heterogeneous Event Store &mdash; Blog</title>
+            <link rel="stylesheet" href="../../../_static/normalize.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/sphinx.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/main.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/flat.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+            <link rel="stylesheet" href="../../../_static/font-awesome.min.css" type="text/css">
+        <link rel="shortcut icon" href="../../../_static/tinkerer.ico" /><!-- Load modernizr and JQuery -->
+        <script src="../../../_static/vendor/modernizr-2.6.2.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="../../../_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
+        <script src="../../../_static/plugins.js"></script>
+        <script src="../../../_static/main.js"></script>
+        <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Memory Management" href="../20/memory-management.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script><script type="text/javascript" src="../../../_static/underscore.js"></script><script type="text/javascript" src="../../../_static/doctools.js"></script><script type="text/javascript" src="../../../_static/disqus.js"></script><script type="text/javascript" src="../../../_static/google_analytics.js"></script><link rel="stylesheet" href="../../../_static/extra.css" type="text/css" /></head>
+    <body role="document">
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+      <div id="container"><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>February 25, 2017</span>
+        </div>
+    <div class="section" id="a-heterogeneous-event-store">
+<h1>A Heterogeneous Event Store</h1>
+<p>I recently stumbled upon a heterogeneous event collection which turned out to
+pose an interesting design problem. We are using library code (we can&#8217;t change)
+that provides a templated <span class="docutils literal"><span class="pre">Event</span></span> to which we can register callbacks and
+which we can raise later to invoke the callbacks. The interface looks like
+this:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="cm">/* Library code */</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span> <span class="k">struct</span> <span class="n">Event</span>
+<span class="p">{</span>
+    <span class="c1">// T is a callable object, like std::function</span>
+    <span class="kt">void</span> <span class="n">Register</span><span class="p">(</span><span class="n">T</span><span class="o">&amp;&amp;</span> <span class="n">callback</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/* Register a callback */</span> <span class="p">}</span>
+
+    <span class="c1">// Raises the event and forwards the arguments to the callbacks</span>
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="p">...</span> <span class="n">Args</span><span class="o">&gt;</span>
+    <span class="kt">void</span> <span class="n">Raise</span><span class="p">(</span><span class="n">Args</span><span class="o">&amp;&amp;</span> <span class="p">...</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/* Invoke all registered callbacks */</span> <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>A stub implementation that validates client code is typed properly would be:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span> <span class="k">struct</span> <span class="n">Event</span>
+<span class="p">{</span>
+    <span class="c1">// T is a callable object, like std::function</span>
+    <span class="kt">void</span> <span class="n">Register</span><span class="p">(</span><span class="n">T</span><span class="o">&amp;&amp;</span> <span class="n">callback</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="cm">/* Register a callback */</span>
+        <span class="n">_callback</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">callback</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="c1">// Raises the event and forwards the arguments to the callbacks</span>
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="p">...</span> <span class="n">Args</span><span class="o">&gt;</span>
+    <span class="kt">void</span> <span class="n">Raise</span><span class="p">(</span><span class="n">Args</span><span class="o">&amp;&amp;</span> <span class="p">...</span> <span class="n">args</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="cm">/* Invoke all registered callbacks */</span>
+        <span class="n">_callback</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">Args</span><span class="o">&gt;</span><span class="p">(</span><span class="n">args</span><span class="p">)...);</span>
+    <span class="p">}</span>
+
+    <span class="n">T</span> <span class="n">_callback</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>Note that unlike the real implementation, this only stores the last registered
+event, but that is irrelevant for the purpose of this post. I&#8217;m providing the
+code just to have something to compile against (otherwise <span class="docutils literal"><span class="pre">Raise</span></span> would
+happily swallow any combination of arguments passed to it). In reality, a more
+complex implementation would maintain a list of callbacks, but this is
+sufficient for framing the design problem.</p>
+<p>The event collection which was wrapping a set of library events looked like
+this:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">LaunchCallback</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">()</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="k">using</span> <span class="n">SaveCallback</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="p">)</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="k">using</span> <span class="n">ExitCallback</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">()</span><span class="o">&gt;</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">EventStore</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="kt">void</span> <span class="n">OnLaunch</span><span class="p">(</span><span class="n">LaunchCallback</span><span class="o">&amp;&amp;</span> <span class="n">callback</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">m_launchEvent</span><span class="p">.</span><span class="n">Register</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">LaunchCallback</span><span class="o">&gt;</span><span class="p">(</span><span class="n">callback</span><span class="p">));</span>
+    <span class="p">}</span>
+
+    <span class="kt">void</span> <span class="n">OnSave</span><span class="p">(</span><span class="n">SaveCallback</span><span class="o">&amp;&amp;</span> <span class="n">callback</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">m_saveEvent</span><span class="p">.</span><span class="n">Register</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">SaveCallback</span><span class="o">&gt;</span><span class="p">(</span><span class="n">callback</span><span class="p">));</span>
+    <span class="p">}</span>
+
+    <span class="kt">void</span> <span class="n">OnExit</span><span class="p">(</span><span class="n">ExitCallback</span><span class="o">&amp;&amp;</span> <span class="n">callback</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">m_exitEvent</span><span class="p">.</span><span class="n">Register</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">ExitCallback</span><span class="o">&gt;</span><span class="p">(</span><span class="n">callback</span><span class="p">));</span>
+    <span class="p">}</span>
+
+    <span class="kt">void</span> <span class="n">RaiseLaunch</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">m_launchEvent</span><span class="p">.</span><span class="n">Raise</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="kt">void</span> <span class="n">RaiseSave</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">fileName</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">m_saveEvent</span><span class="p">.</span><span class="n">Raise</span><span class="p">(</span><span class="n">fileName</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="kt">void</span> <span class="n">RaiseExit</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">m_exitEvent</span><span class="p">.</span><span class="n">Raise</span><span class="p">();</span>
+    <span class="p">}</span>
+
+<span class="k">private</span><span class="o">:</span>
+    <span class="n">Event</span><span class="o">&lt;</span><span class="n">LaunchCallback</span><span class="o">&gt;</span> <span class="n">m_launchEvent</span><span class="p">;</span>
+    <span class="n">Event</span><span class="o">&lt;</span><span class="n">SaveCallback</span><span class="o">&gt;</span> <span class="n">m_saveEvent</span><span class="p">;</span>
+    <span class="n">Event</span><span class="o">&lt;</span><span class="n">ExitCallback</span><span class="o">&gt;</span> <span class="n">m_exitEvent</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>Sample usage of the <span class="docutils literal"><span class="pre">EventStore</span></span>:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">EventStore</span> <span class="n">store</span><span class="p">;</span>
+
+<span class="c1">// Register a couple of callbacks</span>
+<span class="n">store</span><span class="p">.</span><span class="n">OnLaunch</span><span class="p">([]()</span> <span class="p">{</span> <span class="cm">/* Do stuff */</span> <span class="p">});</span>
+<span class="n">store</span><span class="p">.</span><span class="n">OnSave</span><span class="p">([](</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="n">arg</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/* Do stuff */</span> <span class="p">});</span>
+
+<span class="c1">// Raise an event</span>
+<span class="n">store</span><span class="p">.</span><span class="n">RaiseSave</span><span class="p">(</span><span class="s">&quot;Some file name&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Looking at <span class="docutils literal"><span class="pre">EventStore</span></span>, it&#8217;s obvious that there is a lot of repetition
+involved: hooking up a new event involves aliasing a new callback, adding a new
+member to the class, and adding the corresponding registration and <span class="docutils literal"><span class="pre">Raise</span></span>
+member functions which end up being copy/pastes of the other ones. There must
+be a better way!</p>
+<p>An initial idea would be to use some sort of associative container (hopefully
+something <a class="reference external" href="http://vladris.com/blog/2016/04/24/abusing-maps.html">better than an unordered_map</a>),
+but there is an interesting complication due to the fact that some of the
+various events are actually of different types. <span class="docutils literal"><span class="pre">Event&lt;std::function&lt;void()&gt;&gt;</span></span>
+has a different type than <span class="docutils literal"><span class="pre">Event&lt;std::function&lt;void(const</span> <span class="pre">string&amp;)&gt;&gt;</span></span>. There
+are potential workarounds to explore, like standardizing on a single type and
+requiring clients to, for example, only use callbacks that do not take any
+arguments. Another option would be to pass in some base object to each event
+and let each callback re-interpret it. This takes us down the wrong path though.
+We don&#8217;t need to do any runtime lookup - the initial code doesn&#8217;t.</p>
+<p>From the repetition in <span class="docutils literal"><span class="pre">EventStore</span></span>, it should become apparent that we need
+some form of templated <span class="docutils literal"><span class="pre">Register</span></span> and <span class="docutils literal"><span class="pre">Raise</span></span> that would work for each type
+of event we care about. A quick sketch of our function signatures should look
+something like this:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="cm">/* ??? */</span><span class="o">&gt;</span>
+<span class="kt">void</span> <span class="n">Register</span><span class="p">(</span><span class="cm">/* ??? */</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// Register callback to the appropriate event</span>
+<span class="p">}</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="cm">/* ??? */</span><span class="p">,</span> <span class="k">typename</span> <span class="p">...</span> <span class="n">Args</span><span class="o">&gt;</span>
+<span class="kt">void</span> <span class="n">Raise</span><span class="p">(</span><span class="n">Args</span><span class="o">&amp;&amp;</span> <span class="p">...</span> <span class="n">args</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// Raise the appropriate event, forwarding args to it</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>It is also clear that we need a way to store all of the events we need in our
+class. Since they are of heterogeneous types, we can&#8217;t store them in a map or
+equivalent, but we don&#8217;t need to. <span class="docutils literal"><span class="pre">std::tuple</span></span> was build exactly for this:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">tuple</span><span class="o">&lt;</span><span class="n">Event</span><span class="o">&lt;</span><span class="n">LaunchCallback</span><span class="o">&gt;</span><span class="p">,</span>
+           <span class="n">Event</span><span class="o">&lt;</span><span class="n">SaveCallback</span><span class="o">&gt;</span><span class="p">,</span>
+           <span class="n">Event</span><span class="o">&lt;</span><span class="n">ExitCallback</span><span class="o">&gt;&gt;</span> <span class="n">m_events</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Now the only remaining question is how to templatize our two member functions to
+enable a lookup in the tuple. One approach would be to use an enum:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">enum</span> <span class="k">class</span> <span class="nc">EventType</span> <span class="o">:</span> <span class="kt">size_t</span>
+<span class="p">{</span>
+    <span class="n">LaunchEvent</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">SaveEvent</span><span class="p">,</span>
+    <span class="n">ExitEvent</span><span class="p">,</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>Given this enum, we can templatize on its values:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">EventStore</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="k">template</span> <span class="o">&lt;</span><span class="n">EventType</span> <span class="n">eventType</span><span class="p">,</span> <span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+    <span class="kt">void</span> <span class="n">Register</span><span class="p">(</span><span class="n">T</span><span class="o">&amp;&amp;</span> <span class="n">callback</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">get</span><span class="o">&lt;</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">eventType</span><span class="p">)</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m_events</span><span class="p">).</span><span class="n">Register</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">callback</span><span class="p">));</span>
+    <span class="p">}</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="n">EventType</span> <span class="n">eventType</span><span class="p">,</span> <span class="k">typename</span> <span class="p">...</span> <span class="n">Args</span><span class="o">&gt;</span>
+    <span class="kt">void</span> <span class="n">Raise</span><span class="p">(</span><span class="n">Args</span><span class="o">&amp;&amp;</span> <span class="p">...</span> <span class="n">args</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">get</span><span class="o">&lt;</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">eventType</span><span class="p">)</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m_events</span><span class="p">).</span><span class="n">Raise</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">Args</span><span class="o">&gt;</span><span class="p">(</span><span class="n">args</span><span class="p">)...);</span>
+    <span class="p">}</span>
+
+<span class="k">private</span><span class="o">:</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">tuple</span><span class="o">&lt;</span><span class="n">Event</span><span class="o">&lt;</span><span class="n">LaunchCallback</span><span class="o">&gt;</span><span class="p">,</span>
+               <span class="n">Event</span><span class="o">&lt;</span><span class="n">SaveCallback</span><span class="o">&gt;</span><span class="p">,</span>
+               <span class="n">Event</span><span class="o">&lt;</span><span class="n">ExitCallback</span><span class="o">&gt;&gt;</span> <span class="n">m_events</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>Callers can use this new implementation like this:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">EventStore</span> <span class="n">store</span><span class="p">;</span>
+
+<span class="c1">// Register a couple of callbacks</span>
+<span class="n">store</span><span class="p">.</span><span class="n">Register</span><span class="o">&lt;</span><span class="n">EventType</span><span class="o">::</span><span class="n">LaunchEvent</span><span class="o">&gt;</span><span class="p">([]()</span> <span class="p">{</span> <span class="cm">/* Do stuff */</span> <span class="p">});</span>
+<span class="n">store</span><span class="p">.</span><span class="n">Register</span><span class="o">&lt;</span><span class="n">EventType</span><span class="o">::</span><span class="n">SaveEvent</span><span class="o">&gt;</span><span class="p">([](</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="n">arg</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/* Do stuff */</span> <span class="p">});</span>
+
+<span class="c1">// Raise an event</span>
+<span class="n">store</span><span class="p">.</span><span class="n">Raise</span><span class="o">&lt;</span><span class="n">EventType</span><span class="o">::</span><span class="n">SaveEvent</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;Some file name&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>With this implementation, we preserve the ability to have polymorphic events but
+only need to implement the <span class="docutils literal"><span class="pre">Register</span></span> and <span class="docutils literal"><span class="pre">Raise</span></span> functions. Adding a new
+event type now only requires aliasing the callback, adding an enum member, and
+extending our member tuple by adding the new <span class="docutils literal"><span class="pre">Event</span></span> to it.</p>
+<p>The only drawback of this approach is the fact that we need to manually keep the
+enum and the tuple in sync. This is not too bad, because if we try to call
+<span class="docutils literal"><span class="pre">std::get</span></span> with a number higher than the size of the tuple, we get a compile
+time error. If we accidentally swap two events, if they are of incompatible
+types (for example <span class="docutils literal"><span class="pre">Event&lt;LaunchCallback&gt;</span></span> and <span class="docutils literal"><span class="pre">Event&lt;SaveCallback&gt;</span></span>, as one
+expects callbacks of type <span class="docutils literal"><span class="pre">std::function&lt;void()&gt;</span></span> and the other expects
+<span class="docutils literal"><span class="pre">std::function&lt;void(const</span> <span class="pre">std::string&amp;)&gt;</span></span>), we get a compile-time error
+because <span class="docutils literal"><span class="pre">Register</span></span> and <span class="docutils literal"><span class="pre">Raise</span></span> calls would fail to compile (attempting to
+pass in callback/arguments of incompatible types). If we accidentally swap two
+events of the same type, (<span class="docutils literal"><span class="pre">Event&lt;LaunchCallback&gt;</span></span> and <span class="docutils literal"><span class="pre">Event&lt;ExitCallback&gt;</span></span>,
+since both <span class="docutils literal"><span class="pre">LaunchCallback</span></span> and <span class="docutils literal"><span class="pre">ExitCallback</span></span> are aliased to the same
+<span class="docutils literal"><span class="pre">std::function&lt;void()&gt;</span></span>), runtime behavior is equivalent, it just makes
+reading the code confusing. Now we end up storing launch callbacks inside what
+we called <span class="docutils literal"><span class="pre">Event&lt;ExitCallback&gt;</span></span> and vice-versa. Runtime is not affected, as we
+would also raise <span class="docutils literal"><span class="pre">Event&lt;ExitCallback&gt;</span></span> by calling
+<span class="docutils literal"><span class="pre">Raise&lt;EventType::LaunchEvent&gt;</span></span>, but it&#8217;s not ideal. We could drop the aliases
+altogether and simply have:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">tuple</span><span class="o">&lt;</span><span class="n">Event</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">()</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+           <span class="n">Event</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span><span class="p">)</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+           <span class="n">Event</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">()</span><span class="o">&gt;&gt;</span> <span class="n">m_events</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>This solves the above issues but is not very readable. There are other options,
+like picking different names for the aliases - instead of naming the event, have
+them name the type of callback. Either way, effectively what we are doing is a
+mapping from an enum into a set of <span class="docutils literal"><span class="pre">Event</span></span> types. We can actually push more
+information to the type system and get rid of the need to do this mapping. We do
+that by making sure our events are always of different types, even if the
+callback signatures are the same. One way of achieving this is wrapping
+<span class="docutils literal"><span class="pre">Event</span></span> and defining different types for each of our events:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span> <span class="k">struct</span> <span class="n">EventWrapper</span>
+<span class="p">{</span>
+    <span class="n">Event</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span> <span class="n">m_event</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="nl">LaunchEvent</span> <span class="p">:</span> <span class="n">EventWrapper</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">()</span><span class="o">&gt;</span> <span class="p">{</span> <span class="p">};</span>
+<span class="k">struct</span> <span class="nl">SaveEvent</span> <span class="p">:</span> <span class="n">EventWrapper</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="p">)</span><span class="o">&gt;</span> <span class="p">{</span> <span class="p">};</span>
+<span class="k">struct</span> <span class="nl">ExitEvent</span> <span class="p">:</span> <span class="n">EventWrapper</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">()</span><span class="o">&gt;</span> <span class="p">{</span> <span class="p">};</span>
+</pre></div>
+</div>
+<p>Note this is type information used only by the compiler and doesn&#8217;t bring any
+runtime overhead to our code. Inheritance is used here just so we don&#8217;t have to
+repeat declaring <span class="docutils literal"><span class="pre">m_event</span></span>, we could have just as well declared each struct
+independently. Now we can update the member tuple to store an event of each of
+these types:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">tuple</span><span class="o">&lt;</span><span class="n">LaunchEvent</span><span class="p">,</span> <span class="n">SaveEvent</span><span class="p">,</span> <span class="n">ExitEvent</span><span class="o">&gt;</span> <span class="n">m_events</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Since they are of different types, we no longer need an enum to index into the
+tuple, we can do it by type (note <span class="docutils literal"><span class="pre">std::get</span></span> indexed by type requires that the
+tuple contains distinct types, which is not the case for <span class="docutils literal"><span class="pre">Event&lt;LaunchCallback&gt;</span></span>
+and <span class="docutils literal"><span class="pre">Event&lt;ExitCallback&gt;</span></span>, but it is for <span class="docutils literal"><span class="pre">LaunchEvent</span></span> and <span class="docutils literal"><span class="pre">ExitEvent</span></span>):</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Callback</span><span class="o">&gt;</span>
+<span class="kt">void</span> <span class="n">Register</span><span class="p">(</span><span class="n">Callback</span><span class="o">&amp;&amp;</span> <span class="n">callback</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">get</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m_events</span><span class="p">).</span><span class="n">m_event</span><span class="p">.</span><span class="n">Register</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">Callback</span><span class="o">&gt;</span><span class="p">(</span><span class="n">callback</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="p">,</span> <span class="k">typename</span> <span class="p">...</span> <span class="n">Args</span><span class="o">&gt;</span>
+<span class="kt">void</span> <span class="n">Raise</span><span class="p">(</span><span class="n">Args</span><span class="o">&amp;&amp;</span> <span class="p">...</span> <span class="n">args</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">get</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m_events</span><span class="p">).</span><span class="n">m_event</span><span class="p">.</span><span class="n">Raise</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">Args</span><span class="o">&gt;</span><span class="p">(</span><span class="n">args</span><span class="p">)...);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The <span class="docutils literal"><span class="pre">Callback</span></span> template argument in <span class="docutils literal"><span class="pre">Register</span></span> can be deduced once <span class="docutils literal"><span class="pre">T</span></span> is
+specified. The full implementation is:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span> <span class="k">struct</span> <span class="n">EventWrapper</span>
+<span class="p">{</span>
+    <span class="n">Event</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span> <span class="n">m_event</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="nl">LaunchEvent</span> <span class="p">:</span> <span class="n">EventWrapper</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">()</span><span class="o">&gt;</span> <span class="p">{</span> <span class="p">};</span>
+<span class="k">struct</span> <span class="nl">SaveEvent</span> <span class="p">:</span> <span class="n">EventWrapper</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="p">)</span><span class="o">&gt;</span> <span class="p">{</span> <span class="p">};</span>
+<span class="k">struct</span> <span class="nl">ExitEvent</span> <span class="p">:</span> <span class="n">EventWrapper</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">()</span><span class="o">&gt;</span> <span class="p">{</span> <span class="p">};</span>
+
+<span class="k">class</span> <span class="nc">EventStore</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Callback</span><span class="o">&gt;</span>
+    <span class="kt">void</span> <span class="n">Register</span><span class="p">(</span><span class="n">Callback</span><span class="o">&amp;&amp;</span> <span class="n">callback</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">get</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m_events</span><span class="p">).</span><span class="n">m_event</span><span class="p">.</span><span class="n">Register</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">Callback</span><span class="o">&gt;</span><span class="p">(</span><span class="n">callback</span><span class="p">));</span>
+    <span class="p">}</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="p">,</span> <span class="k">typename</span> <span class="p">...</span> <span class="n">Args</span><span class="o">&gt;</span>
+    <span class="kt">void</span> <span class="n">Raise</span><span class="p">(</span><span class="n">Args</span><span class="o">&amp;&amp;</span> <span class="p">...</span> <span class="n">args</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">get</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m_events</span><span class="p">).</span><span class="n">m_event</span><span class="p">.</span><span class="n">Raise</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">Args</span><span class="o">&gt;</span><span class="p">(</span><span class="n">args</span><span class="p">)...);</span>
+    <span class="p">}</span>
+
+<span class="k">private</span><span class="o">:</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">tuple</span><span class="o">&lt;</span><span class="n">LaunchEvent</span><span class="p">,</span> <span class="n">SaveEvent</span><span class="p">,</span> <span class="n">ExitEvent</span><span class="o">&gt;</span> <span class="n">m_events</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>Callers can use it like this:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">EventStore</span> <span class="n">store</span><span class="p">;</span>
+
+<span class="c1">// Register a couple of callbacks</span>
+<span class="n">store</span><span class="p">.</span><span class="n">Register</span><span class="o">&lt;</span><span class="n">LaunchEvent</span><span class="o">&gt;</span><span class="p">([]()</span> <span class="p">{</span> <span class="cm">/* Do stuff */</span> <span class="p">});</span>
+<span class="n">store</span><span class="p">.</span><span class="n">Register</span><span class="o">&lt;</span><span class="n">SaveEvent</span><span class="o">&gt;</span><span class="p">([](</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="n">arg</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/* Do stuff */</span> <span class="p">});</span>
+
+<span class="c1">// Raise an event</span>
+<span class="n">store</span><span class="p">.</span><span class="n">Raise</span><span class="o">&lt;</span><span class="n">SaveEvent</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;Some file name&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>In this case, adding a new event requires declaring a new struct and adding it
+to the tuple. Since we are retrieving the event by its type, no mapping is
+involved.</p>
+</div>
+
+    <div class="postmeta">
+        
+        
+        
+        </div><ul class="related clearfix">
+            <li class="left"></li>
+            <li class="right"><a href="../20/memory-management.html">Memory Management</a> &raquo; </li>
+        </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "vladris";    var disqus_identifier = "2017/02/25/a-heterogeneous-event-store";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article></div> <!-- #main --></div> <!-- #main-container -->
+
+        <div class="footer-container" role="contentinfo"><div style="text-align: center; color: #93a4ad">
+    By Vlad Rișcuția | <a href="http://feeds.feedburner.com/vladris">Subscribe</a> | <a href="http://vladris.com/blog/archive">Archive</a>
+</div></div> <!-- footer-container -->
+
+      </div> <!--! end of #container --><!--[if lt IE 7 ]>
+          <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+          <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+        <![endif]-->
+    </body>
+</html>

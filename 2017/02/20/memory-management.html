@@ -28,13 +28,12 @@
         <script>window.jQuery || document.write('<script src="../../../_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
         <script src="../../../_static/plugins.js"></script>
         <script src="../../../_static/main.js"></script>
-        <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Notes on Error Handling" href="../../../2016/12/03/notes-on-error-handling.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
+        <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Notes on Error Handling" href="../../../2016/12/03/notes-on-error-handling.html" /><link rel="prev" title="A Heterogeneous Event Store" href="../25/a-heterogeneous-event-store.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.5.1',
+        VERSION:     '1.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        SOURCELINK_SUFFIX: '.txt',
         HAS_SOURCE:  true
       };
     </script><script type="text/javascript" src="../../../_static/underscore.js"></script><script type="text/javascript" src="../../../_static/doctools.js"></script><script type="text/javascript" src="../../../_static/disqus.js"></script><script type="text/javascript" src="../../../_static/google_analytics.js"></script><link rel="stylesheet" href="../../../_static/extra.css" type="text/css" /></head>
@@ -350,11 +349,11 @@ when needed and static analysis ensures no dangling references appear. In C++:</
 that type of reference: once an object gets freed, &amp; references and
 non-owning pointers to it are left dangling. On the other hand, this does
 not compile in Rust:</p>
-<div class="highlight-rust"><div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="n">Foo</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<div class="highlight-rust"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">Foo</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 
-<span class="k">struct</span><span class="w"> </span><span class="n">Bar</span><span class="o">&lt;</span><span class="na">&#39;a</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">foo</span><span class="o">:</span><span class="w"> </span><span class="o">&amp;</span><span class="na">&#39;a</span><span class="w"> </span><span class="n">Foo</span><span class="w"></span>
+<span class="k">struct</span> <span class="nc">Bar</span><span class="o">&lt;</span><span class="na">&#39;a</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">foo</span>: <span class="kp">&amp;</span><span class="na">&#39;a</span><span class="w"> </span><span class="n">Foo</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 
 <span class="p">...</span><span class="w"></span>
@@ -362,7 +361,7 @@ not compile in Rust:</p>
 <span class="kd">let</span><span class="w"> </span><span class="n">bar</span><span class="p">;</span><span class="w"></span>
 <span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">foo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Foo</span><span class="w"> </span><span class="p">{};</span><span class="w"></span>
-<span class="w">    </span><span class="n">bar</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Bar</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">foo</span><span class="o">:</span><span class="w"> </span><span class="o">&amp;</span><span class="n">foo</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
+<span class="w">    </span><span class="n">bar</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Bar</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">foo</span>: <span class="kp">&amp;</span><span class="nc">foo</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 <span class="c1">// compiler correctly shows `foo` dropped here while still borrowed</span>
 </pre></div>
@@ -402,7 +401,7 @@ supplemented by static analysis to avoid dangling references</li>
         
         
         </div><ul class="related clearfix">
-            <li class="left"></li>
+            <li class="left"> &laquo; <a href="../25/a-heterogeneous-event-store.html">A Heterogeneous Event Store</a></li>
             <li class="right"><a href="../../../2016/12/03/notes-on-error-handling.html">Notes on Error Handling</a> &raquo; </li>
         </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "vladris";    var disqus_identifier = "2017/02/20/memory-management";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article></div> <!-- #main --></div> <!-- #main-container -->
 
