@@ -4,6 +4,7 @@ Sitemap
 .. toctree::
    :maxdepth: 1
 
+   2017/04/07/data-structures-and-algorithms
    2017/02/25/a-heterogeneous-event-store
    2017/02/20/memory-management
    2016/12/03/notes-on-error-handling
