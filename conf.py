@@ -41,7 +41,9 @@ html_favicon = '_static/tinkerer.ico'
 html_theme = 'flat'
 
 # Theme-specific options, see docs
-html_theme_options = {}
+html_theme_options = {
+    'accent_color': '#dd0000'
+}
 
 # Link to RSS service like FeedBurner if any, otherwise feed is
 # linked directly
