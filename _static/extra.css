@@ -9,3 +9,16 @@ article p {
 div.section p { 
     text-align: justify; 
 }
+
+a:link, a:visited, a:active, a:hover {
+    -webkit-transition: all ease-in-out 0.3s;
+    -moz-transition: all ease-in-out 0.3s;
+    -o-transition: all ease-in-out 0.3s;
+    transition: all ease-in-out 0.3s;
+    text-decoration: none;
+}
+
+a:hover {
+    color: red;
+}
+
