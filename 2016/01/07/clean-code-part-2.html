@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Clean Code - Part 1" href="../04/clean-code-part-1.html" /><link rel="prev" title="Arguments and Smart Pointers" href="../../03/11/arguments-and-smart-pointers.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.5.1',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -60,12 +60,12 @@ how <strong>functions</strong> in math work: <span class="docutils literal"><spa
 of <span class="docutils literal"><span class="pre">x</span></span>, always return the same result.</p>
 <p><em>Source:</em> <a class="reference external" href="http://www.sitepoint.com/functional-programming-pure-functions/">SitePoint</a></p>
 </div></blockquote>
-<p>Things break when a program gets into a &#8220;bad state&#8221;. There are a couple of ways
+<p>Things break when a program gets into a “bad state”. There are a couple of ways
 to make this less likely to happen: making data immutable and writing functions
-that don&#8217;t have side-effects (<em>pure</em> functions).</p>
+that don’t have side-effects (<em>pure</em> functions).</p>
 <div class="section" id="immutable-data">
 <h3>Immutable data</h3>
-<p>If something shouldn&#8217;t change, mark it as immutable and let the compiler enforce
+<p>If something shouldn’t change, mark it as immutable and let the compiler enforce
 that. A good rule of thumb is to mark things as <span class="docutils literal"><span class="pre">const</span></span> (<span class="docutils literal"><span class="pre">const&amp;</span></span>,
 <span class="docutils literal"><span class="pre">const*</span></span> etc.) and/or <span class="docutils literal"><span class="pre">readonly</span></span> by default, and make them mutable only when
 truly needed <a class="footnote-reference" href="#id5" id="id1">[1]</a>.</p>
@@ -104,7 +104,7 @@ might be introduced accidentally and have unexpected consequences down the line.
 <span class="p">};</span>
 </pre></div>
 </div>
-<p>In this case, <span class="docutils literal"><span class="pre">Concat2</span></span> won&#8217;t compile, so we can rely on the compiler to
+<p>In this case, <span class="docutils literal"><span class="pre">Concat2</span></span> won’t compile, so we can rely on the compiler to
 eliminate this type of unintended behavior.</p>
 <p>Another example: a simple <span class="docutils literal"><span class="pre">UpCase</span></span> function which calls <span class="docutils literal"><span class="pre">toupper</span></span> on each
 character of the given string, upcasing it in place:</p>
@@ -137,30 +137,30 @@ immutable data as such:</p>
 </div>
 <p>In contrast with the previous example, the argument to <span class="docutils literal"><span class="pre">UpCase</span></span> is mutable by
 design (the API is modifying the string in-place), but marking <span class="docutils literal"><span class="pre">myString</span></span> as
-<span class="docutils literal"><span class="pre">const</span></span> tells the complier this is non-mutable data, so it can&#8217;t be used with
+<span class="docutils literal"><span class="pre">const</span></span> tells the complier this is non-mutable data, so it can’t be used with
 this API.</p>
 </div>
 <div class="section" id="pure-functions">
 <h3>Pure functions</h3>
-<p>Another way to reduce states is to use pure functions. Unfortunately there isn&#8217;t
+<p>Another way to reduce states is to use pure functions. Unfortunately there isn’t
 a lot of syntax-level support for this in C++ and C# (C++ supports <span class="docutils literal"><span class="pre">const</span></span>
 member functions, which guarantee at compile time that calling the member
-function on an instance of the type won&#8217;t change the attributes of that
+function on an instance of the type won’t change the attributes of that
 instance) <a class="footnote-reference" href="#id6" id="id2">[2]</a></p>
 <p>This goes back to the recommendation from Part 1 of using generic algorithms and
 predicates rather than implementing raw loops. In many cases, traversal state is
 encapsulated in the library algorithm or in an iterator, and predicates ideally
-don&#8217;t have side-effects.</p>
+don’t have side-effects.</p>
 <div class="highlight-c#"><div class="highlight"><pre><span></span><span class="kt">var</span> <span class="n">squares</span> <span class="p">=</span> <span class="n">numbers</span><span class="p">.</span>
                 <span class="n">Where</span><span class="p">(</span><span class="n">number</span> <span class="p">=&gt;</span> <span class="n">number</span> <span class="p">%</span> <span class="m">2</span> <span class="p">!=</span> <span class="m">0</span><span class="p">).</span>
                 <span class="n">Select</span><span class="p">(</span><span class="n">number</span> <span class="p">=&gt;</span> <span class="n">number</span> <span class="p">*</span> <span class="n">number</span><span class="p">);</span>
 </pre></div>
 </div>
-<p>Above code (also from Part 1) doesn&#8217;t hold any state: traversal is handled by
+<p>Above code (also from Part 1) doesn’t hold any state: traversal is handled by
 the Linq methods, the predicates are pure.</p>
 <p>In general, try to encapsulate state in parts of the code built to manage state,
 and keep the rest stateless. Note that immutable data and pure functions are
-also an advantage in concurrent applications, since they can&#8217;t generate race
+also an advantage in concurrent applications, since they can’t generate race
 conditions.</p>
 <p>Key takeaways:</p>
 <ul class="simple">
@@ -176,7 +176,7 @@ the constraint when mutability is explicitly needed</li>
 <blockquote>
 <div><p>In computer science, the&nbsp;<strong>expressive&nbsp;power</strong> (also called
 <strong>expressiveness</strong> or expressivity) of a language is the breadth of ideas
-that can be represented and communicated in that language [...]</p>
+that can be represented and communicated in that language […]</p>
 <ul class="simple">
 <li>regardless of ease (theoretical expressivity)</li>
 <li><strong>concisely and readily</strong> (practical expressivity)</li>
@@ -190,14 +190,14 @@ functions, and types, adding useful comments where appropriate (a comment should
 describe what the code does if it is non-obvious; a comment like <span class="docutils literal"><span class="pre">foo();</span> <span class="pre">//</span> <span class="pre">calls</span> <span class="pre">foo()</span></span>
 is not a useful comment), and in general structure the code for easy reading.</p>
 <p>For a counterexample, think back on a piece of code you read that elicited a
-WTF. That&#8217;s the kind of code you don&#8217;t want to write.</p>
-<p>I won&#8217;t insist much here, since there are countless books and industry best
+WTF. That’s the kind of code you don’t want to write.</p>
+<p>I won’t insist much here, since there are countless books and industry best
 practices for improving code readability.</p>
 <p>Another way to make the code more readable is to have a good knowledge of the
 language you are using. The strength of a language lies in its particularities,
 so use them whenever appropriate. This means writing <a class="reference external" href="http://stackoverflow.com/questions/84102/what-is-idiomatic-code">idiomatic code</a>,
-which implies knowledge of the language idioms. Don&#8217;t write C++ code like C
-code, write it like C++ code. Don&#8217;t write C# code as C++, write it as C# etc.</p>
+which implies knowledge of the language idioms. Don’t write C++ code like C
+code, write it like C++ code. Don’t write C# code as C++, write it as C# etc.</p>
 <p>Also, keep up to date on the language. Language syntax evolves to address needs,
 so in general modern syntax introduces simpler, better ways to implement things
 than old syntax. Take object allocation and initialization in C++ as an example:</p>
@@ -237,7 +237,7 @@ even better way of allocating heap objects:</p>
 </pre></div>
 </div>
 <p><span class="docutils literal"><span class="pre">make_shared</span></span> has the advantage of improved performance, by allocating memory
-in a single operation for both the object and the shared pointer&#8217;s own control
+in a single operation for both the object and the shared pointer’s own control
 block <a class="footnote-reference" href="#id7" id="id3">[3]</a>. It also prevents leaks due to interleaving <a class="footnote-reference" href="#id8" id="id4">[4]</a>. So as the C++
 language evolved, new constructs appeared to address potential problems. Keeping
 up to date with these updates, and incorporating them into your code will reduce
@@ -248,15 +248,15 @@ the opportunity for bugs, make the code more concise, and thus more readable.</p
 <em>beautiful</em> code. I have the following quote from <a class="reference external" href="http://www.goodreads.com/book/show/5608045-apprenticeship-patterns">Apprenticeship Patterns</a>
 on the wall behind my monitors, so I can see it while I work:</p>
 <blockquote>
-<div>There&#8217;s always a better/faster/smarter way to do what you&#8217;re currently doing</div></blockquote>
-<p>So don&#8217;t stop as soon as something works, ask yourself <em>is this the best way to
+<div>There’s always a better/faster/smarter way to do what you’re currently doing</div></blockquote>
+<p>So don’t stop as soon as something works, ask yourself <em>is this the best way to
 implement this?</em></p>
 <p>Key takeaways:</p>
 <ul class="simple">
 <li>Come up with good names</li>
 <li>Write meaningful comments</li>
 <li>Keep up to date with your language</li>
-<li>Don&#8217;t just write working code, write beautiful code.</li>
+<li>Don’t just write working code, write beautiful code.</li>
 </ul>
 </div>
 </div>
@@ -272,7 +272,7 @@ working draft is:</p>
 <li>Write testable code</li>
 </ul>
 <p>Sometime in the future I hope to continue the series with the above, in the
-meantime, I&#8217;ll leave you with this one sentence summary:</p>
+meantime, I’ll leave you with this one sentence summary:</p>
 <blockquote>
 <div><p>Always code as if the person who ends up maintaining your code is a violent psychopath who
 knows where you live</p>
@@ -298,7 +298,7 @@ to add a keyword for it too.</td></tr>
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
 <tr><td class="label"><a class="fn-backref" href="#id3">[3]</a></td><td>This is a non-binding requirement in the standard, meaning a standard
-library implementation doesn&#8217;t <em>have to</em> do this, but most implementations
+library implementation doesn’t <em>have to</em> do this, but most implementations
 will. You can read more about it <a class="reference external" href="http://en.cppreference.com/w/cpp/memory/shared_ptr/make_shared">here</a>.</td></tr>
 </tbody>
 </table>
@@ -307,11 +307,11 @@ will. You can read more about it <a class="reference external" href="http://en.c
 <tbody valign="top">
 <tr><td class="label"><a class="fn-backref" href="#id4">[4]</a></td><td>Interleaving occurs since call order is not guaranteed. For example, in
 <span class="docutils literal"><span class="pre">bar(std::share_ptr&lt;Foo&gt;(new</span> <span class="pre">foo()),</span> <span class="pre">baz())</span></span>, there is no guarantee that
-call order will be <span class="docutils literal"><span class="pre">new</span> <span class="pre">foo()</span></span>, then the shared pointer&#8217;s constructor, then
+call order will be <span class="docutils literal"><span class="pre">new</span> <span class="pre">foo()</span></span>, then the shared pointer’s constructor, then
 <span class="docutils literal"><span class="pre">baz()</span></span>. Calls might get interleaved and executed as <span class="docutils literal"><span class="pre">new</span> <span class="pre">foo()</span></span>, then
 <span class="docutils literal"><span class="pre">baz()</span></span>, then the shared pointer constructor, in which case an exception
 thrown by <span class="docutils literal"><span class="pre">baz()</span></span> would leak the newly allocated <span class="docutils literal"><span class="pre">Foo</span></span> object, since the
-shared pointer didn&#8217;t get ownership of it yet.</td></tr>
+shared pointer didn’t get ownership of it yet.</td></tr>
 </tbody>
 </table>
 </div>

@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Clean Code - Part 2" href="../../01/07/clean-code-part-2.html" /><link rel="prev" title="(Ab)using Maps" href="../../04/24/abusing-maps.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.5.1',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -64,10 +64,10 @@ older codebases, <span class="docutils literal"><span class="pre">auto_ptr</span
 pointers.</p>
 <p>All of this might seem a bit daunting and make C++ seem more complicated than
 it really is. One way to think about it is from the ownership perspective:
-objects are resources and the key question is &#8220;who owns this resource?&#8221;. This
+objects are resources and the key question is “who owns this resource?”. This
 should dictate both how a particular resource is allocated (and released) and
 the shape function arguments should take. Lifetime is also an important
-consideration - a resource shouldn&#8217;t be released while other components expect
+consideration - a resource shouldn’t be released while other components expect
 it to be available, but it should be released as soon as it is no longer
 needed.</p>
 <p>In this post I will try to cover the various ways in which resources can be
@@ -75,7 +75,7 @@ allocated, owned, and passed around.</p>
 <div class="section" id="stack-objects-and-passing-arguments">
 <h2>Stack Objects and Passing Arguments</h2>
 <p>The simplest, clearest thing to do is allocate objects on the stack. A stack
-object doesn&#8217;t involve any pointers:</p>
+object doesn’t involve any pointers:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span>
 <span class="p">{</span>
     <span class="n">Bar</span> <span class="n">bar</span><span class="p">;</span>
@@ -85,7 +85,7 @@ object doesn&#8217;t involve any pointers:</p>
 <p>The variable <span class="docutils literal"><span class="pre">bar</span></span> of type <span class="docutils literal"><span class="pre">Bar</span></span> is created on the stack. Once the stack
 frame is popped (once the function is done executing, either through a normal
 return or due to an exception) the object goes away. This is the easiest, safest
-thing to do. The only reasons we wouldn&#8217;t always do this are time and space
+thing to do. The only reasons we wouldn’t always do this are time and space
 requirements: lifetime-wise, we might want to somehow use <span class="docutils literal"><span class="pre">bar</span></span> after
 <span class="docutils literal"><span class="pre">foo()</span></span> returns - for example we might want to pass it around to some other
 object that wants to use at a later time; in terms of space, stack memory is
@@ -103,13 +103,13 @@ avoid overflow.</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>Let&#8217;s assume for this example that <span class="docutils literal"><span class="pre">do_suff</span></span> takes the argument and sticks it
+<p>Let’s assume for this example that <span class="docutils literal"><span class="pre">do_suff</span></span> takes the argument and sticks it
 into some global object which will use it as some future time.</p>
 <p>The above code will simply create a copy of the object, so whatever <span class="docutils literal"><span class="pre">do_suff</span></span>
-gets won&#8217;t be the original resource which gets freed once the function returns,
+gets won’t be the original resource which gets freed once the function returns,
 rather a copy of it. Copying an object costs both run time and space, but if
-neither are a big concern, this is a great, safe way of ensuring resources don&#8217;t
-get released before we&#8217;re done with them.</p>
+neither are a big concern, this is a great, safe way of ensuring resources don’t
+get released before we’re done with them.</p>
 </div>
 <div class="section" id="move">
 <h3>Move</h3>
@@ -125,19 +125,19 @@ get released before we&#8217;re done with them.</p>
 </div>
 <p>With move semantics, the resource is actually <em>moved</em> into the <span class="docutils literal"><span class="pre">do_suff</span></span>
 function. Once this happens, the original object is left in an undefined state
-and shouldn&#8217;t be used anymore. This approach is usually employed when we have a
+and shouldn’t be used anymore. This approach is usually employed when we have a
 sink argument - we <em>sink</em> <span class="docutils literal"><span class="pre">bar</span></span> to its final resting place somewhere and
 <span class="docutils literal"><span class="pre">foo()</span></span> no longer cares about it after passing it down to <span class="docutils literal"><span class="pre">do_stuff</span></span>.</p>
 <p>One thing to keep in mind is that <span class="docutils literal"><span class="pre">move</span></span> is not magic, so <span class="docutils literal"><span class="pre">Bar</span></span> needs to
 declare a <a class="reference external" href="http://en.cppreference.com/w/cpp/language/move_constructor">move constructor</a>
-in order for this to do what we expect it to do. If Bar doesn&#8217;t declare a move
+in order for this to do what we expect it to do. If Bar doesn’t declare a move
 constructor, the above becomes a simple copy <a class="footnote-reference" href="#id4" id="id1">[1]</a>.</p>
 </div>
 <div class="section" id="pass-by-reference">
 <h3>Pass by reference</h3>
-<p>On the flipside, when we care about the size, so that we don&#8217;t want to create a
-copy of the object, but we aren&#8217;t worried about the lifetime - meaning the
-object we pass to <span class="docutils literal"><span class="pre">do_stuff</span></span> won&#8217;t have to outlive the function call, we can
+<p>On the flipside, when we care about the size, so that we don’t want to create a
+copy of the object, but we aren’t worried about the lifetime - meaning the
+object we pass to <span class="docutils literal"><span class="pre">do_stuff</span></span> won’t have to outlive the function call, we can
 pass by reference:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">do_suff</span><span class="p">(</span><span class="k">const</span> <span class="n">Bar</span><span class="o">&amp;</span> <span class="n">bar</span><span class="p">);</span> <span class="c1">// bar is only used within do_suff</span>
 
@@ -148,7 +148,7 @@ pass by reference:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>Note the <span class="docutils literal"><span class="pre">const</span></span> above - this means <span class="docutils literal"><span class="pre">do_suff</span></span> will use <span class="docutils literal"><span class="pre">bar</span></span> but won&#8217;t
+<p>Note the <span class="docutils literal"><span class="pre">const</span></span> above - this means <span class="docutils literal"><span class="pre">do_suff</span></span> will use <span class="docutils literal"><span class="pre">bar</span></span> but won’t
 modify it. By default, arguments should be marked as <span class="docutils literal"><span class="pre">const</span></span> unless the
 function does indeed need to alter the object. Regardless of constness, in this
 case we pass a reference to <span class="docutils literal"><span class="pre">bar</span></span> as an argument, which is very cheap (a
@@ -171,23 +171,23 @@ the reference becomes invalid.</p>
 </div>
 <p>A good rule of thumb is to not do this. The difference between passing by
 reference and by pointer in this case is that a pointer can be null, while a
-reference can&#8217;t. So passing by pointer here automatically brings the need to
-perform null checks to ensure bad things don&#8217;t happen. You would need to make a
+reference can’t. So passing by pointer here automatically brings the need to
+perform null checks to ensure bad things don’t happen. You would need to make a
 very good argument to convince me during code review that using a pointer
 instead of a reference is appropriate. Unless working against a legacy API which
-can&#8217;t be changed, I highly discourage use of raw pointers.</p>
+can’t be changed, I highly discourage use of raw pointers.</p>
 </div>
 <div class="section" id="summary">
 <h3>Summary</h3>
 <p>In summary, when designing an API:</p>
 <ol class="arabic simple">
 <li>Take argument by value if copying it is not a concern</li>
-<li>Take argument by <span class="docutils literal"><span class="pre">const&amp;</span></span> if it&#8217;s not a sink argument, meaning we don&#8217;t
+<li>Take argument by <span class="docutils literal"><span class="pre">const&amp;</span></span> if it’s not a sink argument, meaning we don’t
 need to refer to it passed the function call</li>
 <li>Take argument by reference (<span class="docutils literal"><span class="pre">&amp;</span></span>) if 2) but the API needs to modify it</li>
-<li>Take argument by <span class="docutils literal"><span class="pre">&amp;&amp;</span></span> if it&#8217;s a sink argument, the type has a move
+<li>Take argument by <span class="docutils literal"><span class="pre">&amp;&amp;</span></span> if it’s a sink argument, the type has a move
 constructor, and copying it is expensive</li>
-<li>Don&#8217;t pass raw pointers around</li>
+<li>Don’t pass raw pointers around</li>
 </ol>
 </div>
 </div>
@@ -195,7 +195,7 @@ constructor, and copying it is expensive</li>
 <h2>Heap Objects and Smart Pointers</h2>
 <p>In all of the examples above, <span class="docutils literal"><span class="pre">bar</span></span> was an object created on the stack. This
 works great in some cases, but some objects are simply too big to fit on the
-stack, or it doesn&#8217;t make sense for them to do so (if, for example, we want to
+stack, or it doesn’t make sense for them to do so (if, for example, we want to
 vary their size at runtime). In this case, we allocate the object on the heap
 and keep a pointer to it.</p>
 <p>Once we start working with heap objects, ownership becomes even more important:
@@ -260,21 +260,21 @@ object is deleted.</p>
 <p>Shared pointers incur a bit more overhead than unique pointers - reference
 counting needs to be atomic to account for multi-threaded environments, which
 comes with a runtime cost. The reference count itself also needs to be stored
-somewhere, which is a small space cost. Unique pointers don&#8217;t have these time
-and space costs since they don&#8217;t need to count references - there is always only
+somewhere, which is a small space cost. Unique pointers don’t have these time
+and space costs since they don’t need to count references - there is always only
 one pointer to the object.</p>
-<p>Costs aside, shared pointers also don&#8217;t make the ownership clear - there are
-several instances &#8220;owning&#8221; the heap resource at the same time, which can
-potentially alter it and step on each other&#8217;s toes. In general, prefer unique
+<p>Costs aside, shared pointers also don’t make the ownership clear - there are
+several instances “owning” the heap resource at the same time, which can
+potentially alter it and step on each other’s toes. In general, prefer unique
 pointers to shared pointers whenever possible.</p>
 </div>
 <div class="section" id="raw-pointer">
 <h3>Raw pointer</h3>
-<p>Avoid using raw pointers. Raw pointers don&#8217;t express ownership, so they don&#8217;t
+<p>Avoid using raw pointers. Raw pointers don’t express ownership, so they don’t
 offer the same guarantees that a) the resource pointed to gets properly cleaned
 up and b) the resource pointed to is still valid at a given time. This leads to
 dereferencing invalid memory and double-deletes (trying to free the same heap
-object multiple times), which means undefined behavior. Also, don&#8217;t mix smart
+object multiple times), which means undefined behavior. Also, don’t mix smart
 and raw pointers - the smart pointers will keep doing their job happily, with
 the potential of making the raw pointers invalid.</p>
 </div>
@@ -293,7 +293,7 @@ expected to keep track of their reference count themselves through the
 <span class="docutils literal"><span class="pre">AddRef</span></span> and <span class="docutils literal"><span class="pre">Release</span></span> methods and self-delete when the last reference goes
 away (through <span class="docutils literal"><span class="pre">Release</span></span> call). The COM smart pointers only need to call
 <span class="docutils literal"><span class="pre">Release</span></span> when they go out of scope.</p>
-<p>It&#8217;s not a good idea to have both standard library and COM pointers point to the
+<p>It’s not a good idea to have both standard library and COM pointers point to the
 same object, as each might decide to delete the object at different times -
 <span class="docutils literal"><span class="pre">shared_ptr</span></span> looks at the <span class="docutils literal"><span class="pre">shared_ptr</span></span> refcount while COM objects look at
 their internal reference count. So a <span class="docutils literal"><span class="pre">shared_ptr</span></span> might decide to delete an
@@ -319,18 +319,18 @@ code, do prefer standard library smart pointers to homebrewed ones.</p>
 <ol class="arabic simple">
 <li>Create them on the stack if feasible (note that standard library types
 like <span class="docutils literal"><span class="pre">std::vector</span></span> and <span class="docutils literal"><span class="pre">std::string</span></span> internally keep their data on
-the heap, but they fit perfectly well on the stack, so you don&#8217;t need to
+the heap, but they fit perfectly well on the stack, so you don’t need to
 create an <span class="docutils literal"><span class="pre">std::vector</span></span> on the heap just because you are planning to
 store a lot of elements in it - the vector manages a heap array
 internally already).</li>
 <li>Use a <span class="docutils literal"><span class="pre">unique_ptr</span></span> when creating them on the heap, to make ownership
 obvious.</li>
-<li>Use a <span class="docutils literal"><span class="pre">shared_ptr</span></span> only when <span class="docutils literal"><span class="pre">unique_ptr</span></span> isn&#8217;t sufficient (review
+<li>Use a <span class="docutils literal"><span class="pre">shared_ptr</span></span> only when <span class="docutils literal"><span class="pre">unique_ptr</span></span> isn’t sufficient (review
 your design first, might be a design issue).</li>
 <li>Use COM smart pointers like <span class="docutils literal"><span class="pre">CComPtr</span></span> when dealing with COM.</li>
-<li>Don&#8217;t use <span class="docutils literal"><span class="pre">auto_ptr</span></span> or other old constructs unless working with legacy
+<li>Don’t use <span class="docutils literal"><span class="pre">auto_ptr</span></span> or other old constructs unless working with legacy
 code/compiler.</li>
-<li>Don&#8217;t use raw pointers.</li>
+<li>Don’t use raw pointers.</li>
 </ol>
 </div>
 </div>
@@ -338,7 +338,7 @@ code/compiler.</li>
 <h2>Passing Smart Pointers as Arguments</h2>
 <p>We covered passing arguments and smart pointers. Now combining the two, how do
 we pass heap objects as arguments? Turns out Herb Sutter has
-<a class="reference external" href="http://bit.ly/227Na5c">a great post</a> on this exact topic on his blog. I can&#8217;t
+<a class="reference external" href="http://bit.ly/227Na5c">a great post</a> on this exact topic on his blog. I can’t
 hope to explain better than him, so go read his post. I will try to summarize:</p>
 <div class="section" id="pass-by-reference-the-pointed-to-type">
 <h3>Pass by reference the pointed-to type</h3>
@@ -355,13 +355,13 @@ just ask for a reference to the pointed-to-type:</p>
 </pre></div>
 </div>
 <p>Herb also mentions raw pointer to the underlying type if the argument can be
-null, but as I mentioned above, I&#8217;d rather stick to references and discourage
+null, but as I mentioned above, I’d rather stick to references and discourage
 use of raw pointers as a general rule of thumb.</p>
 </div>
 <div class="section" id="pass-smart-pointer-by-value">
 <h3>Pass smart pointer by value</h3>
 <p>Passing a <span class="docutils literal"><span class="pre">unique_ptr</span></span> by value implies a sink argument - since a
-<span class="docutils literal"><span class="pre">unique_ptr</span></span> cannot be copied, it has to be <span class="docutils literal"><span class="pre">std::move</span></span>&#8216;d in. Interestingly,
+<span class="docutils literal"><span class="pre">unique_ptr</span></span> cannot be copied, it has to be <span class="docutils literal"><span class="pre">std::move</span></span>’d in. Interestingly,
 Scott Meyers has <a class="reference external" href="http://bit.ly/1WgkvEh">a post</a> on his blog where he
 disagrees with this and argues that arguments of move-only types should be
 specified as <span class="docutils literal"><span class="pre">&amp;&amp;</span></span>:</p>
@@ -376,7 +376,7 @@ specified as <span class="docutils literal"><span class="pre">&amp;&amp;</span><
 </div>
 <p>Passing a <span class="docutils literal"><span class="pre">shared_ptr</span></span> by value implies the function wants to partake in the
 ownership - in other words, will keep somewhere a reference to the object after
-the function returns, but unlike the above <span class="docutils literal"><span class="pre">unique_ptr</span></span> example, it won&#8217;t have
+the function returns, but unlike the above <span class="docutils literal"><span class="pre">unique_ptr</span></span> example, it won’t have
 exclusive ownership of the resource:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">do_stuff</span><span class="p">(</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Bar</span><span class="o">&gt;</span> <span class="n">ptrBar</span><span class="p">);</span>
 

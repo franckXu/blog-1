@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Composable Generators" href="../09/composable-generators.html" /><link rel="prev" title="Notes on Error Handling" href="../../12/03/notes-on-error-handling.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.5.1',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -78,8 +78,8 @@ it as a runtime error. Below is a Python function that squares a number:</p>
 <span class="c1"># for ** or pow(): &#39;str&#39; and &#39;int&#39;</span>
 </pre></div>
 </div>
-<p>Some of the interesting features of dynamic languages are <em>duck typing</em> (&#8220;if it
-walks like a duck, and it quacks like a duck...&#8221;) and <em>monkey patching</em>. Duck
+<p>Some of the interesting features of dynamic languages are <em>duck typing</em> (“if it
+walks like a duck, and it quacks like a duck…”) and <em>monkey patching</em>. Duck
 typing means that accessing a member of an object works as long as that object
 has such a member, regardless of the type of the object. In Python:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Foo</span><span class="p">:</span>
@@ -93,7 +93,7 @@ has such a member, regardless of the type of the object. In Python:</p>
 <span class="p">[</span><span class="n">obj</span><span class="o">.</span><span class="n">func</span><span class="p">()</span> <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="p">[</span><span class="n">Foo</span><span class="p">(),</span> <span class="n">Bar</span><span class="p">()]]</span> <span class="c1"># prints &quot;foo&quot; and &quot;bar&quot;</span>
 </pre></div>
 </div>
-<p>This can&#8217;t work in a statically typed language where, at the bare minimum, we
+<p>This can’t work in a statically typed language where, at the bare minimum, we
 would have to add some form of constraint for the types in the list to ensure
 they contain a <span class="docutils literal"><span class="pre">func()</span></span> method we can call.</p>
 <p>Monkey patching refers to the ability to change the structure of an object at
@@ -113,8 +113,8 @@ with another function like this:</p>
 </pre></div>
 </div>
 <p>These are useful capabilities, but the tradeoff is a whole class of type errors
-which a statically typed language would&#8217;ve caught.</p>
-<p>As a side note, the fact that dynamic languages don&#8217;t need to specify types
+which a statically typed language would’ve caught.</p>
+<p>As a side note, the fact that dynamic languages don’t need to specify types
 makes them more terse. That being said, the
 <a class="reference external" href="https://en.wikipedia.org/wiki/Hindley%E2%80%93Milner_type_system">Hindley-Milner algorithm W</a>
 can infer the types of a program in linear time with respect to the source size.
@@ -131,7 +131,7 @@ often meaningless or have surprising effects - for example, adding a number to
 a list of characters. This can either result in runtime errors or garbage data.
 In contrast, a strongly typed language will not accept code that attempts to do
 this.</p>
-<p>In Python, which is strongly typed, this doesn&#8217;t work:</p>
+<p>In Python, which is strongly typed, this doesn’t work:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">foo</span> <span class="o">=</span> <span class="s2">&quot;foo&quot;</span> <span class="c1"># foo is &quot;foo&quot;</span>
 <span class="n">foo</span> <span class="o">=</span> <span class="n">foo</span> <span class="o">+</span> <span class="s2">&quot; bar&quot;</span> <span class="c1"># foo is &quot;foo bar&quot;</span>
 <span class="n">foo</span> <span class="o">=</span> <span class="n">foo</span> <span class="o">+</span> <span class="mi">5</span> <span class="c1"># TypeError: Can&#39;t convert &#39;int&#39; object to str implicitly</span>
@@ -219,9 +219,9 @@ is needed. On the other hand, we no longer have a single <span class="docutils l
 a templated function which is instantiated for both <span class="docutils literal"><span class="pre">foo</span></span> and <span class="docutils literal"><span class="pre">bar</span></span> types.
 This is all done at compile-time, the advantage being faster code, the drawback
 being compiler needs to be aware of all the types involved - we can no longer
-&#8220;inject&#8221; types implementing an interface at runtime. When calling <span class="docutils literal"><span class="pre">call_func</span></span>,
+“inject” types implementing an interface at runtime. When calling <span class="docutils literal"><span class="pre">call_func</span></span>,
 we need to have both the definition of the function and the declaration of the
-type we&#8217;re passing in visible.</p>
+type we’re passing in visible.</p>
 </div>
 </div>
 <div class="section" id="types">
@@ -236,7 +236,7 @@ focuses on types, I will also provide examples in Haskell, as Haskell can
 express these concepts much more succinctly.</p>
 <div class="section" id="type-basics">
 <h3>Type Basics</h3>
-<p>Let&#8217;s start with the definition of a type: <em>a type represents the set of
+<p>Let’s start with the definition of a type: <em>a type represents the set of
 possible values</em>. For example, the C++ type <span class="docutils literal"><span class="pre">uint8_t</span></span> represents the set of
 integers from 0 to 255. Effectively this means that a variable of a given type
 can only have values from within that set.</p>
@@ -253,7 +253,7 @@ cardinality, there are a few interesting classes of types to talk about:</p>
 set, with <span class="docutils literal"><span class="pre">|T|</span> <span class="pre">=</span> <span class="pre">0</span></span>.</p>
 <p>In Haskell, this type is named <span class="docutils literal"><span class="pre">Void</span></span>. Since Haskell is a functional language,
 all functions must return a value, so it does not make sense to have a function
-that returns <span class="docutils literal"><span class="pre">Void</span></span> - the same way it doesn&#8217;t make sense to define a
+that returns <span class="docutils literal"><span class="pre">Void</span></span> - the same way it doesn’t make sense to define a
 mathematical function with the empty set as its codomain. We do have an
 <span class="docutils literal"><span class="pre">absurd</span></span> function though, which maps the empty set to any value:</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span></span><span class="nf">absurd</span> <span class="ow">::</span> <span class="kt">Void</span> <span class="ow">-&gt;</span> <span class="n">a</span>
@@ -261,7 +261,7 @@ mathematical function with the empty set as its codomain. We do have an
 </div>
 <p>This function cannot be called though.</p>
 <p>In C++, the absence of a value is represented as the <span class="docutils literal"><span class="pre">void</span></span> type. Since C++ is
-not purely functional, we can define functions that don&#8217;t return anything. We
+not purely functional, we can define functions that don’t return anything. We
 can even say that a function does not take any arguments by putting a <span class="docutils literal"><span class="pre">void</span></span>
 between the parenthesis:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
@@ -272,7 +272,7 @@ between the parenthesis:</p>
 </pre></div>
 </div>
 <p>Note though that we cannot have a <em>real</em> argument of type <span class="docutils literal"><span class="pre">void</span></span>, that is a
-compile error as it doesn&#8217;t make any sense - we would be mandating the function
+compile error as it doesn’t make any sense - we would be mandating the function
 takes a value from the empty set. So we can say <span class="docutils literal"><span class="pre">foo(void)</span></span> but not
 <span class="docutils literal"><span class="pre">foo(void</span> <span class="pre">arg)</span></span>, or even <span class="docutils literal"><span class="pre">foo(int</span> <span class="pre">arg,</span> <span class="pre">void)</span></span>.</p>
 </div>
@@ -305,7 +305,7 @@ maps anything to this type:</p>
 takes an argument of any type, as it provides syntactic sugar for type
 parameters (<span class="docutils literal"><span class="pre">a</span></span> in our example). In C++, the equivalent declaration involves a
 template, but they boil down to the same thing. The non-anonymous C++
-representation is a struct which doesn&#8217;t contain anything. All instances of such
+representation is a struct which doesn’t contain anything. All instances of such
 a struct are equivalent:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">singleton</span> <span class="p">{</span> <span class="p">};</span>
 
@@ -338,7 +338,7 @@ type and the singleton <span class="docutils literal"><span class="pre">false</s
 </div>
 <p>Theoretically, numerical types could also be defined as huge sum types of every
 possible value they can represent. Of course, this is impractical, but we can
-reason about them the same way we reason about other sum types, we don&#8217;t have to
+reason about them the same way we reason about other sum types, we don’t have to
 treat them as a special case.</p>
 <p>In C++, an equivalent of the above is an <span class="docutils literal"><span class="pre">enum</span> <span class="pre">class</span></span>. <span class="docutils literal"><span class="pre">bool</span></span> is a built-in
 type with special syntax, but we could define an equivalent as:</p>
@@ -349,7 +349,7 @@ type with special syntax, but we could define an equivalent as:</p>
 <span class="p">};</span>
 </pre></div>
 </div>
-<p>It&#8217;s easy to see how a <span class="docutils literal"><span class="pre">Weekday</span></span> definition would look like. Things get more
+<p>It’s easy to see how a <span class="docutils literal"><span class="pre">Weekday</span></span> definition would look like. Things get more
 interesting when we throw type parameters into the mix. In Haskell, we have the
 <span class="docutils literal"><span class="pre">Either</span></span> type, which is declared as follows:</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span></span><span class="kr">data</span> <span class="kt">Either</span> <span class="n">a</span> <span class="n">b</span> <span class="ow">=</span> <span class="kt">Left</span> <span class="n">a</span> <span class="o">|</span> <span class="kt">Right</span> <span class="n">b</span>
@@ -381,7 +381,7 @@ depending on the contained type, it applies the appropriate function:</p>
 </div>
 <p>This is way beyond the capabilities of a C++ <span class="docutils literal"><span class="pre">enum</span> <span class="pre">class</span></span>. The old way of
 implementing something like this in C++ was using a union and a tag enum to keep
-track of which is the actual type we&#8217;re working with:</p>
+track of which is the actual type we’re working with:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="c1">// Declaration of A and B not provided in this example</span>
 <span class="k">struct</span> <span class="n">A</span><span class="p">;</span>
 <span class="k">struct</span> <span class="n">B</span><span class="p">;</span>
@@ -432,11 +432,11 @@ track of which is the actual type we&#8217;re working with:</p>
 </pre></div>
 </div>
 <p>Our <span class="docutils literal"><span class="pre">Either</span></span> type definition is obviously much more verbose than what we had
-in Haskell, and it doesn&#8217;t even support type parameters - at this point it only
+in Haskell, and it doesn’t even support type parameters - at this point it only
 works with <span class="docutils literal"><span class="pre">struct</span> <span class="pre">A</span></span> and <span class="docutils literal"><span class="pre">struct</span> <span class="pre">B</span></span>, while the Haskell version works for
 any <span class="docutils literal"><span class="pre">a</span></span> and <span class="docutils literal"><span class="pre">b</span></span> types. The other major problem is that, while unions provide
 efficient storage for different types (the size of the union is the size of the
-maximum contained type), it is up to the implementer to make sure we don&#8217;t try
+maximum contained type), it is up to the implementer to make sure we don’t try
 to read an <span class="docutils literal"><span class="pre">A</span></span> as a <span class="docutils literal"><span class="pre">B</span></span> or vice-versa. That means we need to keep our tag in
 sync with what we put in the type and respect it when accessing the value of the
 union.</p>
@@ -454,7 +454,7 @@ of any one of those types. Using variant, we can re-write the above as:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>This is a lot of new syntax, so let&#8217;s break it down: <span class="docutils literal"><span class="pre">std::variant&lt;A,</span> <span class="pre">B&gt;</span></span> is
+<p>This is a lot of new syntax, so let’s break it down: <span class="docutils literal"><span class="pre">std::variant&lt;A,</span> <span class="pre">B&gt;</span></span> is
 the new C++17 sum type. In this case, we specify it holds either <span class="docutils literal"><span class="pre">A</span></span> or <span class="docutils literal"><span class="pre">B</span></span>
 (but it can hold an arbitrary number of types).</p>
 <p><span class="docutils literal"><span class="pre">std::visit</span></span> is a function that applies the visitor function given as its
@@ -469,7 +469,7 @@ very similar can be achieved with templates and <span class="docutils literal"><
 makes for more readable code.</p>
 <p>Note that with this version we can simply prepend a <span class="docutils literal"><span class="pre">template</span> <span class="pre">&lt;typename</span> <span class="pre">A,</span>
 <span class="pre">typename</span> <span class="pre">B&gt;</span></span> and make the whole function generic, as in the Haskell example. It
-doesn&#8217;t read as pretty (because we don&#8217;t have good pattern matching syntax in
+doesn’t read as pretty (because we don’t have good pattern matching syntax in
 the language), but this is the new, type safe way of implementing and working
 with sum types, which is a major improvement.</p>
 </div>
@@ -526,14 +526,14 @@ and product types are the building blocks of a type system.</p>
 <p>An optional type is a type that can hold any of the values of another type, or
 not hold any value, which is usually represented as a singleton. So an optional
 is effectively a sum type between a given type and a singleton representing
-&#8220;doesn&#8217;t hold a value&#8221;. In other words, the cardinality of an optional for a
+“doesn’t hold a value”. In other words, the cardinality of an optional for a
 type <span class="docutils literal"><span class="pre">T</span></span> is <span class="docutils literal"><span class="pre">|O|</span> <span class="pre">=</span> <span class="pre">|T|</span> <span class="pre">+</span> <span class="pre">1</span></span>.</p>
 <p>In Haskell, an optional is the famous <span class="docutils literal"><span class="pre">Maybe</span></span> type:</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span></span><span class="kr">data</span> <span class="kt">Maybe</span> <span class="n">a</span> <span class="ow">=</span> <span class="kt">Just</span> <span class="n">a</span> <span class="o">|</span> <span class="kt">Nothing</span>
 </pre></div>
 </div>
-<p>A function that operates on <span class="docutils literal"><span class="pre">Maybe</span></span> could say &#8220;only apply <span class="docutils literal"><span class="pre">foo</span></span> if the
-optional contains an <span class="docutils literal"><span class="pre">a</span></span>&#8221;:</p>
+<p>A function that operates on <span class="docutils literal"><span class="pre">Maybe</span></span> could say “only apply <span class="docutils literal"><span class="pre">foo</span></span> if the
+optional contains an <span class="docutils literal"><span class="pre">a</span></span>”:</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span></span><span class="c1">-- Implementation of foo not provided in this example</span>
 <span class="nf">foo</span> <span class="ow">::</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span>
 

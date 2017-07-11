@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Arguments and Smart Pointers" href="../../03/11/arguments-and-smart-pointers.html" /><link rel="prev" title="Dependency Injection in C++" href="../../07/06/dependency-injection-in-c.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.5.1',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -152,7 +152,7 @@ on a vector is about twice as fast as the equivalent <span class="docutils liter
 </div>
 <div class="section" id="initialization-cost">
 <h2>Initialization cost</h2>
-<p>There&#8217;s event more hidden cost: <span class="docutils literal"><span class="pre">std::vector</span></span> manages a dynamic array which is
+<p>There’s event more hidden cost: <span class="docutils literal"><span class="pre">std::vector</span></span> manages a dynamic array which is
 allocated on the heap. Having an <span class="docutils literal"><span class="pre">std::vector</span></span> initialized with key-values as
 described above, even if more efficent than an <span class="docutils literal"><span class="pre">unordered_map</span></span>, still has
 some associated cost in terms of heap allocations (albeit smaller than
@@ -189,7 +189,7 @@ while the (mostly) equivalent</p>
 <span class="p">}};</span>
 </pre></div>
 </div>
-<p>shouldn&#8217;t perform any allocations.</p>
+<p>shouldn’t perform any allocations.</p>
 </div>
 <div class="section" id="associative-array">
 <h2>associative_array</h2>

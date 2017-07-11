@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Dependency Injection in C++" href="../../07/06/dependency-injection-in-c.html" /><link rel="prev" title="Composable Generators" href="../../10/09/composable-generators.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.5.1',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -51,7 +51,7 @@
 <p>As a follow up to my previous post, I want to talk about two major new C++
 features that keep not making it into the standard, namely <em>Concepts</em> and
 <em>Modules</em>. These would have a significant impact on the code examples I
-provided while discussing dependency injectiojn, so here&#8217;s a quick peek into the
+provided while discussing dependency injectiojn, so here’s a quick peek into the
 future:</p>
 <div class="section" id="concepts">
 <h2>Concepts</h2>
@@ -110,7 +110,7 @@ type to call. For <span class="docutils literal"><span class="pre">V6Engine</spa
 for <span class="docutils literal"><span class="pre">V8Engine</span></span>, <span class="docutils literal"><span class="pre">IEngine::Start()</span></span> is <span class="docutils literal"><span class="pre">V8Engine::Start()</span></span>. Our classes
 have a vtable - a table containing this mapping, so a virtual call looks up the
 actual function to call in the vtable.</p>
-<p>This is the &#8220;classical&#8221; object-oriented way of dispatching calls. The advantage
+<p>This is the “classical” object-oriented way of dispatching calls. The advantage
 of this approach is that it works across binaries <a class="footnote-reference" href="#id3" id="id1">[1]</a> (we can export
 <span class="docutils literal"><span class="pre">StartEngine</span></span> from a shared library and pass in an external <span class="docutils literal"><span class="pre">IEngine</span></span>
 implementation to it), the disadvantage is the extra redirection - implementing
@@ -151,7 +151,7 @@ classes must have a vtable and call resolution involves jumping through it.</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>A few differences to note here: we don&#8217;t have an <span class="docutils literal"><span class="pre">IEngine</span></span> interface anymore
+<p>A few differences to note here: we don’t have an <span class="docutils literal"><span class="pre">IEngine</span></span> interface anymore
 and the two types we use, <span class="docutils literal"><span class="pre">V6Engine</span></span> and <span class="docutils literal"><span class="pre">V8Engine</span></span>, no longer have virtual
 functions. Calling <span class="docutils literal"><span class="pre">V6Engine::Start()</span></span> or <span class="docutils literal"><span class="pre">V8Engine::Start()</span></span> now no longer
 involves a virtual call. The two <span class="docutils literal"><span class="pre">StartEngine</span></span> calls are actually made to
@@ -164,15 +164,15 @@ template.</p>
 <p>This is compile-time polymorphism, the advantage being that everything is
 determined during build - no virtual calls etc., the disadvantage being that
 the compiler needs to have a definition of the template available whenever it
-needs to create a new instance <a class="footnote-reference" href="#id4" id="id2">[2]</a>. In this case we can&#8217;t encapsulate what
+needs to create a new instance <a class="footnote-reference" href="#id4" id="id2">[2]</a>. In this case we can’t encapsulate what
 happens inside <span class="docutils literal"><span class="pre">StartEngine</span></span> if we want others to be able to call the
 function.</p>
 <div class="section" id="with-concepts">
 <h3>With Concepts</h3>
 <p>The above works just fine, the problem being that, in general, if you have
-a templated function, it&#8217;s not obvious what contracts do the types it expects
+a templated function, it’s not obvious what contracts do the types it expects
 need to satisfy. For example, our <span class="docutils literal"><span class="pre">StartEngine</span></span> expects that the given type
-has a <span class="docutils literal"><span class="pre">Start()</span></span> function it can call. This isn&#8217;t obvious from the function
+has a <span class="docutils literal"><span class="pre">Start()</span></span> function it can call. This isn’t obvious from the function
 declaration though. Also, compiler errors when templates cannot be instantiated
 are notoriously hard to decipher. The proposed solution to both of the above
 are concepts. Here is how an engine concept would look like:</p>
@@ -200,8 +200,8 @@ see what we need to implement on our type. The compiler would also be able to
 issue much clearer errors when the type we pass in is missing one of the concept
 requirements.</p>
 <p>Unfortunately, while several proposals for concepts have been put forward in the
-past years, they weren&#8217;t approved to be part of the C++17 standard. That being
-said, it&#8217;s fairly certain that they will eventually make it into the standard.</p>
+past years, they weren’t approved to be part of the C++17 standard. That being
+said, it’s fairly certain that they will eventually make it into the standard.</p>
 </div>
 </div>
 <div class="section" id="modules">
@@ -295,7 +295,7 @@ file pair from my previous post:</p>
 <p>This is now a single file where we import the <span class="docutils literal"><span class="pre">Engine</span></span> module (instead of
 <span class="docutils literal"><span class="pre">#include</span></span>), we provide the interface and concrete implementation, the factory
 function, and we mark publicly-visible declarations with the <span class="docutils literal"><span class="pre">export</span></span> keyword.</p>
-<p>Like Concepts, Modules haven&#8217;t made it into the C++17 standard, but MSVC has a
+<p>Like Concepts, Modules haven’t made it into the C++17 standard, but MSVC has a
 working implementation as of VS2015 Update 1.</p>
 </div>
 <div class="section" id="dependency-injection-in-the-future">

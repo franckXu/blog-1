@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Concepts and Modules" href="../../08/17/concepts-and-modules.html" /><link rel="prev" title="Notes on Types" href="../16/notes-on-types.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.5.1',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -102,7 +102,7 @@ Luckily, we have Linq, which does just that:</p>
 </pre></div>
 </div>
 <p>To illustrate the magic of generators, instead of relying on
-<span class="docutils literal"><span class="pre">Enumerable.Range</span></span>, let&#8217;s introduce a function that generates numbers
+<span class="docutils literal"><span class="pre">Enumerable.Range</span></span>, let’s introduce a function that generates numbers
 forever:</p>
 <div class="highlight-c#"><div class="highlight"><pre><span></span><span class="k">static</span> <span class="n">IEnumerable</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;</span> <span class="n">Count</span><span class="p">()</span>
 <span class="p">{</span>
@@ -142,7 +142,7 @@ so they can be chained together to form pipelines.</p>
 as a technical specification, with MSVC already supporting them (code samples
 below compile with VS 2015 Update 3). The main syntax additions are the new
 <span class="docutils literal"><span class="pre">co_await</span></span>, <span class="docutils literal"><span class="pre">co_return</span></span>, and <span class="docutils literal"><span class="pre">co_yield</span></span> keywords. The first two are used
-for creating and awaiting tasks (which I won&#8217;t cover in this post), while
+for creating and awaiting tasks (which I won’t cover in this post), while
 <span class="docutils literal"><span class="pre">co_yield</span></span> is used in generators.</p>
 <p>Here is a lazy counter in C++:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">auto</span> <span class="nf">count_to</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span>

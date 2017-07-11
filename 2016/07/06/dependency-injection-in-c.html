@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="(Ab)using Maps" href="../../04/24/abusing-maps.html" /><link rel="prev" title="Concepts and Modules" href="../../08/17/concepts-and-modules.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.5.1',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -50,8 +50,8 @@
 <h1>Dependency Injection in C++</h1>
 <p>In this post, I will switch gears from functional C++ to object oriented C++ and
 talk about dependency injection.</p>
-<p>Let&#8217;s start with a simple example: take a <span class="docutils literal"><span class="pre">Car</span></span> class with a <span class="docutils literal"><span class="pre">Drive()</span></span>
-method. Let&#8217;s say this class contains a <span class="docutils literal"><span class="pre">V8Engine</span></span> attribute with <span class="docutils literal"><span class="pre">Start()</span></span>
+<p>Let’s start with a simple example: take a <span class="docutils literal"><span class="pre">Car</span></span> class with a <span class="docutils literal"><span class="pre">Drive()</span></span>
+method. Let’s say this class contains a <span class="docutils literal"><span class="pre">V8Engine</span></span> attribute with <span class="docutils literal"><span class="pre">Start()</span></span>
 and <span class="docutils literal"><span class="pre">Stop()</span></span> methods. An initial implementation might look like this:</p>
 <p><em>V8Engine.h (publicly visible)</em>:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
@@ -106,7 +106,7 @@ and <span class="docutils literal"><span class="pre">Stop()</span></span> method
 <div class="section" id="dependency-injection-with-interfaces">
 <h2>Dependency Injection with Interfaces</h2>
 <p>In the above example, <span class="docutils literal"><span class="pre">Car</span></span> is tightly coupled to <span class="docutils literal"><span class="pre">V8Engine</span></span>, meaning we
-can&#8217;t create a car without a concrete engine implementation. If we want the
+can’t create a car without a concrete engine implementation. If we want the
 ability to swap various engines or use a mock engine during testing, we could
 reverse the dependency by creating an <span class="docutils literal"><span class="pre">IEngine</span></span> interface and decoupling
 <span class="docutils literal"><span class="pre">Car</span></span> from the concrete <span class="docutils literal"><span class="pre">V8Engine</span></span> implementation. This way, we only expose
@@ -176,7 +176,7 @@ an <span class="docutils literal"><span class="pre">IEngine</span></span> interf
 <p>Headers simply get textually included in each compilation unit by the
 <span class="docutils literal"><span class="pre">#include</span></span> directive. It is not mandatory to provide a header file for each
 class declaration. If a class can be scoped to a single source file, then it
-doesn&#8217;t need a header declaration (for example the <span class="docutils literal"><span class="pre">V8Engine</span></span> class above
+doesn’t need a header declaration (for example the <span class="docutils literal"><span class="pre">V8Engine</span></span> class above
 does not need a V8Engine.h header corresponding to the V8Engine.cpp). It is also
 a good idea to have public headers and internal headers: public headers contain
 the public API surface and can be included by other parts of the system, while
@@ -189,8 +189,8 @@ need to reference it.</p>
 </div>
 <div class="section" id="a-note-on-interfaces">
 <h3>A note on interfaces</h3>
-<p>It&#8217;s a good idea to declare a default virtual destructor: if a deriving type has
-a destructor, it won&#8217;t get called if we store an upcast pointer to the interface
+<p>It’s a good idea to declare a default virtual destructor: if a deriving type has
+a destructor, it won’t get called if we store an upcast pointer to the interface
 unless the interface declares a virtual destructor. Note a destructor does not
 to be expicitly defined - compiler might generate a default one.</p>
 <p>MSVC compiler provides a <span class="docutils literal"><span class="pre">__declspec(novtable)</span></span> <a class="footnote-reference" href="#id2" id="id1">[1]</a> custom attribute which
@@ -204,7 +204,7 @@ reduces code size. Below is the <span class="docutils literal"><span class="pre"
 <span class="p">};</span>
 </pre></div>
 </div>
-<p>I won&#8217;t include it in the code samples in this post, but it&#8217;s worth keeping in
+<p>I won’t include it in the code samples in this post, but it’s worth keeping in
 mind when working with MSVC.</p>
 </div>
 <div class="section" id="a-note-on-factory-functions">
@@ -234,7 +234,7 @@ of a singleton <span class="docutils literal"><span class="pre">Engine</span></s
 </pre></div>
 </div>
 <p>The third function, <span class="docutils literal"><span class="pre">GetFoo</span></span>, implies shared ownership - we get an object that
-other objects might hold a reference to, but we don&#8217;t have the lifetime
+other objects might hold a reference to, but we don’t have the lifetime
 guarantee a singleton would give us, so we need to use a shared pointer to make
 sure the object is kept alive long enough.</p>
 </div>
@@ -324,7 +324,7 @@ details, in which case we would end up with the following:</p>
 out-of-the-box <span class="docutils literal"><span class="pre">V8Engine</span></span> but other engines can be injected when <span class="docutils literal"><span class="pre">Car</span></span> gets
 constructed. The headers IEngine.h and ICar.h are public per our above
 defintion.</p>
-<p>In general, it&#8217;s great if we can get the rest of the component code and unit
+<p>In general, it’s great if we can get the rest of the component code and unit
 tests to work against the interface. Sometimes though we might need to know more
 about the actual implementation inside our component, even if externally we only
 expose an interface. In that case, we can add an internal Car.h header:</p>
@@ -467,10 +467,10 @@ header file and we have to make this publicly visible.</p>
 </div>
 <div class="section" id="hybrid-approach">
 <h2>Hybrid Approach</h2>
-<p>We can use a hybrid approach if we don&#8217;t need an externally injected <span class="docutils literal"><span class="pre">Engine</span></span>.
+<p>We can use a hybrid approach if we don’t need an externally injected <span class="docutils literal"><span class="pre">Engine</span></span>.
 Say our component provides a <span class="docutils literal"><span class="pre">V8Engine</span></span>, a <span class="docutils literal"><span class="pre">V6Engine</span></span>, and we have a
 <span class="docutils literal"><span class="pre">MockEngine</span></span> used during testing. We have the same componentization
-requirements but don&#8217;t need to expose all the details to consumers. In that case
+requirements but don’t need to expose all the details to consumers. In that case
 we could have something like this:</p>
 <p><em>ICar.h (publicly visible)</em>:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
@@ -548,8 +548,8 @@ publicly</li>
 <p>Each of these approaches has pros and cons, the tradeoffs mostly being around
 encapsulation (how much of the component code we expose publicly), runtime
 (templates are instantiated at compile-time so no virtual calls etc.), type
-constraints (with templates we don&#8217;t require engines to implement a particular
-<span class="docutils literal"><span class="pre">IEngine</span></span> interface), and flexibility (with the hybrid approach we can&#8217;t
+constraints (with templates we don’t require engines to implement a particular
+<span class="docutils literal"><span class="pre">IEngine</span></span> interface), and flexibility (with the hybrid approach we can’t
 inject an external engine, we can only use what the component has available
 internally).</p>
 <hr class="docutils" />

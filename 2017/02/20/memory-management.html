@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Notes on Error Handling" href="../../../2016/12/03/notes-on-error-handling.html" /><link rel="prev" title="A Heterogeneous Event Store" href="../25/a-heterogeneous-event-store.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.5.1',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -93,7 +93,7 @@ hasn’t been freed previously.</p>
 <p>Automatic memory management attempts to move the responsibility of tracking
 when a memory resource is no longer needed (and handling its deallocation) from
 the developer to the system. Such a system is called <em>garbage collected</em>, as
-memory that is no longer needed (&#8220;garbage&#8221;) is reclaimed by the system
+memory that is no longer needed (“garbage”) is reclaimed by the system
 automatically. The two most popular methods used to automatically free memory
 are <em>tracing garbage collectors</em> and <em>reference counting</em>.</p>
 <div class="section" id="tracing-garbage-collector">
@@ -109,8 +109,8 @@ this resource - which means the memory can be safely deallocated.</p>
 <p>For example, a naïve tracing garbage collection algorithm, <em>mark-and-sweep</em>,
 involves adding an “in-use” bit to each memory resource allocated then, during
 collection, following all references starting from the stack and marking each as
-&#8220;in-use&#8221;. Once all used resources are marked, the sweep stage involves walking
-the whole heap and for each memory resource, if not marked as &#8220;in-use&#8221;, freeing
+“in-use”. Once all used resources are marked, the sweep stage involves walking
+the whole heap and for each memory resource, if not marked as “in-use”, freeing
 it.</p>
 <p>Tracing garbage collectors are used by many popular runtimes, like JVM and .NET.
 In C#:</p>
@@ -327,7 +327,7 @@ the object.</p>
 <p>Unfortunately in C++ this has to be handled through sensical design and is
 mostly left up to the developer. Rust on the other hand provides strong static
 analysis and lifetime annotations to ensure such issues do not occur. In fact,
-the default in Rust is to have uniquely owned objects which can be &#8220;borrowed&#8221;
+the default in Rust is to have uniquely owned objects which can be “borrowed”
 when needed and static analysis ensures no dangling references appear. In C++:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Foo</span> <span class="p">{</span> <span class="p">};</span>
 
@@ -367,7 +367,7 @@ not compile in Rust:</p>
 <span class="c1">// compiler correctly shows `foo` dropped here while still borrowed</span>
 </pre></div>
 </div>
-<p>In Rust, the compiler ensures dangling references (&#8220;borrowed&#8221; objects) do not
+<p>In Rust, the compiler ensures dangling references (“borrowed” objects) do not
 exist once owning object goes out of scope.</p>
 <p>It seems that in most cases, the best approach to memory management is to use
 the latter model of ownership and lifetimes which comes with no runtime

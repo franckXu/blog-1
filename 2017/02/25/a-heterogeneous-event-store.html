@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Memory Management" href="../20/memory-management.html" /><link rel="prev" title="Data Structures and Algorithms" href="../../04/07/data-structures-and-algorithms.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.5.1',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -49,7 +49,7 @@
     <div class="section" id="a-heterogeneous-event-store">
 <h1>A Heterogeneous Event Store</h1>
 <p>I recently stumbled upon a heterogeneous event collection which turned out to
-pose an interesting design problem. We are using library code (we can&#8217;t change)
+pose an interesting design problem. We are using library code (we can’t change)
 that provides a templated <span class="docutils literal"><span class="pre">Event</span></span> to which we can register callbacks and
 which we can raise later to invoke the callbacks. The interface looks like
 this:</p>
@@ -88,7 +88,7 @@ this:</p>
 </pre></div>
 </div>
 <p>Note that unlike the real implementation, this only stores the last registered
-event, but that is irrelevant for the purpose of this post. I&#8217;m providing the
+event, but that is irrelevant for the purpose of this post. I’m providing the
 code just to have something to compile against (otherwise <span class="docutils literal"><span class="pre">Raise</span></span> would
 happily swallow any combination of arguments passed to it). In reality, a more
 complex implementation would maintain a list of callbacks, but this is
@@ -150,7 +150,7 @@ this:</p>
 <span class="n">store</span><span class="p">.</span><span class="n">RaiseSave</span><span class="p">(</span><span class="s">&quot;Some file name&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
-<p>Looking at <span class="docutils literal"><span class="pre">EventStore</span></span>, it&#8217;s obvious that there is a lot of repetition
+<p>Looking at <span class="docutils literal"><span class="pre">EventStore</span></span>, it’s obvious that there is a lot of repetition
 involved: hooking up a new event involves aliasing a new callback, adding a new
 member to the class, and adding the corresponding registration and <span class="docutils literal"><span class="pre">Raise</span></span>
 member functions which end up being copy/pastes of the other ones. There must
@@ -164,7 +164,7 @@ are potential workarounds to explore, like standardizing on a single type and
 requiring clients to, for example, only use callbacks that do not take any
 arguments. Another option would be to pass in some base object to each event
 and let each callback re-interpret it. This takes us down the wrong path though.
-We don&#8217;t need to do any runtime lookup - the initial code doesn&#8217;t.</p>
+We don’t need to do any runtime lookup - the initial code doesn’t.</p>
 <p>From the repetition in <span class="docutils literal"><span class="pre">EventStore</span></span>, it should become apparent that we need
 some form of templated <span class="docutils literal"><span class="pre">Register</span></span> and <span class="docutils literal"><span class="pre">Raise</span></span> that would work for each type
 of event we care about. A quick sketch of our function signatures should look
@@ -183,8 +183,8 @@ something like this:</p>
 </pre></div>
 </div>
 <p>It is also clear that we need a way to store all of the events we need in our
-class. Since they are of heterogeneous types, we can&#8217;t store them in a map or
-equivalent, but we don&#8217;t need to. <span class="docutils literal"><span class="pre">std::tuple</span></span> was build exactly for this:</p>
+class. Since they are of heterogeneous types, we can’t store them in a map or
+equivalent, but we don’t need to. <span class="docutils literal"><span class="pre">std::tuple</span></span> was build exactly for this:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">tuple</span><span class="o">&lt;</span><span class="n">Event</span><span class="o">&lt;</span><span class="n">LaunchCallback</span><span class="o">&gt;</span><span class="p">,</span>
            <span class="n">Event</span><span class="o">&lt;</span><span class="n">SaveCallback</span><span class="o">&gt;</span><span class="p">,</span>
            <span class="n">Event</span><span class="o">&lt;</span><span class="n">ExitCallback</span><span class="o">&gt;&gt;</span> <span class="n">m_events</span><span class="p">;</span>
@@ -253,7 +253,7 @@ since both <span class="docutils literal"><span class="pre">LaunchCallback</span
 reading the code confusing. Now we end up storing launch callbacks inside what
 we called <span class="docutils literal"><span class="pre">Event&lt;ExitCallback&gt;</span></span> and vice-versa. Runtime is not affected, as we
 would also raise <span class="docutils literal"><span class="pre">Event&lt;ExitCallback&gt;</span></span> by calling
-<span class="docutils literal"><span class="pre">Raise&lt;EventType::LaunchEvent&gt;</span></span>, but it&#8217;s not ideal. We could drop the aliases
+<span class="docutils literal"><span class="pre">Raise&lt;EventType::LaunchEvent&gt;</span></span>, but it’s not ideal. We could drop the aliases
 altogether and simply have:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">tuple</span><span class="o">&lt;</span><span class="n">Event</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">()</span><span class="o">&gt;&gt;</span><span class="p">,</span>
            <span class="n">Event</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span><span class="p">)</span><span class="o">&gt;&gt;</span><span class="p">,</span>
@@ -278,8 +278,8 @@ callback signatures are the same. One way of achieving this is wrapping
 <span class="k">struct</span> <span class="nl">ExitEvent</span> <span class="p">:</span> <span class="n">EventWrapper</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">()</span><span class="o">&gt;</span> <span class="p">{</span> <span class="p">};</span>
 </pre></div>
 </div>
-<p>Note this is type information used only by the compiler and doesn&#8217;t bring any
-runtime overhead to our code. Inheritance is used here just so we don&#8217;t have to
+<p>Note this is type information used only by the compiler and doesn’t bring any
+runtime overhead to our code. Inheritance is used here just so we don’t have to
 repeat declaring <span class="docutils literal"><span class="pre">m_event</span></span>, we could have just as well declared each struct
 independently. Now we can update the member tuple to store an event of each of
 these types:</p>

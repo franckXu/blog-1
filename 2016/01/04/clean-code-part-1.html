@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Hello World" href="../../../2015/12/28/hello-world.html" /><link rel="prev" title="Clean Code - Part 2" href="../07/clean-code-part-2.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.5.1',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -58,13 +58,13 @@ interns as four rules of thumb for writing cleaner code:</p>
 <li>Write readable code</li>
 </ul>
 <p>I will cover the first two points in this post and the remaining two in Part 2.
-I&#8217;m talking about C++ and C# throughout, but most of this should be applicable
+I’m talking about C++ and C# throughout, but most of this should be applicable
 to any object-oriented or multi-paradigm language.</p>
 <div class="section" id="write-less-code">
 <h2>Write Less Code</h2>
 <blockquote>
 <div><p>The number of defects found in open source projects was 0.45 defects/1,000
-lines of code, while the industry&#8217;s average is around 1 defect per&nbsp;1,000
+lines of code, while the industry’s average is around 1 defect per&nbsp;1,000
 lines of code for companies not using automated testing such as static
 analysis.</p>
 <p><em>Source:</em> <a class="reference external" href="http://www.infoq.com/news/2012/03/Defects-Open-Source-Commercial">InfoQ</a></p>
@@ -75,7 +75,7 @@ productivity yet, unfortunately, most developers still feel great when, at the
 end of the day, we wrote <em>insert high number</em> LoC.</p>
 <div class="section" id="how-to-write-less-code">
 <h3>How to write less code?</h3>
-<p>Two points to keep in mind: first, don&#8217;t reinvent the wheel - don&#8217;t write code
+<p>Two points to keep in mind: first, don’t reinvent the wheel - don’t write code
 if there is an existing library, internal to your company or open-source, that
 already does what needs to be done. Case in point, we refactored some code for
 a project (C#), extracted some interfaces, componentized things, and wrote a
@@ -124,8 +124,8 @@ language of choice. Many times, a block of code can be replaced with a simple
 library call. For C++, pay particular attention to the STL <span class="docutils literal"><span class="pre">&lt;algorithm&gt;</span></span> header
 and for C#, <span class="docutils literal"><span class="pre">System.Linq</span></span>. Both contain many of useful algorithms which can
 replace a lot of code.</p>
-<p>I also recommend watching Sean Parent&#8217;s <a class="reference external" href="https://channel9.msdn.com/Events/GoingNative/2013/Cpp-Seasoning">C++ Seasoning</a>
-talk, one of the best tech talks I&#8217;ve seen. The example he gives in the talk
+<p>I also recommend watching Sean Parent’s <a class="reference external" href="https://channel9.msdn.com/Events/GoingNative/2013/Cpp-Seasoning">C++ Seasoning</a>
+talk, one of the best tech talks I’ve seen. The example he gives in the talk
 (from the Chrome codebase) shows how a couple of lines of STL code can be used
 instead of a whole convoluted function:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="n">PanelBar</span><span class="o">::</span><span class="n">RepositionExpandedPanels</span><span class="p">(</span><span class="n">Panel</span><span class="o">*</span> <span class="n">fixed_panel</span><span class="p">)</span> <span class="p">{</span>
@@ -261,10 +261,10 @@ instead of a whole convoluted function:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>Code snippets borrowed from Sean Parent&#8217;s slides, I highly recommend watching the
+<p>Code snippets borrowed from Sean Parent’s slides, I highly recommend watching the
 whole talk.</p>
 <p>The key takeaway here is that there could be a standard library implementation or
-an external module that can greatly simplify your work and it&#8217;s a good practice
+an external module that can greatly simplify your work and it’s a good practice
 to always ask yourself <em>“do I really need to write this?”</em></p>
 </div>
 </div>
@@ -274,7 +274,7 @@ to always ask yourself <em>“do I really need to write this?”</em></p>
 <blockquote>
 <div><p>Cyclomatic complexity&nbsp;is a software metric (measurement), used to indicate
 the&nbsp;complexity&nbsp;of a program. It is a quantitative measure of the number of
-linearly independent paths through a program&#8217;s source code.</p>
+linearly independent paths through a program’s source code.</p>
 <dl class="docutils">
 <dt>The complexity M is then defined as</dt>
 <dd><em>M = E − N + 2P</em></dd>
@@ -300,7 +300,7 @@ less opportunities for bugs.</p>
 <p>One way to avoid conditional statements is to, whenever feasible, throw
 exceptions instead of propagating errors through return values.</p>
 <p>Here is an example of error code propagation through return values using the
-Windows API&#8217;s <span class="docutils literal"><span class="pre">HRESULT</span></span>:</p>
+Windows API’s <span class="docutils literal"><span class="pre">HRESULT</span></span>:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">HRESULT</span> <span class="nf">foo</span><span class="p">();</span> <span class="c1">// Does some work and returns an HRESULT</span>
 <span class="n">HRESULT</span> <span class="nf">bar</span><span class="p">();</span> <span class="c1">// Does some work and returns an HRESULT</span>
 
@@ -354,7 +354,7 @@ Windows API&#8217;s <span class="docutils literal"><span class="pre">HRESULT</sp
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>Error code return values come from the old days when exceptions didn&#8217;t exist
+<p>Error code return values come from the old days when exceptions didn’t exist
 and make code harder to read. That being said, for C++ specifically, you
 should be careful about throwing exceptions across DLL boundaries. In practice
 though, a lot of code in the shape of the above example appears within the
@@ -403,7 +403,7 @@ returns an object as opposed to null. All callers look like this:</p>
 <p>While there is a single <span class="docutils literal"><span class="pre">ActivityScope</span></span> implementation, there are hundreds of
 calls to <span class="docutils literal"><span class="pre">GetCurrentActivity</span></span>, all coming with a boilerplate null check. The
 Null Object alternative for this is to provide a <span class="docutils literal"><span class="pre">NullActivity</span></span>, for which
-<span class="docutils literal"><span class="pre">LogSuccess</span></span> and <span class="docutils literal"><span class="pre">LogFailure</span></span> don&#8217;t do anything. <span class="docutils literal"><span class="pre">ActivityScope</span></span> can return
+<span class="docutils literal"><span class="pre">LogSuccess</span></span> and <span class="docutils literal"><span class="pre">LogFailure</span></span> don’t do anything. <span class="docutils literal"><span class="pre">ActivityScope</span></span> can return
 <span class="docutils literal"><span class="pre">NullActivity</span></span> instead of null if there is no <span class="docutils literal"><span class="pre">Activity</span></span> in the context:</p>
 <div class="highlight-c#"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">NullActivity</span> <span class="p">:</span> <span class="n">IActivity</span>
 <span class="p">{</span>
@@ -427,7 +427,7 @@ Null Object alternative for this is to provide a <span class="docutils literal">
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>Now callers don&#8217;t need to worry about getting back a null, and can use the API
+<p>Now callers don’t need to worry about getting back a null, and can use the API
 like this:</p>
 <div class="highlight-c#"><div class="highlight"><pre><span></span><span class="n">activityScope</span><span class="p">.</span><span class="n">GetCurrentActivity</span><span class="p">().</span><span class="n">LogSuccess</span><span class="p">();</span>
 </pre></div>
@@ -462,7 +462,7 @@ data (<span class="docutils literal"><span class="pre">IdTypeToStringMap</span><
 </div>
 <div class="section" id="avoid-loops">
 <h3>Avoid loops</h3>
-<p>This goes back to the C++ Seasoning talk, namely the <em>No Raw Loops</em> guideline. Here&#8217;s
+<p>This goes back to the C++ Seasoning talk, namely the <em>No Raw Loops</em> guideline. Here’s
 a C# example: given a list of numbers, we want to get the square of all the odd
 numbers in the list.</p>
 <div class="highlight-c#"><div class="highlight"><pre><span></span><span class="kt">var</span> <span class="n">numbers</span> <span class="p">=</span> <span class="k">new</span> <span class="n">List</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;</span> <span class="p">{</span> <span class="m">6</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">2</span><span class="p">,</span> <span class="m">7</span><span class="p">,</span> <span class="m">3</span><span class="p">,</span> <span class="m">4</span><span class="p">,</span> <span class="m">9</span><span class="p">,</span> <span class="m">5</span><span class="p">,</span> <span class="m">8</span> <span class="p">};</span>
@@ -544,9 +544,9 @@ Blanket statements cannot be made about performance, as there are many factors
 involved: compiler, runtime, standard library, OS, architecture, whether code is
 on a hot path or not, and so on and so forth.</p>
 <p>Still, my recommendation is to use the library algorithms and, only if they
-become the bottleneck (which in most cases shouldn&#8217;t happen), look into replacing
+become the bottleneck (which in most cases shouldn’t happen), look into replacing
 them with handcrafted code. Another thing to keep in mind is that standard
-library authors know what they&#8217;re doing, so it&#8217;s very likely that library code is
+library authors know what they’re doing, so it’s very likely that library code is
 already pretty well optimized. I ran a simple wall clock benchmark for 1M
 iterations for some of the examples I used throughout the presentation (both the
 handcrafted and the library versions), and in all cases the code leveraging
@@ -556,7 +556,7 @@ library functions ran slightly faster.</p>
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
 <tr><td class="label"><a class="fn-backref" href="#id1">[*]</a></td><td>Cyclomatic complexity of this is actually higher when computed by looking
-at basic blocks (eg. from Visual Studio&#8217;s <span class="docutils literal"><span class="pre">Analyze</span></span> menu), since the compiler
+at basic blocks (eg. from Visual Studio’s <span class="docutils literal"><span class="pre">Analyze</span></span> menu), since the compiler
 will automatically add a finally block to dispose of the Linq-returned
 IEnumerables in case of exception. That being said, I prefer
 compiler-generated complexity to developer-generated complexity.</td></tr>
