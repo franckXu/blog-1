@@ -4,6 +4,7 @@ Sitemap
 .. toctree::
    :maxdepth: 1
 
+   2017/07/20/idris-totality-dependent-types-proofs
    2017/07/10/singletons
    2017/04/07/data-structures-and-algorithms
    2017/02/25/a-heterogeneous-event-store
