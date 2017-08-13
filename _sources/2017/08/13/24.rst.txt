@@ -1,0 +1,466 @@
+24
+==
+
+I recently learned about the `24 game <https://en.wikipedia.org/wiki/24_Game>`_.
+There are several variants of it, but the version I learned goes like this:
+
+    Take out the face cards and jokers from a deck and deal four cards (aces or
+    number cards). Aces can be used either as 1 or as 11. Using addition,
+    subtraction, multiplication, and division, with any grouping of operations
+    (paranthesis can be added anywhere), try to come up with an expression that
+    uses all four cards once and equals 24. Division is fractional, so ``5 / 2``
+    is ``2.5``.
+
+    For example for ``A 4 5 8`` we have :math:`(1 + 5) * (8 - 4)`.
+
+There is the problem of implementing an algorithm to find a solution given the
+cards as input.
+
+Brute force
+-----------
+
+A simple solution is to try all permutations of cards, all possible operations,
+and all possible groupings.
+
+In the general case, there are 24 ways to arrange the cards - permutations of 4
+which is ``4!``. Each ace doubles this number as we need to consider the case in
+which we use it as 1 and the case in which we use it as 11.
+
+There are 64 ways to combine operations, since we have 4 operations in 3
+possitions, which means :math:`4^3` total.
+
+We also have 5 possible groupings:
+
+.. math::
+
+   (x_0 \odot x_1) \oplus (x_2 \otimes x_3)
+
+   ((x_0 \odot x_1) \oplus x_2) \otimes x_3
+
+   (x_0 \odot (x_1 \oplus x_2)) \otimes x_3
+
+   x_0 \odot ((x_1 \oplus x_2) \otimes x_3)
+
+   x_0 \odot (x_1 \oplus (x_2 \otimes x_3))
+
+where :math:`\odot, \oplus, \otimes` are placeholders for any operators (they
+could potentially be the same operator).
+
+A simple solver implementation looks like this:
+
+.. code-block:: python
+
+    from itertools import permutations, product
+    from sys import argv
+
+    # Transform arguments to numbers, replace 'A' and 'a' with [1, 11]
+    args = sum([[1, 11] if arg in 'aA' else
+        [int(arg)] for arg in argv[1:5]], [])
+
+    # For every permutation of 4 arguments
+    for xs in permutations(args, 4):
+        # If we have more 1s and 11s then aces ignore this permutation
+        if sum(n == 1 or n == 11 for n in xs) > len(args) - 4:
+            continue
+
+        # For every possible combination of 3 operators
+        for ops in product('+-*/', repeat=3):
+            # For every possible grouping
+            for exp in ['({} {} {}) {} ({} {} {})',
+                        '(({} {} {}) {} {}) {} {}',
+                        '({} {} ({} {} {})) {} {}',
+                        '{} {} ({} {} ({} {} {}))',
+                        '{} {} (({} {} {}) {} {})']:
+
+                # Place operands and operators in expression
+                exp = exp.format(xs[0], ops[0], xs[1], ops[1], xs[2],
+                    ops[2], xs[3])
+
+                try:
+                    # If expression evaluates to 24, we found a solution
+                    if eval(exp) == 24:
+                        print(exp)
+                        exit()
+                except ZeroDivisionError:
+                    # Ignore division by zero errors
+                    pass
+
+    # If we get here we tried all combinations and couldn't
+    # find any solution
+    print('No solution')
+
+We have ten possible cards (ace and number cards), and taking combination with
+repetition of 4 cards, we have :math:`\frac{(n + r - 1)!}{r! * (n - 1)!}` for
+:math:`n = 10, r = 4`, so a total of :math:`\frac{(10 + 4 - 1)!}{4! * (10 - 1)!}
+= 715` possible games.
+
+Feeding all possible games to the code above, we can see that there are 117
+games which have no solution. The remaining 598 games are solvable.
+
+We can optimize the above solution further by observing that we only need three
+of the five groupings to cover all cases. Take, for example,
+:math:`x_0 \odot ((x_1 \oplus x_2) \otimes x_3)`. Now if :math:`\odot` is a
+commutative operation (addition or multiplication), we can rewrite this to the
+equivalent :math:`((x_1 \oplus x_2) \otimes x_3) \odot x_0`, and since we any
+way take all permuations of arguments and operators, this ends up getting
+covered by the :math:`((x_0 \odot x_1) \oplus x_2) \otimes x_3` case. For
+non-commutative operations, for example subtraction, notice that if we do have
+a solution :math:`x_0 - ((x_1 \oplus x_2) \otimes x_3) = 24`, since :math:`x_0`
+is at most 11, it means we need to subtract a negative number from it in order
+to get 24. This implies that at least :math:`\oplus` or :math:`\otimes` is also
+a subtraction. If :math:`\otimes` is a subtraction, we can rewrite the
+expression :math:`x_0 - ((x_1 \oplus x_2) - x_3)` as :math:`(x_0 + x_3) -
+(x_1 \oplus x_2)`. If :math:`\otimes` is not a subtraction but :math:`\oplus`
+is, we have :math:`x_0 - ((x_1 - x_2) \otimes x_3)` which is equivalent with
+:math:`x_0 - (- (x_2 - x_1) \otimes x_3)`. If :math:`\otimes` is addition, this
+becomes :math:`x_0 - (x_3 - (x_2 - x_1)) = (x_0 - x_3) + (x_2 - x_1)`. If
+:math:`\otimes` is multiplication or division, this becomes :math:`x_0 - (-
+(x_2 - x_1) \otimes x_3) = x_0 + ((x_2 - x_1) \otimes x_3) = ((x_2 - x_1)
+\otimes x_3) + x_0`.
+
+Similar rewrites can be done if :math:`\odot` is division by observing that we
+would have to divide with a fractional number in order to get 24, so at least
+one of :math:`\oplus` or :math:`\otimes` is also a division. This means we only
+need the groupings
+
+.. math::
+
+   (x_0 \odot x_1) \oplus (x_2 \otimes x_3)
+
+   ((x_0 \odot x_1) \oplus x_2) \otimes x_3
+
+   (x_0 \odot (x_1 \oplus x_2)) \otimes x_3
+
+to find all possible solutions. Our solution becomes:
+
+.. code-block:: python
+
+    from itertools import permutations, product
+    from sys import argv
+
+    args = sum([[1, 11] if arg in 'aA' else
+        [int(arg)] for arg in argv[1:5]], [])
+
+    for xs in permutations(args, 4):
+        if sum(n == 1 or n == 11 for n in xs) > len(args) - 4:
+            continue
+
+        for ops in product('+-*/', repeat=3):
+            for exp in ['({} {} {}) {} ({} {} {})',
+                        '(({} {} {}) {} {}) {} {}',
+                        '({} {} ({} {} {})) {} {}']:
+
+                exp = exp.format(xs[0], ops[0], xs[1], ops[1], xs[2],
+                    ops[2], xs[3])
+
+                try:
+                    if eval(exp) == 24:
+                        print(exp)
+                        exit()
+                except ZeroDivisionError:
+                    pass
+
+    print('No solution')
+
+This means that for games without aces, we need to check 24 (:math:`4!`)
+permutations of cards, 64 (:math:`4^3`) combinations of operators, and 3
+groupings. That is :math:`4! * 4^3 * 3 = 4608` tests. For games with aces, we
+double this number for each ace to account for both the 1 and 11 cases.
+
+Minimizing Number of Tests
+--------------------------
+
+A more interesting question is what is the minimum number of tests we need to
+perform in order to correctly find a solution for all solvable games.
+
+It is obvious that there are expressions which can never evaluate to 24 for any
+game. For example :math:`(x_0 - x_1) - x_2) - x_3`, since :math:`x_i \in \{1,
+2, ... 11\}`.
+
+It is also obvious that we perform a lot of redundant tests, since, for example,
+all of the below expression are equivalent for all possible inputs:
+
+.. math::
+
+   (x_0 + x_1) + (x_2 + x_3)
+
+   ((x_0 + x_1) + x_2) + x_3
+
+   (x_0 + (x_1 + x_2)) + x_3
+
+   (x_0 + x_1) + (x_3 + x_2)
+
+   ((x_0 + x_1) + x_3) + x_2
+
+   (x_0 + (x_1 + x_3)) + x_2
+
+   ...
+
+and so on for all permutations of :math:`x_0, x_1, x_2, x_3`.
+
+Let's generate all possible permutations of cards, combinations of operators,
+and groupings as above:
+
+.. code-block:: python
+
+    import itertools
+
+    operands = list(itertools.permutations(range(4), 4)) # 24 of these
+    operators = list(itertools.product('+-*/', repeat=3)) # 64 of these
+    groupings = ['({} {} {}) {} ({} {} {})',
+                 '(({} {} {}) {} {}) {} {}',
+                 '({} {} ({} {} {})) {} {}'] # 3 of these
+
+Note that here we are looking at all possible games so operands are permutations
+of indexes from 0 to 3, not actual cards. We can also take all possible games as
+combinations of 4 numbers from 1 to 11. Here we generate 1 and 11 games for each
+ace, so we end up with 1001 possible games instead of 715:
+
+.. code-block:: python
+
+    inputs = list(itertools.combinations_with_replacement(range(1, 12), 4))
+    # 1001 of these
+
+We can now write a function that, for a given game, generates all possible
+expressions which evaluate to 24:
+
+.. code-block:: python
+
+    def solutions_for(inp):
+        for xs in operands:
+            for ops in operators:
+                for exp in groupings:
+                    try:
+                        if eval(exp.format(inp[xs[0]], ops[0],
+                                inp[xs[1]], ops[1], inp[xs[2]],
+                                ops[2], inp[xs[3]])) == 24:
+                            yield exp.format(f'x{xs[0]}', ops[0],
+                                f'x{xs[1]}', ops[1], f'x{xs[2]}',
+                                ops[2], f'x{xs[3]}')
+                    except ZeroDivisionError:
+                        pass
+
+This is very similar with the initial solution, except that we don't have to
+worry about aces (we assume they are already converted to either 1 or 11), and
+we use the permutations of indexes to determine the order of terms as input is
+going to always be in increasing order (as generated by
+``itertools.combinations_with_replacement``). So instead of placing ``inp[0],
+op[0], inp[1], op[1], inp[2], op[2], inp[3]`` in the expression to be evaluated
+as we did in the initial solution, since ``inp`` is fixed, we come up with
+permutations of operands from ``operands``, so we are placing ``inp[xs[0]],
+op[0], inp[xs[1]], op[1], inp[xs[2]], op[2], inp[xs[3]]`` in the expression
+instead. We also return the expression replacing the operands with ``x0, x1, x2,
+x3`` since we don't care about their particular values, rather the expression
+we are using.
+
+For example calling:
+
+.. code-block:: python
+
+    list(solutions_for([2, 4, 7, 8]))
+
+yields
+
+.. code-block:: text
+
+    ['((x0 * x2) - x3) * x1', '(x1 * x2) - (x3 / x0)',
+     '((x2 * x0) - x3) * x1', '((x2 / x0) * x3) - x1',
+     '(x2 / (x0 / x3)) - x1', '(x2 * x1) - (x3 / x0)',
+     '((x2 * x3) / x0) - x1', '(x2 * (x3 / x0)) - x1',
+     '((x3 / x0) * x2) - x1', '(x3 / (x0 / x2)) - x1',
+     '((x3 * x2) / x0) - x1', '(x3 * (x2 / x0)) - x1']
+
+These are all possible expression which evaluate to 24 for the game ``2 4 7 8``.
+
+We can compute the list of all expressions which evaluate to 24 for every
+possible game:
+
+.. code-block:: python
+
+    results = []
+    for inp in inputs:
+        result = set(solutions_for(inp))
+
+        # Only append the set of expressions to the list if
+        # non-empty (if game has at least on solution)
+        if result:
+            results.append(result)
+
+We can take the union of the sets in ``results`` and get the set of all
+expressions that evaluate to 24 for at least one game:
+
+.. code-block:: python
+
+    expressions = set()
+    for result in results:
+        expressions = expressions.union(result)
+
+The size of this set is 1809. We are guaranteed that for any possible game, no
+other expression evaluates to 24 since we generated all possible solutions for
+all possible games. Which means we can test just these 1809 expression for any
+game and determine whether it is solvable or not, which is better than our
+original 4608 (or more for games with aces).
+
+Here we eliminated all expressions which never evaluate to 24, but we still have
+all the redundant tests in our set of expressions. It is also possible to have
+an expression :math:`E_0` which solves all games some expression :math:`E_1`
+solves, plus some other games. In which case we wouldn't ever need to test using
+:math:`E_1` since :math:`E_0` would still solve all games that :math:`E_1` would
+solve.
+
+More formally, ``expressions`` is our universe :math:`\mathcal{U}` of tests and
+``results`` is a set of sets :math:`R = \{ R_0, R_1 ... R_n \}` where
+:math:`R_i \subset \mathcal{U} \space \forall i \in \{ 0, 1 ... n \}`. We want
+to find the smallest set :math:`H \subset \mathcal{U}` such that :math:`H \cap
+R_i \neq \varnothing \space \forall i \in \{ 0, 1 ... n \}`.
+
+The good news is that this is actually a well known problem called **the hitting
+set problem** [#]_. The bad news is this problem is NP-hard. Even with clever
+pruning, trying out combinations of expressions to find the smallest :math:`H`
+has factorial complexity and even for small sets it quickly reaches astronomical
+numbers.
+
+Approximation
+-------------
+
+Since finding an optimal solution is too computationally expensive, we can at
+least attempt to find a *good enough* solution.
+
+The greedy algorithm which solves the hitting set problem works as follows:
+build up the solution by selecting at each step the element which hits the
+highest number of sets which were not hit so far.
+
+.. code-block:: python
+
+    # Start with an empty set
+    min_expressions = set()
+
+    # While we have unhit sets
+    while results:
+        min_expression, max_hitting = set(), 0
+
+        # For each expression in our universe
+        for expr in expressions:
+            hitting = sum([1 for result in results if expr in result])
+            if hitting > max_hitting:
+                min_expression, max_hitting = expr, hitting
+
+        # We found the expression hitting most unhit sets
+        min_expressions.add(min_expression)
+
+        # Remove hit sets from results
+        results = [result for result in results if
+            min_expression not in result]
+
+Interestingly enough, since we are working with sets and hashing is randomized
+in Python, I got different results across different runs of this algorithm. For
+cases where there are multiple max hitting sets (sets intersecting the same
+number of other sets), we non-deterministically select one, since iteration over
+sets is based on the randomized key order. I got solutions ranging from 110 to
+114 expressions. This gives us an upper bound of 110 - we must perform at most
+110 tests to find a solution for a game.
+
+We can use the above code to generate a set of expressions and dump it into a
+source file, together with the code to test input:
+
+.. code-block:: python
+
+    from sys import argv
+
+    expressions = [
+        "(x3 + x1) * (x2 - x0)", "((x2 * x3) - x0) / x1",
+        "(x3 + (x1 + x0)) * x2", "(x0 - x3) * (x1 - x2)",
+        "(x1 * x0) + (x2 - x3)", "((x2 * x0) * x3) - x1",
+        "(x3 + (x1 + x2)) + x0", "(x2 * x0) + (x3 - x1)",
+        "((x0 / x1) * x2) * x3", "(x1 * (x3 - x2)) + x0",
+        "((x3 + x2) - x0) + x1", "(x0 * x1) * (x3 - x2)",
+        "(x1 * x0) - (x2 + x3)", "(x3 / x1) * (x2 + x0)",
+        "((x2 + x1) + x3) * x0", "(x3 - x0) / (x1 / x2)",
+        "(x3 + x1) * (x2 / x0)", "(x1 * x3) + (x0 * x2)",
+        "((x3 * x1) + x2) + x0", "((x0 - x2) + x1) * x3",
+        "((x3 / x0) + x2) * x1", "(x3 + (x2 * x1)) - x0",
+        "(x1 * x3) - (x2 - x0)", "(x1 * (x3 - x0)) - x2",
+        "((x2 + x1) * x3) / x0", "(x0 * x3) - (x1 + x2)",
+        "(x1 + (x3 * x0)) * x2", "(x0 * (x2 + x3)) - x1",
+        "(x1 * x3) - (x0 + x2)", "(x3 - (x2 / x1)) * x0",
+        "(x0 - (x1 / x2)) * x3", "(x3 * x0) + (x2 - x1)",
+        "((x3 / x0) + x1) + x2", "(x3 + (x1 * x2)) + x0",
+        "(x0 + x2) * (x1 + x3)", "(x0 * (x3 - x1)) + x2",
+        "((x0 + x3) * x1) * x2", "(x2 * (x0 + x3)) / x1",
+        "(x2 - (x1 + x0)) * x3", "(x3 * x2) - (x0 / x1)",
+        "((x0 + x3) * x1) + x2", "((x0 * x3) + x1) - x2",
+        "(x2 + (x3 - x1)) * x0", "(x2 * (x0 + x1)) + x3",
+        "((x2 + x3) * x0) + x1", "(x0 - (x3 / x2)) * x1",
+        "((x0 + x2) - x3) * x1", "((x3 / x2) + x0) * x1",
+        "(x1 / x0) + (x2 + x3)", "((x1 * x0) - x2) * x3",
+        "((x0 + x1) + x2) * x3", "(x2 * (x3 - x1)) - x0",
+        "((x2 * x1) - x0) * x3", "((x3 - x1) * x2) + x0",
+        "(x3 / (x0 + x1)) * x2", "((x1 * x0) + x3) + x2",
+        "(x3 + x0) * (x2 - x1)", "(x2 - x0) * (x3 - x1)",
+        "((x3 / x0) * x2) + x1", "((x2 * x1) - x0) - x3",
+        "(x0 + (x3 - x1)) * x2", "(x0 * x2) / (x3 - x1)",
+        "((x3 * x2) - x1) / x0", "(x2 - (x0 / x3)) * x1",
+        "(x3 - x2) * (x0 + x1)", "(x0 * x2) - (x3 + x1)",
+        "((x2 - x0) * x3) + x1", "(x1 * (x3 - x0)) + x2",
+        "(x1 * (x0 + x3)) - x2", "((x0 + x1) * x3) + x2",
+        "((x1 - x2) + x3) * x0", "((x3 - x1) * x2) * x0",
+        "((x2 + x1) - x3) * x0", "(x1 + (x3 / x2)) * x0",
+        "(x2 / (x0 / x1)) + x3", "(x2 / (x3 - x0)) * x1",
+        "(x3 * x1) - (x0 * x2)", "((x1 + x0) * x2) * x3",
+        "(x1 - (x2 / x3)) * x0", "(x2 + (x3 * x0)) + x1",
+        "((x2 * x3) + x1) / x0", "(x3 - x0) * (x2 + x1)",
+        "(x1 * x3) + (x2 - x0)", "(x3 * (x2 - x0)) - x1",
+        "(x0 + (x1 - x3)) * x2", "(x1 * (x3 - x2)) - x0",
+        "(x0 + (x2 * x3)) - x1", "(x2 + x3) / (x0 / x1)",
+        "(x0 * x3) / (x2 - x1)", "(x2 - (x3 / x0)) * x1",
+        "(x0 - (x1 - x2)) * x3", "(x3 + x1) + (x2 * x0)",
+        "((x3 - x1) - x0) * x2", "(x1 * (x2 - x0)) - x3",
+        "(x2 + x0) * (x3 - x1)", "((x3 - x1) * x2) / x0",
+        "((x1 * x3) - x2) * x0", "((x1 + x3) * x0) - x2",
+        "((x3 - x2) + x0) * x1", "((x2 * x0) - x3) * x1",
+        "(x2 * (x1 + x0)) - x3", "(x0 + (x1 / x2)) * x3",
+        "((x2 - x1) * x3) + x0", "((x2 / x1) + x3) * x0",
+        "(x1 * x0) - (x2 / x3)", "((x3 * x0) - x1) * x2",
+        "((x2 - x0) * x1) + x3", "((x1 + x0) * x3) - x2",
+        "(x1 * x0) / (x3 - x2)", "(x3 * (x1 - x0)) - x2"
+    ]
+
+    # Since we no longer try all permutations of cards, we
+    # need to split inputs containing aces by replacing aces
+    # with both 1 and 11
+    def get_input(args):
+        if 'A' not in args:
+            return [args]
+
+        idx = args.index('A')
+        return get_input(args[:idx] + ['1'] + args[idx+1:]
+            ) + get_input(args[:idx] + ['11'] + args[idx+1:])
+
+    for args in get_input(argv[1:5]):
+        # We also expect inputs to be in sorted order now
+        args = sorted([int(arg) for arg in args])
+
+        for exp in expressions:
+            for i in range(4):
+                # Replace x0 ... x3 with args[0] ... args[3]
+                exp = exp.replace('x' + str(i), str(args[i]))
+            try:
+                if eval(exp) == 24:
+                    print(exp)
+                    return
+            except ZeroDivisionError:
+                pass
+
+    print('No solution')
+
+We can test this by ensuring that we still see 117 games without solution when
+we try to solve all 715 games, which is indeed the case. We reduced the number
+of tests we perform on a game from 4608 to 110.
+
+----
+
+.. [#] Wikipedia explains the `set cover problem <https://en.wikipedia.org/wiki/Set_cover_problem>`_
+       which is equivalent to the hitting set problem (one can be converted to
+       the other).
+
+.. comments::
