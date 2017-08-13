@@ -115,8 +115,8 @@ is, we have :math:`x_0 - ((x_1 - x_2) \otimes x_3)` which is equivalent with
 :math:`x_0 - (- (x_2 - x_1) \otimes x_3)`. If :math:`\otimes` is addition, this
 becomes :math:`x_0 - (x_3 - (x_2 - x_1)) = (x_0 - x_3) + (x_2 - x_1)`. If
 :math:`\otimes` is multiplication or division, this becomes :math:`x_0 - (-
-(x_2 - x_1) \otimes x_3) = x_0 + ((x_2 - x_1) \otimes x_3) = ((x_2 - x_1)
-\otimes x_3) + x_0`.
+(x_2 - x_1) \otimes x_3)` = :math:`x_0 + ((x_2 - x_1) \otimes x_3)` =
+:math:`((x_2 - x_1) \otimes x_3) + x_0``.
 
 Similar rewrites can be done if :math:`\odot` is division by observing that we
 would have to divide with a fractional number in order to get 24, so at least
