@@ -102,8 +102,8 @@ expression <span class="math">\(x_0 - ((x_1 \oplus x_2) - x_3)\)</span> as <span
 (x_1 \oplus x_2)\)</span>. If <span class="math">\(\otimes\)</span> is not a subtraction but <span class="math">\(\oplus\)</span>
 is, we have <span class="math">\(x_0 - ((x_1 - x_2) \otimes x_3)\)</span> which is equivalent with
 <span class="math">\(x_0 - (- (x_2 - x_1) \otimes x_3)\)</span>. If <span class="math">\(\otimes\)</span> is addition, this
-becomes <span class="math">\(x_0 - (x_3 - (x_2 - x_1)) = (x_0 - x_3) + (x_2 - x_1)\)</span>. If
-<span class="math">\(\otimes\)</span> is multiplication or division, this becomes <span class="math">\(x_0 - (-
+becomes <span class="math">\(x_0 - (x_3 - (x_2 - x_1))\)</span> = <span class="math">\((x_0 - x_3) + (x_2 - x_1)\)</span>.
+If <span class="math">\(\otimes\)</span> is multiplication or division, this becomes <span class="math">\(x_0 - (-
 (x_2 - x_1) \otimes x_3)\)</span> = <span class="math">\(x_0 + ((x_2 - x_1) \otimes x_3)\)</span> =
 <span class="math">\(((x_2 - x_1) \otimes x_3) + x_0`\)</span>.</p>
 <p>Similar rewrites can be done if <span class="math">\(\odot\)</span> is division by observing that we
@@ -227,7 +227,7 @@ possible game:</p>
     <span class="n">result</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">solutions_for</span><span class="p">(</span><span class="n">inp</span><span class="p">))</span>
 
     <span class="c1"># Only append the set of expressions to the list if</span>
-    <span class="c1"># non-empty (if game has at least on solution)</span>
+    <span class="c1"># non-empty (if game has at least one solution)</span>
     <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
         <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 </pre></div>
