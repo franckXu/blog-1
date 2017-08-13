@@ -113,8 +113,8 @@ expression :math:`x_0 - ((x_1 \oplus x_2) - x_3)` as :math:`(x_0 + x_3) -
 (x_1 \oplus x_2)`. If :math:`\otimes` is not a subtraction but :math:`\oplus`
 is, we have :math:`x_0 - ((x_1 - x_2) \otimes x_3)` which is equivalent with
 :math:`x_0 - (- (x_2 - x_1) \otimes x_3)`. If :math:`\otimes` is addition, this
-becomes :math:`x_0 - (x_3 - (x_2 - x_1)) = (x_0 - x_3) + (x_2 - x_1)`. If
-:math:`\otimes` is multiplication or division, this becomes :math:`x_0 - (-
+becomes :math:`x_0 - (x_3 - (x_2 - x_1))` = :math:`(x_0 - x_3) + (x_2 - x_1)`.
+If :math:`\otimes` is multiplication or division, this becomes :math:`x_0 - (-
 (x_2 - x_1) \otimes x_3)` = :math:`x_0 + ((x_2 - x_1) \otimes x_3)` =
 :math:`((x_2 - x_1) \otimes x_3) + x_0``.
 
@@ -282,7 +282,7 @@ possible game:
         result = set(solutions_for(inp))
 
         # Only append the set of expressions to the list if
-        # non-empty (if game has at least on solution)
+        # non-empty (if game has at least one solution)
         if result:
             results.append(result)
 
