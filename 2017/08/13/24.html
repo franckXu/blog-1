@@ -193,7 +193,7 @@ perform in order to correctly find a solution for all solvable games.</p>
 game. For example <span class="math">\((x_0 - x_1) - x_2) - x_3\)</span>, since <span class="math">\(x_i \in \{1,
 2, ... 11\}\)</span>.</p>
 <p>It is also obvious that we perform a lot of redundant tests, since, for example,
-all of the below expression are equivalent for all possible inputs:</p>
+all of the below expressions are equivalent for all possible inputs:</p>
 <div class="math">
 \[ \begin{align}\begin{aligned}(x_0 + x_1) + (x_2 + x_3)\\((x_0 + x_1) + x_2) + x_3\\(x_0 + (x_1 + x_2)) + x_3\\(x_0 + x_1) + (x_3 + x_2)\\((x_0 + x_1) + x_3) + x_2\\(x_0 + (x_1 + x_3)) + x_2\\...\end{aligned}\end{align} \]</div>
 <p>and so on for all permutations of <span class="math">\(x_0, x_1, x_2, x_3\)</span>.</p>
@@ -429,6 +429,133 @@ source file, together with the code to test input:</p>
 <p>We can test this by ensuring that we still see 117 games without solution when
 we try to solve all 715 games, which is indeed the case. We reduced the number
 of tests we perform on a game from 4608 to 110.</p>
+</div>
+<div class="section" id="unique-expressions">
+<h2>Unique Expressions</h2>
+<p>There are a couple of other interesting facts we can determine from the set of
+all solutions for all games: the set of unique expressions and out of them, the
+subset of expressions which are absolutely required in order to solve all
+possible games.</p>
+<p>By <em>unique expression</em> I mean picking an expression and eliminating all other
+equivalent expressions from the set (for example keeping only
+<span class="math">\(((x_0 + x_1) + x_2) + x_3\)</span> while dropping all other permutations and
+groupings of addition). We can easily do this by defining equivalent expressions
+as expressions which solve the exact same games. So if <span class="math">\(E_1\)</span> solves some
+subset <span class="math">\(R_{E_1}\)</span> of <span class="math">\(R\)</span>, an expression <span class="math">\(E_2\)</span> is equivalent to
+it if the set <span class="math">\(R_{E_2}\)</span> of games it solves is equal to <span class="math">\(R_{E_1}\)</span>. We
+can define equivalence as:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">equivalent</span><span class="p">(</span><span class="n">exp1</span><span class="p">,</span> <span class="n">exp2</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">exp1</span> <span class="ow">in</span> <span class="n">result</span> <span class="ow">and</span> <span class="n">exp2</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">if</span> <span class="n">exp1</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span> <span class="ow">and</span> <span class="n">exp2</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+    <span class="k">return</span> <span class="bp">True</span>
+</pre></div>
+</div>
+<p>With this function, we can go over our univese <span class="math">\(\mathcal{U}\)</span> of
+expressions and eliminate all expressions which are the equivalent of another
+expression:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">expressions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">expressions</span><span class="p">)</span>
+<span class="n">i1</span><span class="p">,</span> <span class="n">i2</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+<span class="k">while</span> <span class="n">i1</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">expressions</span><span class="p">):</span>
+    <span class="n">i2</span> <span class="o">=</span> <span class="n">i1</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">while</span> <span class="n">i2</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">expressions</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">equivalent</span><span class="p">(</span><span class="n">expressions</span><span class="p">[</span><span class="n">i1</span><span class="p">],</span> <span class="n">expressions</span><span class="p">[</span><span class="n">i2</span><span class="p">]):</span>
+            <span class="n">expressions</span> <span class="o">=</span> <span class="n">expressions</span><span class="p">[:</span><span class="n">i2</span><span class="p">]</span> <span class="o">+</span> <span class="n">expressions</span><span class="p">[</span><span class="n">i2</span><span class="o">+</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">i2</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">i1</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="n">expressions</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">expressions</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The resulting set of unique expressions has 273 elements. This means these 273
+expressions are enough to solve all possible games and, more so, adding any
+other expression to this set would be redundant. This is a lower bound than our
+original 1809 expressions which solve games, but higher than our previously
+found bound of 110 expressions. Note that this data point is not useful in the
+greedy algorithm shown in the previous section, since once that algorithm picks
+an expression, it would automatically discard all other equivalent expressions,
+since it eliminates all games which are solved by the picked expression from the
+search space. This should put the problem in combinatorial perspective though,
+as we need to select from 273 candidates to find the smallest hitting set.</p>
+<p>Once we have eliminated equivalent expressions, we can update the set of game
+results accordingly, by intersecting each <span class="math">\(R_i\)</span> with our new
+<span class="math">\(\mathcal{U}\)</span>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">expressions</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">result</span><span class="p">))</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Now we can search <span class="math">\(R\)</span> for sets with a single element. This will give us
+expressions which must be part of our solution, otherwise eliminating them would
+cause a solvable game to appear as unsolvable:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">min_expressions</span><span class="p">,</span> <span class="n">games_with_unique_result</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(),</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">min_expressions</span> <span class="o">=</span> <span class="n">min_expressions</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">games_with_unique_result</span> <span class="o">+=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p>Turns out there are 62 expressions which (ignoring equivalences) provide unique
+solutions to games. They are:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>{&#39;(x1 + x2) - (x0 - x3)&#39;, &#39;(x1 + x0) * (x2 * x3)&#39;,
+ &#39;((x1 + x0) - x2) * x3&#39;, &#39;((x3 + x2) * x0) + x1&#39;,
+ &#39;(x0 + x3) * (x2 - x1)&#39;, &#39;((x2 * x1) / x0) + x3&#39;,
+ &#39;((x3 - x1) * x2) - x0&#39;, &#39;(x1 - (x3 / x2)) * x0&#39;,
+ &#39;((x1 * x0) - x2) - x3&#39;, &#39;((x2 - x1) - x0) * x3&#39;,
+ &#39;((x1 * x0) - x3) + x2&#39;, &#39;(x2 + (x1 / x0)) + x3&#39;,
+ &#39;((x1 + x3) - x2) * x0&#39;, &#39;(x2 - (x3 - x0)) * x1&#39;,
+ &#39;(x2 + (x1 + x3)) + x0&#39;, &#39;(x1 * x0) - (x2 / x3)&#39;,
+ &#39;(x3 + (x2 * x1)) - x0&#39;, &#39;((x0 * x1) + x3) + x2&#39;,
+ &#39;(x2 + (x1 - x3)) * x0&#39;, &#39;((x0 * x1) - x2) * x3&#39;,
+ &#39;(x2 * x0) + (x1 + x3)&#39;, &#39;(x2 + (x3 * x0)) + x1&#39;,
+ &#39;((x0 * x3) - x1) + x2&#39;, &#39;(x0 + (x2 - x1)) * x3&#39;,
+ &#39;((x3 * x1) - x2) - x0&#39;, &#39;(x1 - x2) * (x0 - x3)&#39;,
+ &#39;((x3 - x0) - x1) * x2&#39;, &#39;(x1 * (x2 - x0)) - x3&#39;,
+ &#39;(x0 / (x3 - x2)) * x1&#39;, &#39;((x0 + x1) - x3) * x2&#39;,
+ &#39;((x3 - x1) + x0) * x2&#39;, &#39;((x1 + x0) * x3) + x2&#39;,
+ &#39;((x1 + x0) * x3) - x2&#39;, &#39;(x3 / x1) * (x2 + x0)&#39;,
+ &#39;((x3 - x1) * x0) + x2&#39;, &#39;(x3 * (x2 - x0)) + x1&#39;,
+ &#39;((x0 + x2) + x1) * x3&#39;, &#39;(x2 * (x0 + x1)) - x3&#39;,
+ &#39;(x2 * x1) / (x3 - x0)&#39;, &#39;(x3 + x0) + (x1 * x2)&#39;,
+ &#39;(x0 + (x3 * x2)) - x1&#39;, &#39;(x0 - x2) * (x1 - x3)&#39;,
+ &#39;((x2 + x3) * x1) / x0&#39;, &#39;(x2 / x0) * (x3 + x1)&#39;,
+ &#39;(x3 * (x1 - x0)) - x2&#39;, &#39;((x3 + x1) * x0) - x2&#39;,
+ &#39;((x0 + x3) * x1) - x2&#39;, &#39;((x3 + x2) * x0) - x1&#39;,
+ &#39;(x3 + x0) / (x1 / x2)&#39;, &#39;(x0 + x2) * (x3 - x1)&#39;,
+ &#39;(x2 * (x3 - x1)) + x0&#39;, &#39;((x0 * x3) - x2) - x1&#39;,
+ &#39;((x1 * x2) - x3) - x0&#39;, &#39;(x3 - (x1 - x2)) * x0&#39;,
+ &#39;(x2 * x3) / (x1 + x0)&#39;, &#39;(x3 - x2) * (x0 + x1)&#39;,
+ &#39;(x0 / (x3 - x1)) * x2&#39;, &#39;((x2 * x3) - x0) / x1&#39;,
+ &#39;(x2 * (x3 - x0)) / x1&#39;, &#39;((x1 + x0) * x2) + x3&#39;,
+ &#39;(x1 * (x2 - x0)) + x3&#39;, &#39;(x3 * (x2 - x1)) + x0&#39;}
+</pre></div>
+</div>
+<p>This is a lower bound for our problem, since at the very least we need these
+expressions in order to correcly solve all possible games. We also computed the
+number of games with a unique solution, which is 122. The remaining games are
+either unsolvable or admit multiple solutions. Note we considered aces as 1s and
+aces as 11s as distinct games in the above analysis. We could search for
+equivalent games (number of 1s and 11s is the same) and see if we can eliminate
+some expressions from the list above. This is left as an exercise to the reader.</p>
+</div>
+<div class="section" id="summary">
+<h2>Summary</h2>
+<ul class="simple">
+<li>There are 715 distinct games in 24, with 117 of them unsolvable and the
+remaining 598 having at least one solution.</li>
+<li>A brute-force solution checks 4608 expressions (double for each ace) to
+determine that a game is unsolvable.</li>
+<li>Only 1809 expressions (out of the 4608) solve at least one game.</li>
+<li>Finding the minimum number of expressions we need to check in order to find
+whether a game has a solution is equivalent to the hitting set problem which
+is NP-hard.</li>
+<li>A greedy algorithm finds a set of 110 expressions which is enough to find a
+solution for any solvable game.</li>
+<li>Removing equivalent expressions, we are left with 273 expressions which all
+solve at least one different game than any other. Out of these, 62 expressions
+are unique solutions to 122 games, so they must necessarily be checked in
+order to find solutions for all possible games.</li>
+</ul>
 <hr class="docutils" />
 <table class="docutils footnote" frame="void" id="id3" rules="none">
 <colgroup><col class="label" /><col /></colgroup>

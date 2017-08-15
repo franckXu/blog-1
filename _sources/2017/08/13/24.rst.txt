@@ -178,7 +178,7 @@ game. For example :math:`(x_0 - x_1) - x_2) - x_3`, since :math:`x_i \in \{1,
 2, ... 11\}`.
 
 It is also obvious that we perform a lot of redundant tests, since, for example,
-all of the below expression are equivalent for all possible inputs:
+all of the below expressions are equivalent for all possible inputs:
 
 .. math::
 
@@ -456,6 +456,145 @@ source file, together with the code to test input:
 We can test this by ensuring that we still see 117 games without solution when
 we try to solve all 715 games, which is indeed the case. We reduced the number
 of tests we perform on a game from 4608 to 110.
+
+Unique Expressions
+------------------
+
+There are a couple of other interesting facts we can determine from the set of
+all solutions for all games: the set of unique expressions and out of them, the
+subset of expressions which are absolutely required in order to solve all
+possible games.
+
+By *unique expression* I mean picking an expression and eliminating all other
+equivalent expressions from the set (for example keeping only
+:math:`((x_0 + x_1) + x_2) + x_3` while dropping all other permutations and
+groupings of addition). We can easily do this by defining equivalent expressions
+as expressions which solve the exact same games. So if :math:`E_1` solves some
+subset :math:`R_{E_1}` of :math:`R`, an expression :math:`E_2` is equivalent to
+it if the set :math:`R_{E_2}` of games it solves is equal to :math:`R_{E_1}`. We
+can define equivalence as:
+
+.. code-block:: python
+
+   def equivalent(exp1, exp2):
+       for result in results:
+           if exp1 in result and exp2 not in result:
+               return False
+           if exp1 not in result and exp2 in result:
+               return False
+       return True
+
+With this function, we can go over our univese :math:`\mathcal{U}` of
+expressions and eliminate all expressions which are the equivalent of another
+expression:
+
+.. code-block:: python
+
+   expressions = list(expressions)
+   i1, i2 = 0, 0
+   while i1 < len(expressions):
+       i2 = i1 + 1
+       while i2 < len(expressions):
+           if equivalent(expressions[i1], expressions[i2]):
+               expressions = expressions[:i2] + expressions[i2+1:]
+           else:
+               i2 += 1
+       i1 += 1
+   expressions = set(expressions)
+
+The resulting set of unique expressions has 273 elements. This means these 273
+expressions are enough to solve all possible games and, more so, adding any
+other expression to this set would be redundant. This is a lower bound than our
+original 1809 expressions which solve games, but higher than our previously
+found bound of 110 expressions. Note that this data point is not useful in the
+greedy algorithm shown in the previous section, since once that algorithm picks
+an expression, it would automatically discard all other equivalent expressions,
+since it eliminates all games which are solved by the picked expression from the
+search space. This should put the problem in combinatorial perspective though,
+as we need to select from 273 candidates to find the smallest hitting set.
+
+Once we have eliminated equivalent expressions, we can update the set of game
+results accordingly, by intersecting each :math:`R_i` with our new
+:math:`\mathcal{U}`:
+
+.. code-block:: python
+
+   results = [list(expressions.intersection(result)) for result in results]
+
+Now we can search :math:`R` for sets with a single element. This will give us
+expressions which must be part of our solution, otherwise eliminating them would
+cause a solvable game to appear as unsolvable:
+
+.. code-block:: python
+
+   min_expressions, games_with_unique_result = set(), 0
+   for result in results:
+       if len(result) == 1:
+           min_expressions = min_expressions.union(result[0])
+           games_with_unique_result += 1
+
+Turns out there are 62 expressions which (ignoring equivalences) provide unique
+solutions to games. They are:
+
+.. code-block:: text
+
+   {'(x1 + x2) - (x0 - x3)', '(x1 + x0) * (x2 * x3)',
+    '((x1 + x0) - x2) * x3', '((x3 + x2) * x0) + x1',
+    '(x0 + x3) * (x2 - x1)', '((x2 * x1) / x0) + x3',
+    '((x3 - x1) * x2) - x0', '(x1 - (x3 / x2)) * x0',
+    '((x1 * x0) - x2) - x3', '((x2 - x1) - x0) * x3',
+    '((x1 * x0) - x3) + x2', '(x2 + (x1 / x0)) + x3',
+    '((x1 + x3) - x2) * x0', '(x2 - (x3 - x0)) * x1',
+    '(x2 + (x1 + x3)) + x0', '(x1 * x0) - (x2 / x3)',
+    '(x3 + (x2 * x1)) - x0', '((x0 * x1) + x3) + x2',
+    '(x2 + (x1 - x3)) * x0', '((x0 * x1) - x2) * x3',
+    '(x2 * x0) + (x1 + x3)', '(x2 + (x3 * x0)) + x1',
+    '((x0 * x3) - x1) + x2', '(x0 + (x2 - x1)) * x3',
+    '((x3 * x1) - x2) - x0', '(x1 - x2) * (x0 - x3)',
+    '((x3 - x0) - x1) * x2', '(x1 * (x2 - x0)) - x3',
+    '(x0 / (x3 - x2)) * x1', '((x0 + x1) - x3) * x2',
+    '((x3 - x1) + x0) * x2', '((x1 + x0) * x3) + x2',
+    '((x1 + x0) * x3) - x2', '(x3 / x1) * (x2 + x0)',
+    '((x3 - x1) * x0) + x2', '(x3 * (x2 - x0)) + x1',
+    '((x0 + x2) + x1) * x3', '(x2 * (x0 + x1)) - x3',
+    '(x2 * x1) / (x3 - x0)', '(x3 + x0) + (x1 * x2)',
+    '(x0 + (x3 * x2)) - x1', '(x0 - x2) * (x1 - x3)',
+    '((x2 + x3) * x1) / x0', '(x2 / x0) * (x3 + x1)',
+    '(x3 * (x1 - x0)) - x2', '((x3 + x1) * x0) - x2',
+    '((x0 + x3) * x1) - x2', '((x3 + x2) * x0) - x1',
+    '(x3 + x0) / (x1 / x2)', '(x0 + x2) * (x3 - x1)',
+    '(x2 * (x3 - x1)) + x0', '((x0 * x3) - x2) - x1',
+    '((x1 * x2) - x3) - x0', '(x3 - (x1 - x2)) * x0',
+    '(x2 * x3) / (x1 + x0)', '(x3 - x2) * (x0 + x1)',
+    '(x0 / (x3 - x1)) * x2', '((x2 * x3) - x0) / x1',
+    '(x2 * (x3 - x0)) / x1', '((x1 + x0) * x2) + x3',
+    '(x1 * (x2 - x0)) + x3', '(x3 * (x2 - x1)) + x0'}
+
+This is a lower bound for our problem, since at the very least we need these
+expressions in order to correcly solve all possible games. We also computed the
+number of games with a unique solution, which is 122. The remaining games are
+either unsolvable or admit multiple solutions. Note we considered aces as 1s and
+aces as 11s as distinct games in the above analysis. We could search for
+equivalent games (number of 1s and 11s is the same) and see if we can eliminate
+some expressions from the list above. This is left as an exercise to the reader.
+
+Summary
+-------
+
+* There are 715 distinct games in 24, with 117 of them unsolvable and the
+  remaining 598 having at least one solution.
+* A brute-force solution checks 4608 expressions (double for each ace) to
+  determine that a game is unsolvable.
+* Only 1809 expressions (out of the 4608) solve at least one game.
+* Finding the minimum number of expressions we need to check in order to find
+  whether a game has a solution is equivalent to the hitting set problem which
+  is NP-hard.
+* A greedy algorithm finds a set of 110 expressions which is enough to find a
+  solution for any solvable game.
+* Removing equivalent expressions, we are left with 273 expressions which all
+  solve at least one different game than any other. Out of these, 62 expressions
+  are unique solutions to 122 games, so they must necessarily be checked in
+  order to find solutions for all possible games.
 
 ----
 
