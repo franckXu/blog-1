@@ -4,6 +4,7 @@ Sitemap
 .. toctree::
    :maxdepth: 1
 
+   2017/12/10/binary-relations
    2017/11/09/notes-on-unit-testing
    2017/08/13/24
    2017/07/20/idris-totality-dependent-types-proofs
