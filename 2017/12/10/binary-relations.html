@@ -190,12 +190,12 @@ sequence work.</p>
 algorithm to traverse a data structure and find an object equivalent to a given
 object. The C++ standard library algorithm <span class="docutils literal"><span class="pre">find</span></span> is an example of such an
 algorithm.</p>
-<p>Having a total order relation (eg. <span class="docutils literal"><span class="pre">&lt;=</span></span>), allows us to implement binary search
-over an ordered set of objects. A total order relation also enables comparison
-sort algorithms.</p>
-<p>We need a strict weak order to be able to determine a minimum or a maximum
-element from a set of objects (<span class="docutils literal"><span class="pre">min_element</span></span> and <span class="docutils literal"><span class="pre">max_element</span></span> algorithms in
-C++).</p>
+<p>Having a total order relation (eg. <span class="docutils literal"><span class="pre">&lt;=</span></span>) or a strict weak order (eg. <span class="docutils literal"><span class="pre">&lt;</span></span>),
+allows us to implement binary search over an ordered set of objects. A total
+order or strict weak order relation also enables comparison sort algorithms.</p>
+<p>Similarly, we need a total oreder or strict weak order to be able to determine a
+minimum or a maximum element from a set of objects (<span class="docutils literal"><span class="pre">min_element</span></span> and
+<span class="docutils literal"><span class="pre">max_element</span></span> algorithms in C++).</p>
 </div>
 <div class="section" id="summary">
 <h2>Summary</h2>
@@ -216,7 +216,7 @@ symmetric or antisymmetric, transitive, total etc.</li>
 </ul>
 </li>
 <li>Certain algorithms require the types they operate on to have relations with
-certain properties</li>
+certain properties.</li>
 </ul>
 </div>
 </div>
