@@ -362,8 +362,6 @@ Can we abstract away the data structure we are partitioning? The answer is
 <div class="highlight-c++"><div class="highlight"><pre><span/><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">It</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Pred</span><span class="o">&gt;</span>
 <span class="kt">void</span> <span class="n">partition</span><span class="p">(</span><span class="n">It</span> <span class="n">first</span><span class="p">,</span> <span class="n">It</span> <span class="n">last</span><span class="p">,</span> <span class="n">Pred</span> <span class="n">pred</span><span class="p">)</span>
 <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">first</span> <span class="o">==</span> <span class="n">last</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-
     <span class="k">for</span> <span class="p">(;;)</span>
     <span class="p">{</span>
         <span class="k">while</span> <span class="p">(</span><span class="n">first</span> <span class="o">!=</span> <span class="n">last</span> <span class="o">&amp;&amp;</span> <span class="n">pred</span><span class="p">(</span><span class="o">*</span><span class="n">first</span><span class="p">))</span>
@@ -385,11 +383,10 @@ Can we abstract away the data structure we are partitioning? The answer is
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>The implementation is virtually the same. We add an initial check to ensure we
-are not trying to operate on an empty range. We also get rid of <span class="docutils literal"><span class="pre">i</span></span> and <span class="docutils literal"><span class="pre">j</span></span>,
-as we are using the iterators provided as arguments for traversal. The
-implementation does not increase in complexity, but is now usable beyond
-vectors. For example we can now partition a C-style array:</p>
+<p>The implementation is virtually the same. We get rid of <span class="docutils literal"><span class="pre">i</span></span> and <span class="docutils literal"><span class="pre">j</span></span>, as we
+are using the iterators provided as arguments for traversal. The implementation
+does not increase in complexity, but is now usable beyond vectors. For example
+we can now partition a C-style array:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span/><span class="kt">void</span> <span class="nf">evens_before_odds</span><span class="p">(</span><span class="kt">int</span> <span class="n">arr</span><span class="p">[],</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="n">partition</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">arr</span> <span class="o">+</span> <span class="n">n</span><span class="p">,</span> <span class="p">[](</span><span class="kt">int</span> <span class="n">i</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">;</span> <span class="p">});</span>
@@ -405,8 +402,6 @@ we should return it:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span/><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">It</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Pred</span><span class="o">&gt;</span>
 <span class="k">auto</span> <span class="n">partition</span><span class="p">(</span><span class="n">It</span> <span class="n">first</span><span class="p">,</span> <span class="n">It</span> <span class="n">last</span><span class="p">,</span> <span class="n">Pred</span> <span class="n">pred</span><span class="p">)</span>
 <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">first</span> <span class="o">==</span> <span class="n">last</span><span class="p">)</span> <span class="k">return</span> <span class="n">first</span><span class="p">;</span>
-
     <span class="k">for</span> <span class="p">(;;)</span>
     <span class="p">{</span>
         <span class="k">while</span> <span class="p">(</span><span class="n">first</span> <span class="o">!=</span> <span class="n">last</span> <span class="o">&amp;&amp;</span> <span class="n">pred</span><span class="p">(</span><span class="o">*</span><span class="n">first</span><span class="p">))</span>

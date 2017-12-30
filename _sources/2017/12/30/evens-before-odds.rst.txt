@@ -373,8 +373,6 @@ Can we abstract away the data structure we are partitioning? The answer is
     template <typename It, typename Pred>
     void partition(It first, It last, Pred pred)
     {
-        if (first == last) return;
-
         for (;;)
         {
             while (first != last && pred(*first))
@@ -395,11 +393,10 @@ Can we abstract away the data structure we are partitioning? The answer is
         }
     }
 
-The implementation is virtually the same. We add an initial check to ensure we
-are not trying to operate on an empty range. We also get rid of ``i`` and ``j``,
-as we are using the iterators provided as arguments for traversal. The
-implementation does not increase in complexity, but is now usable beyond
-vectors. For example we can now partition a C-style array::
+The implementation is virtually the same. We get rid of ``i`` and ``j``, as we
+are using the iterators provided as arguments for traversal. The implementation
+does not increase in complexity, but is now usable beyond vectors. For example
+we can now partition a C-style array::
 
     void evens_before_odds(int arr[], int n)
     {
@@ -417,8 +414,6 @@ we should return it::
     template <typename It, typename Pred>
     auto partition(It first, It last, Pred pred)
     {
-        if (first == last) return first;
-
         for (;;)
         {
             while (first != last && pred(*first))
