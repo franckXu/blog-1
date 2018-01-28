@@ -11,7 +11,7 @@ function ``r : A x A -> bool`` such that ``r(x, y)`` is ``true`` if
 notation, we can use ``x ~ y`` to denote ``r(x, y)``.
 
 More generally, a binary relation can be defined on a pair of sets ``A x B`` but
-to keep things simple, we'll only cover binary realtions over a single set.
+to keep things simple, we'll only cover binary relations over a single set.
 
 Binary relations may have several properties. A few interesting ones are:
 
@@ -44,7 +44,7 @@ symmetric relation: for any ``x`` and ``y`` vertices of the graph, if there is
 an edge from ``x`` to ``y``, the same edge exists from ``y`` to ``x``, in other
 words, if ``x ~ y`` then ``y ~ x``.
 
-The *is in the subtree rooted at* realtion above is also antisymmetric: if for
+The *is in the subtree rooted at* relation above is also antisymmetric: if for
 a pair of nodes we can say ``x`` is in the subtree rooted at ``y`` and also
 ``y`` is in the subtree rooted at ``x``, it's obvious that both ``x`` and ``y``
 are, in fact, the root of the subtree, thus ``x ~ y``.
@@ -68,7 +68,7 @@ A preorder which is also symmetric is an *equivalence*. A preorder which is
 antisymmetric is a *partial order*. More on those below.
 
 An example of preorder is the *is reachable from* relation over a directed
-graph in the example above. This realtion is obviously reflexive and transitive,
+graph in the example above. This relation is obviously reflexive and transitive,
 but it is neither symmetric nor antisymmetric. If ``x`` is reachable from ``y``,
 it doesn't mean that ``y`` is reachable from ``x``, so symmetry is not
 guaranteed. Similarly, if ``x`` is reachable from ``y`` and ``y`` is reachable

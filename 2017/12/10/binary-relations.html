@@ -31,13 +31,13 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Notes on Unit Testing" href="../../11/09/notes-on-unit-testing.html" /><link rel="prev" title="Evens before Odds" href="../30/evens-before-odds.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.7.0',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
         HAS_SOURCE:  true
       };
-    </script><script type="text/javascript" src="../../../_static/underscore.js"></script><script type="text/javascript" src="../../../_static/doctools.js"></script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script type="text/javascript" src="../../../_static/disqus.js"></script><script type="text/javascript" src="../../../_static/google_analytics.js"></script><link rel="stylesheet" href="../../../_static/extra.css" type="text/css" />
+    </script><script type="text/javascript" src="../../../_static/underscore.js"></script><script type="text/javascript" src="../../../_static/doctools.js"></script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script type="text/javascript" src="../../../_static/disqus.js"></script><script type="text/javascript" src="../../../_static/google_analytics.js"></script><link rel="stylesheet" href="../../../_static/extra.css" type="text/css" />
 <script type="text/javascript" async
   src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
 </script></head>
@@ -59,7 +59,7 @@ function <span class="docutils literal"><span class="pre">r</span> <span class="
 <span class="docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span> <span class="pre">in</span> <span class="pre">R</span></span>, and <span class="docutils literal"><span class="pre">false</span></span> if <span class="docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span> <span class="pre">not</span> <span class="pre">in</span> <span class="pre">R</span></span>. For a more natural
 notation, we can use <span class="docutils literal"><span class="pre">x</span> <span class="pre">~</span> <span class="pre">y</span></span> to denote <span class="docutils literal"><span class="pre">r(x,</span> <span class="pre">y)</span></span>.</p>
 <p>More generally, a binary relation can be defined on a pair of sets <span class="docutils literal"><span class="pre">A</span> <span class="pre">x</span> <span class="pre">B</span></span> but
-to keep things simple, we’ll only cover binary realtions over a single set.</p>
+to keep things simple, we’ll only cover binary relations over a single set.</p>
 <p>Binary relations may have several properties. A few interesting ones are:</p>
 <ul class="simple">
 <li>A binary relation is <em>reflexive</em> if for any <span class="docutils literal"><span class="pre">x</span></span> in <span class="docutils literal"><span class="pre">A</span></span>, <span class="docutils literal"><span class="pre">x</span> <span class="pre">~</span> <span class="pre">x</span></span></li>
@@ -87,7 +87,7 @@ set of tree nodes <span class="docutils literal"><span class="pre">A</span></spa
 symmetric relation: for any <span class="docutils literal"><span class="pre">x</span></span> and <span class="docutils literal"><span class="pre">y</span></span> vertices of the graph, if there is
 an edge from <span class="docutils literal"><span class="pre">x</span></span> to <span class="docutils literal"><span class="pre">y</span></span>, the same edge exists from <span class="docutils literal"><span class="pre">y</span></span> to <span class="docutils literal"><span class="pre">x</span></span>, in other
 words, if <span class="docutils literal"><span class="pre">x</span> <span class="pre">~</span> <span class="pre">y</span></span> then <span class="docutils literal"><span class="pre">y</span> <span class="pre">~</span> <span class="pre">x</span></span>.</p>
-<p>The <em>is in the subtree rooted at</em> realtion above is also antisymmetric: if for
+<p>The <em>is in the subtree rooted at</em> relation above is also antisymmetric: if for
 a pair of nodes we can say <span class="docutils literal"><span class="pre">x</span></span> is in the subtree rooted at <span class="docutils literal"><span class="pre">y</span></span> and also
 <span class="docutils literal"><span class="pre">y</span></span> is in the subtree rooted at <span class="docutils literal"><span class="pre">x</span></span>, it’s obvious that both <span class="docutils literal"><span class="pre">x</span></span> and <span class="docutils literal"><span class="pre">y</span></span>
 are, in fact, the root of the subtree, thus <span class="docutils literal"><span class="pre">x</span> <span class="pre">~</span> <span class="pre">y</span></span>.</p>
@@ -107,7 +107,7 @@ so neither <span class="docutils literal"><span class="pre">x</span> <span class
 <p>A preorder which is also symmetric is an <em>equivalence</em>. A preorder which is
 antisymmetric is a <em>partial order</em>. More on those below.</p>
 <p>An example of preorder is the <em>is reachable from</em> relation over a directed
-graph in the example above. This realtion is obviously reflexive and transitive,
+graph in the example above. This relation is obviously reflexive and transitive,
 but it is neither symmetric nor antisymmetric. If <span class="docutils literal"><span class="pre">x</span></span> is reachable from <span class="docutils literal"><span class="pre">y</span></span>,
 it doesn’t mean that <span class="docutils literal"><span class="pre">y</span></span> is reachable from <span class="docutils literal"><span class="pre">x</span></span>, so symmetry is not
 guaranteed. Similarly, if <span class="docutils literal"><span class="pre">x</span></span> is reachable from <span class="docutils literal"><span class="pre">y</span></span> and <span class="docutils literal"><span class="pre">y</span></span> is reachable

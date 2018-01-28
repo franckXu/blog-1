@@ -1,0 +1,456 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="Vlad's Tech Blog">
+        <meta name="viewport" content="width=device-width">
+        <title>Notes on OOP &mdash; Blog</title>
+            <link rel="stylesheet" href="../../../_static/normalize.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/sphinx.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/main.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/flat.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+            <link rel="stylesheet" href="../../../_static/font-awesome.min.css" type="text/css">
+        <link rel="shortcut icon" href="../../../_static/tinkerer.ico" /><!-- Load modernizr and JQuery -->
+        <script src="../../../_static/vendor/modernizr-2.6.2.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="../../../_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
+        <script src="../../../_static/plugins.js"></script>
+        <script src="../../../_static/main.js"></script>
+        <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Evens before Odds" href="../../../2017/12/30/evens-before-odds.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.6.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        SOURCELINK_SUFFIX: '.txt',
+        HAS_SOURCE:  true
+      };
+    </script><script type="text/javascript" src="../../../_static/underscore.js"></script><script type="text/javascript" src="../../../_static/doctools.js"></script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script type="text/javascript" src="../../../_static/disqus.js"></script><script type="text/javascript" src="../../../_static/google_analytics.js"></script><link rel="stylesheet" href="../../../_static/extra.css" type="text/css" />
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+</script></head>
+    <body role="document">
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+      <div id="container"><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>January 27, 2018</span>
+        </div>
+    <div class="section" id="notes-on-oop">
+<h1>Notes on OOP</h1>
+<p>I am not a huge fan of “pure” OOP. In this post I will cover a few non-pure OOP
+concepts: subtyping wihtout inheritance, mixins, free functions, and types
+without invariants. I will make a case for why multi-paradigm is needed and how
+using a wider variety of concepts enables us to build simpler systems.</p>
+<div class="section" id="duck-typing">
+<h2>Duck typing</h2>
+<blockquote>
+<div>If it walks like a duck and it quacks like a duck, then it must be a duck.</div></blockquote>
+<p>Let’s say we have a <span class="docutils literal"><span class="pre">Duck</span></span> class. A <span class="docutils literal"><span class="pre">Duck</span></span> quacks and waddles:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Duck</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="kt">void</span> <span class="n">Quack</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span>
+    <span class="kt">void</span> <span class="n">Waddle</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>We have a function that uses a duck:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="n">Duck</span><span class="o">&amp;</span> <span class="n">duck</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">duck</span><span class="p">.</span><span class="n">Quack</span><span class="p">();</span>
+    <span class="n">duck</span><span class="p">.</span><span class="n">Waddle</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The object-oriented way to implement subtyping is to inherit from the base
+class:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">UglyDuckling</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Duck</span> <span class="p">{</span> <span class="p">};</span>
+
+<span class="c1">// ...</span>
+
+<span class="n">UglyDuckling</span> <span class="n">uglyDuckling</span><span class="p">;</span>
+<span class="n">foo</span><span class="p">(</span><span class="n">uglyDuckling</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>We can call <span class="docutils literal"><span class="pre">foo</span></span> on an <span class="docutils literal"><span class="pre">UglyDuckling</span></span> since <span class="docutils literal"><span class="pre">UglyDuckling</span></span> inherits from
+<span class="docutils literal"><span class="pre">Duck</span></span>. We have an <em>is-a</em> relationship, so we can substitute an
+<span class="docutils literal"><span class="pre">UglyDuckling</span></span> for a <span class="docutils literal"><span class="pre">Duck</span></span>. The problem with this approach is that whenever
+we want something that quacks and waddles, we need to inherit from <span class="docutils literal"><span class="pre">Duck</span></span>.
+More generally, this type of polymorphism is achieved by implementing a set of
+interfaces like, for example, <span class="docutils literal"><span class="pre">IComparable</span></span>, <span class="docutils literal"><span class="pre">IClonebale</span></span>, <span class="docutils literal"><span class="pre">IDisposable</span></span>
+and so on. This makes things slightly complicated: what if we need something
+that waddles, but we don’t care about quacking? Do we separate our duck into two
+different interfaces? In general, do we add an interface for each behavior and
+then pull groups of interfaces together to form more refined types?</p>
+<div class="highlight-C++"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">IQuack</span>
+<span class="p">{</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">Quack</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="n">IWaddle</span>
+<span class="p">{</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">Waddle</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="k">class</span> <span class="nc">Duck</span> <span class="o">:</span> <span class="n">IQuack</span><span class="p">,</span> <span class="n">IWaddle</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="kt">void</span> <span class="n">Quack</span><span class="p">()</span> <span class="k">override</span> <span class="p">{</span> <span class="p">}</span>
+    <span class="kt">void</span> <span class="n">Waddle</span><span class="p">()</span> <span class="k">override</span> <span class="p">{</span> <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">class</span> <span class="nc">Penguin</span> <span class="o">:</span> <span class="n">IWaddle</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="kt">void</span> <span class="n">Waddle</span><span class="p">()</span> <span class="k">override</span> <span class="p">{</span> <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>This works, but has combinatorial complexity and we end up with deep hierarchies
+which are difficult to reason about. There is another way to achieve this
+though, using generic programming:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">UglyDuckling</span> <span class="c1">// No inheritance</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="kt">void</span> <span class="n">Quack</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span>
+    <span class="kt">void</span> <span class="n">Waddle</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Duck</span><span class="o">&gt;</span>
+<span class="kt">void</span> <span class="n">foo</span><span class="p">(</span><span class="n">Duck</span><span class="o">&amp;</span> <span class="n">duck</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">duck</span><span class="p">.</span><span class="n">Quack</span><span class="p">();</span>
+    <span class="n">duck</span><span class="p">.</span><span class="n">Waddle</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="c1">// ...</span>
+
+<span class="n">UglyDuckling</span> <span class="n">uglyDuckling</span><span class="p">;</span>
+<span class="n">foo</span><span class="p">(</span><span class="n">uglyDuckling</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><span class="docutils literal"><span class="pre">foo</span></span> here is a templated function which only cares that the type passed in
+has a <span class="docutils literal"><span class="pre">Quack</span></span> and a <span class="docutils literal"><span class="pre">Waddle</span></span> member function. There is no inheritance
+involved, but we can still substitute an <span class="docutils literal"><span class="pre">UglyDuckling</span></span> for a <span class="docutils literal"><span class="pre">Duck</span></span>. This
+gets us rid of all the interfaces (we don’t need our <span class="docutils literal"><span class="pre">Penguin</span></span> to explicitly
+implement an <span class="docutils literal"><span class="pre">IWaddle</span></span> interface, we just need it to provide a <span class="docutils literal"><span class="pre">Waddle</span></span>
+member function). Our model becomes simpler - as long as a type supports the
+behavior required by a function, it can be used with that function.</p>
+</div>
+<div class="section" id="mixins">
+<h2>Mixins</h2>
+<p>Lore has it that multiple inheritance is bad and it is by design not supported
+in Java, C#, and such. On the other hand, mixins are extremely useful, and it
+is a pity that we usually have to express them via inheritance. A mixin is a
+type that provides some behavior which is <em>mixed in</em> or <em>included</em> into another
+type. For example, if we use intrusive reference counting, we can isolate the
+reference-counting behavior into its own type:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">RefCounted</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="kt">void</span> <span class="n">AddRef</span><span class="p">()</span> <span class="p">{</span> <span class="o">++</span><span class="n">m_refCount</span><span class="p">;</span> <span class="p">}</span>
+    <span class="kt">void</span> <span class="n">Release</span><span class="p">()</span> <span class="p">{</span> <span class="k">if</span> <span class="p">(</span><span class="o">--</span><span class="n">m_refCount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span> <span class="k">delete</span> <span class="k">this</span><span class="p">;</span> <span class="p">}</span> <span class="p">}</span>
+
+    <span class="k">virtual</span> <span class="o">~</span><span class="n">RefCounted</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+
+<span class="k">private</span><span class="o">:</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">m_refCount</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>Then we can have other types for which we want intrusive reference counting
+simply mixing in this behavior:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Foo</span> <span class="o">:</span> <span class="k">public</span> <span class="n">RefCounted</span> <span class="p">{</span> <span class="p">};</span>
+</pre></div>
+</div>
+<p>Now <span class="docutils literal"><span class="pre">Foo</span></span> has <span class="docutils literal"><span class="pre">AddRef</span></span> and <span class="docutils literal"><span class="pre">Release</span></span> functions which can be called by a
+generic smart pointer that expects managed types to expose these member
+functions. While technically <span class="docutils literal"><span class="pre">Foo</span></span> inherits from <span class="docutils literal"><span class="pre">RefCounted</span></span>, conceptually
+we only care that it includes the reference counting behavior. In such cases it
+is perfectly fine to mix and match and include behavior defined across multiple
+other types.</p>
+</div>
+<div class="section" id="the-case-for-free-functions">
+<h2>The Case for Free Functions</h2>
+<p>What is the difference between the following two <span class="docutils literal"><span class="pre">Print</span></span> functions?</p>
+<div class="highlight-C++"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Foo</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="kt">void</span> <span class="n">Print</span><span class="p">()</span> <span class="p">{</span> <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">Data</span><span class="p">();</span> <span class="p">}</span>
+    <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">Data</span><span class="p">()</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kt">void</span> <span class="nf">Print</span><span class="p">(</span><span class="k">const</span> <span class="n">Foo</span><span class="o">&amp;</span> <span class="n">foo</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">foo</span><span class="p">.</span><span class="n">Data</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The first is a member function, called with an implicit <span class="docutils literal"><span class="pre">this</span></span> argument which
+points to the object instance, while the second is a free function called with
+an explicit reference to a <span class="docutils literal"><span class="pre">Foo</span></span> object.</p>
+<p>The member function approach leads to bloated objects as whenever we need some
+additional processing of the type, we would have to add new member functions.
+This contradicts the <em>Single Responsibility Principle</em> which states that each
+class should have a single responsibility. Adding member functions like
+<span class="docutils literal"><span class="pre">ToString</span></span>, <span class="docutils literal"><span class="pre">Serialize</span></span> etc. needlessly bloats a class.</p>
+<p>In general, we only need member functions when these functions access private
+members of the type. If <span class="docutils literal"><span class="pre">Data</span></span> was private in the above example, then the
+free-function version wouldn’t have worked. As long as we can implement a
+function that operates on a type without having to access its private member,
+that function should not belong to the type. Depending on the language, we have
+several options. We could put such functions in “helper” types:</p>
+<div class="highlight-C#"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">FooPrinter</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">Print</span><span class="p">(</span><span class="n">Foo</span> <span class="n">foo</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>C# provides extension methods as syntax sugar for this, which allow us to call
+<span class="docutils literal"><span class="pre">foo.Print()</span></span> even though we implement the <span class="docutils literal"><span class="pre">Print</span></span> function as an extension
+method:</p>
+<div class="highlight-C#"><div class="highlight"><pre><span></span><span class="k">static</span> <span class="k">class</span> <span class="nc">FooPrinter</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">Print</span><span class="p">(</span><span class="k">this</span> <span class="n">Foo</span> <span class="n">foo</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Still, the simplest thing to do is have a free function:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">Print</span><span class="p">(</span><span class="k">const</span> <span class="n">Foo</span><span class="o">&amp;</span> <span class="n">foo</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
+</pre></div>
+</div>
+<p>Being forced to group everything inside classes yields messy code. Steve Yegge’s
+<a class="reference external" href="http://steve-yegge.blogspot.com/2006/03/execution-in-kingdom-of-nouns.html">Kingdom of Nouns</a>
+is a classic on the topic.</p>
+<div class="section" id="managers-and-utils">
+<h3>Managers and Utils</h3>
+<p>Because a purely object-oriented language forces developers to think in classes,
+we more often than not end up with managers and utility classes, both being
+horrible replacements for free-standing functions.</p>
+<p>Managers usually show up once we have a nice object model for the problem space
+but we need to implement a set of operations on said object model. Managers tend
+to be singletons. For example, we have a <cite>Connection</cite> type that models a
+connection to a peer:</p>
+<div class="highlight-C#"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Connection</span>
+<span class="p">{</span>
+    <span class="c1">// Open, Close, Send, Receive etc.</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>We also want someone to open new connections and close all opened connections.
+Here is a purely object oriented <span class="docutils literal"><span class="pre">ConnectionManager</span></span>:</p>
+<div class="highlight-C#"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ConnectionManager</span>
+<span class="p">{</span>
+    <span class="k">private</span> <span class="k">static</span> <span class="n">ConnectionManager</span> <span class="n">_instance</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ConnectionManager</span><span class="p">();</span>
+    <span class="k">private</span> <span class="nf">ConnectionManager</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">static</span> <span class="n">ConnectionManager</span> <span class="nf">GetInstance</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">_instance</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">private</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">Connection</span><span class="p">&gt;</span> <span class="n">_connections</span> <span class="p">=</span> <span class="k">new</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">Connection</span><span class="p">&gt;();</span>
+
+    <span class="k">public</span> <span class="n">Connection</span> <span class="nf">Make</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="kt">var</span> <span class="n">connection</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Connection</span><span class="p">();</span>
+        <span class="n">_connections</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="n">connection</span><span class="p">);</span>
+        <span class="k">return</span> <span class="n">connection</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">void</span> <span class="nf">CloseAll</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">_connections</span><span class="p">.</span><span class="n">ForEach</span><span class="p">(</span><span class="n">connection</span> <span class="p">=&gt;</span> <span class="n">connection</span><span class="p">.</span><span class="n">Close</span><span class="p">());</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This maintains the list of connections and can close all of them with a call to
+<span class="docutils literal"><span class="pre">CloseAll()</span></span>. Besides being verbose to use (<span class="docutils literal"><span class="pre">ConnectionManager.GetInstance().Make()</span></span>, <span class="docutils literal"><span class="pre">ConnectionManager.GetInstance().Close()</span></span>),
+this class does not make much sense. A non-OOP implementation would look like
+this:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="c1">// In .h file</span>
+<span class="k">class</span> <span class="nc">Connection</span>
+<span class="p">{</span>
+    <span class="c1">// Open, Close, Send, Receive etc.</span>
+<span class="p">};</span>
+
+<span class="n">Connection</span><span class="o">&amp;</span> <span class="n">Make</span><span class="p">();</span>
+<span class="kt">void</span> <span class="nf">CloseAll</span><span class="p">();</span>
+
+<span class="c1">// In .cpp file</span>
+<span class="k">namespace</span>
+<span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Connection</span><span class="o">&gt;</span> <span class="n">connections</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">Connection</span><span class="o">&amp;</span> <span class="n">Make</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">connections</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">Connection</span><span class="p">{});</span>
+    <span class="k">return</span> <span class="n">connections</span><span class="p">.</span><span class="n">back</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">CloseAll</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="nl">connection</span> <span class="p">:</span> <span class="n">connections</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">connection</span><span class="p">.</span><span class="n">Close</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><span class="docutils literal"><span class="pre">Make()</span></span> and <span class="docutils literal"><span class="pre">CloseAll()</span></span> do not need to be group in some manager. They can
+be free functions living next to the <span class="docutils literal"><span class="pre">Connection</span></span> type, which is the only
+context within which they make sense. The list of connections can be stored in a
+variable scoped to the implementation .cpp file. “Managers” rarely make sense.</p>
+<p>Utility classes are even worse: while a manager is usually tightly coupled to
+the type it “manages”, “Utils” classes end up being dumping grounds of functions
+that don’t seem to belong anywhere else. The biggest problem is that each of
+these functions usually depends on some other component:</p>
+<div class="highlight-C#"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">FooUtils</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">DoBar</span><span class="p">()</span> <span class="p">{</span> <span class="cm">/* Dependency on Bar */</span> <span class="p">}</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">DoBaz</span><span class="p">()</span> <span class="p">{</span> <span class="cm">/* Dependency on Baz */</span> <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Now whoever takes a dependency on <span class="docutils literal"><span class="pre">FooUtils</span></span>, transitively takes a dependency
+on both <span class="docutils literal"><span class="pre">Bar</span></span> and <span class="docutils literal"><span class="pre">Baz</span></span> too, even if they only really needed one of them.
+If <span class="docutils literal"><span class="pre">DoBar()</span></span> and <span class="docutils literal"><span class="pre">DoBaz()</span></span> were free functions, taking a dependency on
+<span class="docutils literal"><span class="pre">DoBar()</span></span> would transitively take a dependency on <span class="docutils literal"><span class="pre">Bar</span></span> only. “Utility”
+types make layering a nightmare.</p>
+</div>
+</div>
+<div class="section" id="when-to-use-classes">
+<h2>When To Use Classes</h2>
+<p>I am a big believer in multi-paradigm. If our only tool is a hammer, we can only
+hammer things. While pure functional languages are elegant, they are too far
+removed from the machine they run on (for example we can’t implement an in-place
+<span class="docutils literal"><span class="pre">reverse</span></span> if all data is immutable). Similarly, if everything is an object, we
+end up with too many classes and too many complicated relationships. Procedural
+languages usually provide some way to group data via <span class="docutils literal"><span class="pre">struct</span></span> or <span class="docutils literal"><span class="pre">record</span></span>
+types, so when are classes useful?</p>
+<p>The answer is <em>for encapsulating</em> - classes enable us to declare private data
+and control access to it. This is useful when the class needs to maintain
+invariants, which could potentially be broken if external entities would be able
+to change an object’s state. Let’s use a <span class="docutils literal"><span class="pre">Date</span></span> type as a made up example.
+Made up because dates are usually implemented as a number representing a tick
+count since some set start date, and information like <em>day</em>, <em>month</em>, and <em>year</em>
+is derived from that. But let’s assume we have separate <em>day</em>, <em>month</em>, and
+<em>year</em> fields. This type should maintain an invariant that it represents a valid
+date, so we can’t have, for example, a June 31st. It’s hard to enforce the
+invariant with:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Date</span>
+<span class="p">{</span>
+    <span class="kt">uint8_t</span> <span class="n">day</span><span class="p">;</span>
+    <span class="kt">uint8_t</span> <span class="n">month</span><span class="p">;</span>
+    <span class="kt">uint8_t</span> <span class="n">year</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>Alternately, we can implement a class with a constructor which ensures only
+valid dates can be created:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Date</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">Date</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">year</span><span class="p">,</span> <span class="kt">uint8_t</span> <span class="n">month</span><span class="p">,</span> <span class="kt">uint8_t</span> <span class="n">day</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">month</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">month</span> <span class="o">&gt;</span> <span class="mi">12</span><span class="p">)</span> <span class="k">throw</span> <span class="cm">/* ... */</span>
+        <span class="cm">/* Additional checks to ensure a valid date... */</span>
+    <span class="p">}</span>
+
+    <span class="kt">uint8_t</span> <span class="n">year</span><span class="p">()</span> <span class="k">const</span> <span class="k">noexcept</span> <span class="p">{</span> <span class="k">return</span> <span class="n">m_year</span><span class="p">;</span> <span class="p">}</span>
+    <span class="kt">uint8_t</span> <span class="n">month</span><span class="p">()</span> <span class="k">const</span> <span class="k">noexcept</span> <span class="p">{</span> <span class="k">return</span> <span class="n">m_month</span><span class="p">;</span> <span class="p">}</span>
+    <span class="kt">uint8_t</span> <span class="n">day</span><span class="p">()</span> <span class="k">const</span> <span class="k">noexcept</span> <span class="p">{</span> <span class="k">return</span> <span class="n">m_day</span><span class="p">;</span> <span class="p">}</span>
+
+<span class="k">private</span><span class="o">:</span>
+    <span class="kt">uint8_t</span> <span class="n">m_day</span><span class="p">;</span>
+    <span class="kt">uint8_t</span> <span class="n">m_month</span><span class="p">;</span>
+    <span class="kt">uint8_t</span> <span class="n">m_year</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>If we want to add an <span class="docutils literal"><span class="pre">AddDays</span></span> function, we would create a member function
+<a class="footnote-reference" href="#id2" id="id1">[1]</a> which would implement the algorithm that would know when adding a number of
+days would increment the month and when incrementing the month would increment
+the year, such that the invariant of always having a valid date is enforced.</p>
+<p>On the other hand, a type which doesn’t need to maintain an invariant, say a
+point in the plane, should not be implemented as a class:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Point</span>
+<span class="p">{</span>
+    <span class="kt">int64_t</span> <span class="n">x</span><span class="p">;</span>
+    <span class="kt">int64_t</span> <span class="n">y</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="summary">
+<h2>Summary</h2>
+<p>Inheritance is rarely warranted, and when used, it should mostly be used in the
+context of mixins - with the intention of including behavior rather than
+deriving and extending. Interfaces are sometimes useful at a component boundary,
+though static, template-based polymorphism is preferred. A good design consists
+of a set of independent classes which maintain invariants, and free functions
+that operate on them. Structure (or record) types should be used when there is
+no invariant to be maintained. Generic functions should be used when algorithms
+can be generalized to multiple types as long as they satisfy some requirements
+(as in the Duck Typing section above). This encourages reusable code and systems
+of loosely-coupled components which can be more easily reasoned about in
+isolation and reused when needed.</p>
+<ul class="simple">
+<li>Generic programming/compile-time polymorphism yields less complex models than
+inheritance</li>
+<li>While multiple inheritance is frowned upon, mixins provide a great way to add
+behavior to a type. The problem is including this behavior is usually
+syntactically equivalent with inheritance.</li>
+<li>Free functions are great. Managers and Utils are bad and should be avoided.</li>
+<li>Classes are useful when invariants need to be enforced. Encapsulation and
+member functions maintain invariants.</li>
+<li>A good design consists of loosely-coupled components and generic functions,
+which can be reasoned about in isolation and freely combined to create complex
+behavior.</li>
+</ul>
+<hr class="docutils" />
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Or better yet a free function which takes a <span class="docutils literal"><span class="pre">Date</span></span> and returns a new
+instance - immutability seems like a good idea in this case.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+    <div class="postmeta">
+        
+        
+        
+        </div><ul class="related clearfix">
+            <li class="left"></li>
+            <li class="right"><a href="../../../2017/12/30/evens-before-odds.html">Evens before Odds</a> &raquo; </li>
+        </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "vladris";    var disqus_identifier = "2018/01/27/notes-on-oop";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article></div> <!-- #main --></div> <!-- #main-container -->
+
+        <div class="footer-container" role="contentinfo"><div style="text-align: center; color: #93a4ad">
+    By Vlad Rișcuția | <a href="http://feeds.feedburner.com/vladris">Subscribe</a> | <a href="http://vladris.com/blog/archive">Archive</a>
+</div></div> <!-- footer-container -->
+
+      </div> <!--! end of #container --><!--[if lt IE 7 ]>
+          <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+          <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+        <![endif]-->
+    </body>
+</html>
