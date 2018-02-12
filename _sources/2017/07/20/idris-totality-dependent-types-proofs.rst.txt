@@ -35,7 +35,7 @@ definition, the compiler can easily determine the following function is total::
 
     f : Nat' -> ()
     f Z = ()
-    f (S k) = g k
+    f (S k) = f k
 
 This function return a unit given ``Z``, otherwise it recursively takes the
 predecessor of the argument. This converges to the ``Z`` case. The following
@@ -196,7 +196,7 @@ tests, we are actually proving that we get the expected output for *any* input.
 These are all tools for writing better, more correct code. As other functional
 concepts got adopted over the years into more mainstream languages (for example
 first-order functions, anonymous functions, algebraic types etc.), I expect (and
-hopre) these features to eventually be adopted too.
+hope) these features to eventually be adopted too.
 
 There is still a lot of room for improvement: writing proofs is tedious,
 compiler errors are not always very clear, and, coming back to the speed to

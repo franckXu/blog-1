@@ -2395,7 +2395,7 @@ things about them. Here is a minimal definition of natural numbers <a class="foo
 definition, the compiler can easily determine the following function is total:</p>
 <div class="highlight-idris"><div class="highlight"><pre><span/><span class="nf">f</span> <span class="ow">:</span> <span class="kt">Nat'</span> <span class="ow">-&gt;</span> <span class="ow">()</span>
 f <span class="kt">Z</span> <span class="ow">=</span> <span class="ow">()</span>
-f <span class="ow">(</span><span class="kt">S</span> k<span class="ow">)</span> <span class="ow">=</span> g k
+f <span class="ow">(</span><span class="kt">S</span> k<span class="ow">)</span> <span class="ow">=</span> f k
 </pre></div>
 </div>
 <p>This function return a unit given <span class="docutils literal"><span class="pre">Z</span></span>, otherwise it recursively takes the
@@ -2547,7 +2547,7 @@ tests, we are actually proving that we get the expected output for <em>any</em> 
 These are all tools for writing better, more correct code. As other functional
 concepts got adopted over the years into more mainstream languages (for example
 first-order functions, anonymous functions, algebraic types etc.), I expect (and
-hopre) these features to eventually be adopted too.</p>
+hope) these features to eventually be adopted too.</p>
 <p>There is still a lot of room for improvement: writing proofs is tedious,
 compiler errors are not always very clear, and, coming back to the speed to
 market tradeoff, I doubt we will ever get to entire large applications formally
