@@ -4,6 +4,7 @@ Sitemap
 .. toctree::
    :maxdepth: 1
 
+   2018/02/11/fibonacci
    2018/01/27/notes-on-oop
    2017/12/30/evens-before-odds
    2017/12/10/binary-relations

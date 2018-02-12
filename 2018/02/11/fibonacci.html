@@ -1,0 +1,488 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="Vlad's Tech Blog">
+        <meta name="viewport" content="width=device-width">
+        <title>Fibonacci &mdash; Blog</title>
+            <link rel="stylesheet" href="../../../_static/normalize.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/sphinx.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/main.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/flat.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+            <link rel="stylesheet" href="../../../_static/font-awesome.min.css" type="text/css">
+        <link rel="shortcut icon" href="../../../_static/tinkerer.ico" /><!-- Load modernizr and JQuery -->
+        <script src="../../../_static/vendor/modernizr-2.6.2.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="../../../_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
+        <script src="../../../_static/plugins.js"></script>
+        <script src="../../../_static/main.js"></script>
+        <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Notes on OOP" href="../../01/27/notes-on-oop.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.7.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        SOURCELINK_SUFFIX: '.txt',
+        HAS_SOURCE:  true
+      };
+    </script><script type="text/javascript" src="../../../_static/underscore.js"></script><script type="text/javascript" src="../../../_static/doctools.js"></script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script type="text/javascript" src="../../../_static/disqus.js"></script><script type="text/javascript" src="../../../_static/google_analytics.js"></script><link rel="stylesheet" href="../../../_static/extra.css" type="text/css" />
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+</script></head>
+    <body role="document">
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+      <div id="container"><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>February 11, 2018</span>
+        </div>
+    <div class="section" id="fibonacci">
+<h1>Fibonacci</h1>
+<p>This blog post looks at a few algorithms to generate Fibonacci numbers. For a
+much better treatment of these algorithms, I recommend <a class="reference external" href="https://www.goodreads.com/book/show/23498372-from-mathematics-to-generic-programming">From Mathematics to
+Generic Programming</a>.
+The implementations are provided in poorly written Rust, as I’m just
+learning the language.</p>
+<p>Learning Rust and going through <a class="reference external" href="https://doc.rust-lang.org/book/second-edition/">The Rust Programming Language</a>,
+I got to <a class="reference external" href="https://doc.rust-lang.org/book/second-edition/ch03-05-control-flow.html#summary">the end of chapter 3</a>,
+where there are a few simple exercises. One of them is <em>Generate the nth
+Fibonacci number</em>.</p>
+<div class="section" id="the-fibonacci-sequence">
+<h2>The Fibonacci Sequence</h2>
+<p>The Fibonacci sequence is defined as the sequence <span class="math">\(F_n = F_{n-1} + F_{n-2}\)</span>
+with the seed values <span class="math">\(F_0 = 0\)</span> and <span class="math">\(F_1 = 1\)</span>.</p>
+<p>The first few values of the sequence are 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55,
+89, 144, ….</p>
+</div>
+<div class="section" id="a-naive-algorithm">
+<h2>A Naïve Algorithm</h2>
+<p>Directly translating the definition above into an algorithm to compute the n-th
+Fibonacci number yields:</p>
+<div class="highlight-rust"><div class="highlight"><pre><span></span><span class="k">fn</span> <span class="nf">fib</span><span class="p">(</span><span class="n">n</span>: <span class="kt">i32</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="kt">i32</span> <span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">fib</span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">fib</span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>This algorithm works for very small <span class="docutils literal"><span class="pre">n</span></span> values but it is extremely inefficient
+as it has exponential time complexity and linear space complexity (based on
+stack depth). Since <span class="docutils literal"><span class="pre">fib(n</span> <span class="pre">-</span> <span class="pre">1)</span> <span class="pre">=</span> <span class="pre">fib(n</span> <span class="pre">-</span> <span class="pre">2)</span> <span class="pre">+</span> <span class="pre">fib(n</span> <span class="pre">-</span> <span class="pre">3)</span></span>, a call like
+<span class="docutils literal"><span class="pre">fib(n</span> <span class="pre">-</span> <span class="pre">1)</span> <span class="pre">+</span> <span class="pre">fib(n</span> <span class="pre">-</span> <span class="pre">2)</span></span> is equivalent to <span class="docutils literal"><span class="pre">(fib(n</span> <span class="pre">-</span> <span class="pre">2)</span> <span class="pre">+</span> <span class="pre">fib(n</span> <span class="pre">-</span> <span class="pre">3))</span> <span class="pre">+</span>
+<span class="pre">fib(n</span> <span class="pre">-</span> <span class="pre">2)</span></span>, so the same elements of the sequence end up being computed over
+and over again.</p>
+</div>
+<div class="section" id="bottom-up-approach">
+<h2>Bottom-Up Approach</h2>
+<p>A better way to generate the nth Fibonacci number is to build it bottom-up,
+starting from <span class="math">\(F_0\)</span> and <span class="math">\(F_1\)</span>:</p>
+<div class="highlight-rust"><div class="highlight"><pre><span></span><span class="k">fn</span> <span class="nf">fib2</span><span class="p">(</span><span class="n">n</span>: <span class="kt">i32</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="kt">i32</span> <span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">_</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">1</span><span class="p">..</span><span class="n">n</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">c</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">b</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Here we start with <span class="math">\(a = F_0, b = F_1\)</span> and with each iteration of the loop
+we advance from <span class="math">\(a = F_k, b = F_{k+1}\)</span> to <span class="math">\(a = F_{k+1}, b = F_{k+2}\)</span>
+until <span class="docutils literal"><span class="pre">b</span></span> becomes <span class="math">\(F_n\)</span>.</p>
+<p>Compared to the first algorithm, this is highly efficient, as it has linear
+complexity and requires constant space. There are faster ways to compute the nth
+Fibonacci number though.</p>
+</div>
+<div class="section" id="matrix-form">
+<h2>Matrix Form</h2>
+<p>The Fibonacci sequence can also be described in matrix form as follows:</p>
+<div class="math">
+\[\begin{split}\begin{bmatrix}
+    F_{k+2} \\
+    F_{k+1}
+\end{bmatrix}
+=
+\begin{bmatrix}
+    1 &amp; 1 \\
+    1 &amp; 0
+\end{bmatrix}
+*
+\begin{bmatrix}
+    F_{k+1} \\
+    F_k
+\end{bmatrix}\end{split}\]</div>
+<p>Note that the next pair of numbers in the sequence, <span class="math">\(F_{k+3}, F_{k+2}\)</span> can
+be expressed as:</p>
+<div class="math">
+\[\begin{split}\begin{bmatrix}
+    F_{k+3} \\
+    F_{k+2}
+\end{bmatrix}
+=
+\begin{bmatrix}
+    1 &amp; 1 \\
+    1 &amp; 0
+\end{bmatrix}
+*
+\begin{bmatrix}
+    F_{k+2} \\
+    F_{k+1}
+\end{bmatrix}
+=
+\begin{bmatrix}
+    1 &amp; 1 \\
+    1 &amp; 0
+\end{bmatrix}
+*
+\begin{bmatrix}
+    1 &amp; 1 \\
+    1 &amp; 0
+\end{bmatrix}
+*
+\begin{bmatrix}
+    F_{k+1} \\
+    F_k
+\end{bmatrix}\end{split}\]</div>
+<p>Thus we have the formula:</p>
+<div class="math">
+\[\begin{split}\begin{bmatrix}
+    F_n \\
+    F_n - 1
+\end{bmatrix}
+=
+\begin{bmatrix}
+    1 &amp; 1 \\
+    1 &amp; 0
+\end{bmatrix}^{n-1}
+*
+\begin{bmatrix}
+    F_1 \\
+    F_0
+\end{bmatrix}\end{split}\]</div>
+<p>Since <span class="math">\(F_0 = 0\)</span> and <span class="math">\(F_1 = 1\)</span>, <span class="math">\(F_n\)</span> is the element at index
+<span class="math">\((0, 0)\)</span> in:</p>
+<div class="math">
+\[\begin{split}\begin{bmatrix}
+    1 &amp; 1 \\
+    1 &amp; 0
+\end{bmatrix}^{n-1}\end{split}\]</div>
+<p>Assuming we have a function for exponentiating 2x2 matrices <span class="docutils literal"><span class="pre">exp2x2</span></span>, we can
+implement an algorithm to compute the nth Fibonacci number like this:</p>
+<div class="highlight-rust"><div class="highlight"><pre><span></span><span class="k">fn</span> <span class="nf">fib3</span><span class="p">(</span><span class="n">n</span>: <span class="kt">i32</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="kt">i32</span> <span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="w"></span>
+<span class="w">        </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">],</span><span class="w"></span>
+<span class="w">        </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">],</span><span class="w"></span>
+<span class="w">    </span><span class="p">];</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">exp2x2</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>The complexity of this algorithm is given by the complexity of <span class="docutils literal"><span class="pre">exp2x2</span></span>. A
+simple implementation of matrix exponentiation given a matrix multiplication
+function <span class="docutils literal"><span class="pre">mul2x2</span></span> is:</p>
+<div class="highlight-rust"><div class="highlight"><pre><span></span><span class="k">fn</span> <span class="nf">exp2x2</span><span class="p">(</span><span class="n">a</span>: <span class="p">[[</span><span class="kt">i32</span><span class="p">;</span><span class="w"> </span><span class="mi">2</span><span class="p">];</span><span class="w"> </span><span class="mi">2</span><span class="p">],</span><span class="w"> </span><span class="n">n</span>: <span class="kt">i32</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="p">[[</span><span class="kt">i32</span><span class="p">;</span><span class="w"> </span><span class="mi">2</span><span class="p">];</span><span class="w"> </span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="w"></span>
+<span class="w">        </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">],</span><span class="w"></span>
+<span class="w">        </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">],</span><span class="w"></span>
+<span class="w">    </span><span class="p">];</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">_</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">0</span><span class="p">..</span><span class="n">n</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mul2x2</span><span class="p">(</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">result</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>This function computes <span class="docutils literal"><span class="pre">a^n</span></span> by starting with the identity matrix and
+multiplying it with a n times. The function for multiplying two 2x2 matrices is
+trivial:</p>
+<div class="highlight-rust"><div class="highlight"><pre><span></span><span class="k">fn</span> <span class="nf">mul2x2</span><span class="p">(</span><span class="n">a</span>: <span class="p">[[</span><span class="kt">i32</span><span class="p">;</span><span class="w"> </span><span class="mi">2</span><span class="p">];</span><span class="w"> </span><span class="mi">2</span><span class="p">],</span><span class="w"> </span><span class="n">b</span>: <span class="p">[[</span><span class="kt">i32</span><span class="p">;</span><span class="w"> </span><span class="mi">2</span><span class="p">];</span><span class="w"> </span><span class="mi">2</span><span class="p">])</span><span class="w"> </span>-&gt; <span class="p">[[</span><span class="kt">i32</span><span class="p">;</span><span class="w"> </span><span class="mi">2</span><span class="p">];</span><span class="w"> </span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="p">[</span><span class="w"></span>
+<span class="w">        </span><span class="p">[</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]],</span><span class="w"></span>
+<span class="w">        </span><span class="p">[</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]],</span><span class="w"></span>
+<span class="w">    </span><span class="p">]</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>With <span class="docutils literal"><span class="pre">mul2x2</span></span> and <span class="docutils literal"><span class="pre">exp2x2</span></span>, our <span class="docutils literal"><span class="pre">fib3</span></span> algorithm has linear complexity,
+which is determined by the number of times we call <span class="docutils literal"><span class="pre">mul2x2</span></span> in our
+exponentiation function. There is a faster way to do exponentiation though:
+observe that <span class="math">\(x^7 = x^4 * x^2 * x\)</span>. In general, any number <span class="docutils literal"><span class="pre">n</span></span> and can
+be decomposed as a series of powers of two. So we can implement a
+<span class="docutils literal"><span class="pre">fast_exp2x2</span></span> which works as follows:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>if n == 1, return a
+if n is even, return fast_exp2x2(a * a, n / 2)
+if n is odd, return fast_exp2x2(a * a, (n - 1) / 2) * a
+</pre></div>
+</div>
+<p>We stop when our exponent is 1 and return <span class="docutils literal"><span class="pre">a</span></span>. If <span class="docutils literal"><span class="pre">n</span></span> is even, we square the
+base and halve the exponent (for example <span class="math">\(x^8 = (x*x)^4\)</span>). If <span class="docutils literal"><span class="pre">n</span></span> is
+odd, we do the same but multiply by the base (for example <span class="math">\(x^9 = (x*x)^4 *
+x\)</span>). This is a recursive algorithm which halves <span class="docutils literal"><span class="pre">n</span></span> at each step, so we have
+logarithmic time and space complexity.</p>
+<div class="highlight-rust"><div class="highlight"><pre><span></span><span class="k">fn</span> <span class="nf">fast_exp2x2</span><span class="p">(</span><span class="n">a</span>: <span class="p">[[</span><span class="kt">i32</span><span class="p">;</span><span class="w"> </span><span class="mi">2</span><span class="p">];</span><span class="w"> </span><span class="mi">2</span><span class="p">],</span><span class="w"> </span><span class="n">n</span>: <span class="kt">i32</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="p">[[</span><span class="kt">i32</span><span class="p">;</span><span class="w"> </span><span class="mi">2</span><span class="p">];</span><span class="w"> </span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fast_exp2x2</span><span class="p">(</span><span class="n">mul2x2</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">),</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mul2x2</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">result</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">result</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>This is a very efficient way to compute the nth Fibonacci number. But where does
+this fast exponentiation algorithm come from?</p>
+</div>
+<div class="section" id="ancient-egyptian-multiplication">
+<h2>Ancient Egyptian Multiplication</h2>
+<p>The ancient Egyptian multiplication algorithm comes from the <a class="reference external" href="RhindMathematicalPapyrus">Rhind Papyrus</a>
+from around 1500 BC. The idea is very similar to our fast exponentiation
+algorithm: we can implement a fast multiplication algorithm by relying on
+addition and doubling (eg. <span class="math">\(x * 7 = x * 4 + x * 2 + x\)</span>).  The steps or our
+<span class="docutils literal"><span class="pre">egyptian_mul</span></span> algorithm are:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>if n == 1, return a
+if n is even, return egyptian_mul(a + a, n / 2)
+if n is odd, return egyptian_mul(a + a, (n - 1) / 2) + a
+</pre></div>
+</div>
+<p>An implementation in Rust is:</p>
+<div class="highlight-rust"><div class="highlight"><pre><span></span><span class="k">fn</span> <span class="nf">egyptian_mul</span><span class="p">(</span><span class="n">a</span>: <span class="kt">i32</span><span class="p">,</span><span class="w"> </span><span class="n">n</span>: <span class="kt">i32</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="kt">i32</span> <span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">egyptian_mul</span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">result</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">a</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">result</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>This multiplication algorithm relies only on addition, and multiplies <span class="docutils literal"><span class="pre">a</span></span> by
+<span class="docutils literal"><span class="pre">n</span></span> in <span class="math">\(log(n)\)</span> steps.</p>
+<p><span class="docutils literal"><span class="pre">egyptian_mul</span></span> and <span class="docutils literal"><span class="pre">fast_exp2x2</span></span> algorithms have the same structure since
+they are fundamentally the same: they provide an efficient way to implement an
+operation defined as applying another operation n times. Multiplication is, by
+definition, repeated addition. Similarly, exponentiation is, by definition,
+repeated multiplication. We can generalize these to an algorithm that given an
+initial value <span class="docutils literal"><span class="pre">a</span></span> of any type <span class="docutils literal"><span class="pre">T</span></span>, an operation <span class="docutils literal"><span class="pre">op(T,</span> <span class="pre">T)</span> <span class="pre">-&gt;</span> <span class="pre">T</span></span>, and
+<span class="docutils literal"><span class="pre">n</span></span>, the number of times to apply <span class="docutils literal"><span class="pre">op</span></span>, provides an efficient computation
+using doubling and halving:</p>
+<div class="highlight-rust"><div class="highlight"><pre><span></span><span class="k">fn</span> <span class="nf">op_n_times</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">Op</span><span class="o">&gt;</span><span class="p">(</span><span class="n">a</span>: <span class="nc">T</span><span class="p">,</span><span class="w"> </span><span class="n">op</span>: <span class="kp">&amp;</span><span class="nc">Op</span><span class="p">,</span><span class="w"> </span><span class="n">n</span>: <span class="kt">i32</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">T</span><span class="w"></span>
+<span class="w">    </span><span class="k">where</span><span class="w"> </span><span class="n">T</span>: <span class="nb">Copy</span><span class="p">,</span><span class="w"></span>
+<span class="w">          </span><span class="n">Op</span>: <span class="nb">Fn</span><span class="p">(</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">T</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">op_n_times</span>::<span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">Op</span><span class="o">&gt;</span><span class="p">(</span><span class="n">op</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">),</span><span class="w"> </span><span class="o">&amp;</span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">op</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">result</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">result</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>We can express Egyptian multiplication (<span class="docutils literal"><span class="pre">egyptian_mul</span></span>) as addition applied
+<span class="docutils literal"><span class="pre">n</span></span> times:</p>
+<div class="highlight-rust"><div class="highlight"><pre><span></span><span class="k">fn</span> <span class="nf">egyptian_mul</span><span class="p">(</span><span class="n">a</span>: <span class="kt">i32</span><span class="p">,</span><span class="w"> </span><span class="n">n</span>: <span class="kt">i32</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="kt">i32</span> <span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">op_n_times</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">std</span>::<span class="n">ops</span>::<span class="n">Add</span>::<span class="n">add</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Similarly, we can express fast matrix exponentiation (<span class="docutils literal"><span class="pre">fast_exp2x2</span></span>) as matrix
+multiplication applied <span class="docutils literal"><span class="pre">n</span></span> times:</p>
+<div class="highlight-rust"><div class="highlight"><pre><span></span><span class="k">fn</span> <span class="nf">fast_exp2x2</span><span class="p">(</span><span class="n">a</span>: <span class="p">[[</span><span class="kt">i32</span><span class="p">;</span><span class="w"> </span><span class="mi">2</span><span class="p">];</span><span class="w"> </span><span class="mi">2</span><span class="p">],</span><span class="w"> </span><span class="n">n</span>: <span class="kt">i32</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="p">[[</span><span class="kt">i32</span><span class="p">;</span><span class="w"> </span><span class="mi">2</span><span class="p">];</span><span class="w"> </span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">op_n_times</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">mul2x2</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="industrial-strength-fibonacci">
+<h2>Industrial Strength Fibonacci</h2>
+<p>I wanted to benchmark the two interesting implementations: <span class="docutils literal"><span class="pre">fib2</span></span> and
+<span class="docutils literal"><span class="pre">fib4</span></span>. The first exponential complexity implementation is highly inefficient
+and even for small values of <span class="docutils literal"><span class="pre">N</span></span> (eg. <span class="docutils literal"><span class="pre">N</span> <span class="pre">=</span> <span class="pre">50</span></span>) it takes a long time to
+complete. <span class="docutils literal"><span class="pre">fib3</span></span> has linear complexity like <span class="docutils literal"><span class="pre">fib2</span></span>, but while <span class="docutils literal"><span class="pre">fib2</span></span> just
+performs additions and assignments on each iteration, <span class="docutils literal"><span class="pre">fib3</span></span> performs matrix
+multiplication, which is more expensive. So <span class="docutils literal"><span class="pre">fib2</span></span> and <span class="docutils literal"><span class="pre">fib4</span></span> are more
+interesting to look at.</p>
+<p>Turns out that the Fibonacci sequence grows quite fast, the 100th Fibonacci
+number is <span class="docutils literal"><span class="pre">354224848179261915075</span></span>, which does not fit in an <span class="docutils literal"><span class="pre">i32</span></span>. So let’s
+update the implementations to use <span class="docutils literal"><span class="pre">num::BigUint</span></span>, an arbitrary precision
+number. First is <span class="docutils literal"><span class="pre">fib2</span></span>:</p>
+<div class="highlight-rust"><div class="highlight"><pre><span></span><span class="k">extern</span><span class="w"> </span><span class="k">crate</span><span class="w"> </span><span class="n">num</span><span class="p">;</span><span class="w"></span>
+
+<span class="k">use</span><span class="w"> </span><span class="n">num</span>::<span class="n">bigint</span>::<span class="p">{</span><span class="n">BigUint</span><span class="p">,</span><span class="w"> </span><span class="n">ToBigUint</span><span class="p">};</span><span class="w"></span>
+
+<span class="k">fn</span> <span class="nf">fib2</span><span class="p">(</span><span class="n">n</span>: <span class="kt">i32</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">BigUint</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="mf">0.</span><span class="n">to_biguint</span><span class="p">().</span><span class="n">unwrap</span><span class="p">();</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.</span><span class="n">to_biguint</span><span class="p">().</span><span class="n">unwrap</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.</span><span class="n">to_biguint</span><span class="p">().</span><span class="n">unwrap</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">_</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">1</span><span class="p">..</span><span class="n">n</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="o">&amp;</span><span class="n">b</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">c</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">b</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>For <span class="docutils literal"><span class="pre">fib4</span></span>, we need to update <span class="docutils literal"><span class="pre">mul2x2</span></span> to work with <span class="docutils literal"><span class="pre">BigUint</span></span> array
+references, so we don’t copy <span class="docutils literal"><span class="pre">BigUint</span></span> arrays:</p>
+<div class="highlight-rust"><div class="highlight"><pre><span></span><span class="k">fn</span> <span class="nf">mul2x2</span><span class="p">(</span><span class="n">a</span>: <span class="kp">&amp;</span><span class="p">[[</span><span class="n">BigUint</span><span class="p">;</span><span class="w"> </span><span class="mi">2</span><span class="p">];</span><span class="w"> </span><span class="mi">2</span><span class="p">],</span><span class="w"> </span><span class="n">b</span>: <span class="kp">&amp;</span><span class="p">[[</span><span class="n">BigUint</span><span class="p">;</span><span class="w"> </span><span class="mi">2</span><span class="p">];</span><span class="w"> </span><span class="mi">2</span><span class="p">])</span><span class="w"> </span>-&gt; <span class="p">[[</span><span class="n">BigUint</span><span class="p">;</span><span class="w"> </span><span class="mi">2</span><span class="p">];</span><span class="w"> </span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="p">[</span><span class="w"></span>
+<span class="w">        </span><span class="p">[</span><span class="o">&amp;</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="o">&amp;</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="o">&amp;</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="o">&amp;</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="o">&amp;</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="o">&amp;</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="o">&amp;</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="o">&amp;</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]],</span><span class="w"></span>
+<span class="w">        </span><span class="p">[</span><span class="o">&amp;</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="o">&amp;</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="o">&amp;</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="o">&amp;</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="o">&amp;</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="o">&amp;</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="o">&amp;</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="o">&amp;</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]],</span><span class="w"></span>
+<span class="w">    </span><span class="p">]</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>We also need to update our <span class="docutils literal"><span class="pre">op_n_times</span></span> so the operation now takes <span class="docutils literal"><span class="pre">&amp;T</span></span>
+instead of <span class="docutils literal"><span class="pre">T</span></span>. Note this version still works with <span class="docutils literal"><span class="pre">i32</span></span> arrays and numbers,
+but now the operation is expected to take two references instead of two values.
+On the other hand we no longer require that <span class="docutils literal"><span class="pre">T</span></span> has the <span class="docutils literal"><span class="pre">Copy</span></span> trait:</p>
+<div class="highlight-rust"><div class="highlight"><pre><span></span><span class="k">fn</span> <span class="nf">op_n_times</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">Op</span><span class="o">&gt;</span><span class="p">(</span><span class="n">a</span>: <span class="nc">T</span><span class="p">,</span><span class="w"> </span><span class="n">op</span>: <span class="kp">&amp;</span><span class="nc">Op</span><span class="p">,</span><span class="w"> </span><span class="n">n</span>: <span class="kt">i32</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">T</span><span class="w"></span>
+<span class="w">    </span><span class="k">where</span><span class="w"> </span><span class="n">Op</span>: <span class="nb">Fn</span><span class="p">(</span><span class="o">&amp;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">T</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">T</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">op_n_times</span>::<span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">Op</span><span class="o">&gt;</span><span class="p">(</span><span class="n">op</span><span class="p">(</span><span class="o">&amp;</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">a</span><span class="p">),</span><span class="w"> </span><span class="o">&amp;</span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">op</span><span class="p">(</span><span class="o">&amp;</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">result</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">result</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Then we can update our <span class="docutils literal"><span class="pre">fib4</span></span> implementation to use <span class="docutils literal"><span class="pre">BigUint</span></span>:</p>
+<div class="highlight-rust"><div class="highlight"><pre><span></span><span class="k">fn</span> <span class="nf">fast_exp2x2</span><span class="p">(</span><span class="n">a</span>: <span class="p">[[</span><span class="n">BigUint</span><span class="p">;</span><span class="w"> </span><span class="mi">2</span><span class="p">];</span><span class="w"> </span><span class="mi">2</span><span class="p">],</span><span class="w"> </span><span class="n">n</span>: <span class="kt">i32</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="p">[[</span><span class="n">BigUint</span><span class="p">;</span><span class="w"> </span><span class="mi">2</span><span class="p">];</span><span class="w"> </span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">op_n_times</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">mul2x2</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="k">fn</span> <span class="nf">fib4</span><span class="p">(</span><span class="n">n</span>: <span class="kt">i32</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">BigUint</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="mf">0.</span><span class="n">to_biguint</span><span class="p">().</span><span class="n">unwrap</span><span class="p">();</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="mf">1.</span><span class="n">to_biguint</span><span class="p">().</span><span class="n">unwrap</span><span class="p">();</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="w"></span>
+<span class="w">        </span><span class="p">[</span><span class="mf">1.</span><span class="n">to_biguint</span><span class="p">().</span><span class="n">unwrap</span><span class="p">(),</span><span class="w"> </span><span class="mf">1.</span><span class="n">to_biguint</span><span class="p">().</span><span class="n">unwrap</span><span class="p">()],</span><span class="w"></span>
+<span class="w">        </span><span class="p">[</span><span class="mf">1.</span><span class="n">to_biguint</span><span class="p">().</span><span class="n">unwrap</span><span class="p">(),</span><span class="w"> </span><span class="mf">0.</span><span class="n">to_biguint</span><span class="p">().</span><span class="n">unwrap</span><span class="p">()],</span><span class="w"></span>
+<span class="w">    </span><span class="p">];</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">fast_exp2x2</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">].</span><span class="n">clone</span><span class="p">()</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>These two implementations work with arbitrarily large numbers, for example
+<span class="docutils literal"><span class="pre">fib4(10_000)</span></span> is:</p>
+<blockquote style="word-wrap:break-word">
+33644764876431783266621612005107543310302148460680063906564769974680081442166662368155595513633734025582065332680836159373734790483865268263040892463056431887354544369559827491606602099884183933864652731300088830269235673613135117579297437854413752130520504347701602264758318906527890855154366159582987279682987510631200575428783453215515103870818298969791613127856265033195487140214287532698187962046936097879900350962302291026368131493195275630227837628441540360584402572114334961180023091208287046088923962328835461505776583271252546093591128203925285393434620904245248929403901706233888991085841065183173360437470737908552631764325733993712871937587746897479926305837065742830161637408969178426378624212835258112820516370298089332099905707920064367426202389783111470054074998459250360633560933883831923386783056136435351892133279732908133732642652633989763922723407882928177953580570993691049175470808931841056146322338217465637321248226383092103297701648054726243842374862411453093812206564914032751086643394517512161526545361333111314042436854805106765843493523836959653428071768775328348234345557366719731392746273629108210679280784718035329131176778924659089938635459327894523777674406192240337638674004021330343297496902028328145933418826817683893072003634795623117103101291953169794607632737589253530772552375943788434504067715555779056450443016640119462580972216729758615026968443146952034614932291105970676243268515992834709891284706740862008587135016260312071903172086094081298321581077282076353186624611278245537208532365305775956430072517744315051539600905168603220349163222640885248852433158051534849622434848299380905070483482449327453732624567755879089187190803662058009594743150052402532709746995318770724376825907419939632265984147498193609285223945039707165443156421328157688908058783183404917434556270520223564846495196112460268313970975069382648706613264507665074611512677522748621598642530711298441182622661057163515069260029861704945425047491378115154139941550671256271197133252763631939606902895650288268608362241082050562430701794976171121233066073310059947366875
+</blockquote><p>We can benchmark these implementations using Rust’s built-in benchmarking:</p>
+<div class="highlight-rust"><div class="highlight"><pre><span></span><span class="cp">#[bench]</span><span class="w"></span>
+<span class="k">fn</span> <span class="nf">fib4_bench</span><span class="p">(</span><span class="n">b</span>: <span class="kp">&amp;</span><span class="nc">mut</span><span class="w"> </span><span class="n">Bencher</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">b</span><span class="p">.</span><span class="n">iter</span><span class="p">(</span><span class="o">||</span><span class="w"> </span><span class="n">fib4</span><span class="p">(</span><span class="n">N</span><span class="p">));</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="cp">#[bench]</span><span class="w"></span>
+<span class="k">fn</span> <span class="nf">fib2_bench</span><span class="p">(</span><span class="n">b</span>: <span class="kp">&amp;</span><span class="nc">mut</span><span class="w"> </span><span class="n">Bencher</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">b</span><span class="p">.</span><span class="n">iter</span><span class="p">(</span><span class="o">||</span><span class="w"> </span><span class="n">fib2</span><span class="p">(</span><span class="n">N</span><span class="p">));</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>On my Surface Book, for <span class="docutils literal"><span class="pre">N</span> <span class="pre">=</span> <span class="pre">100</span></span>, we have:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>test tests::fib2_bench ... bench:       7,805 ns/iter (+/- 3,042)
+test tests::fib4_bench ... bench:       6,140 ns/iter (+/- 356)
+</pre></div>
+</div>
+<p>For <span class="docutils literal"><span class="pre">N</span> <span class="pre">=</span> <span class="pre">1_000</span></span>:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>test tests::fib2_bench ... bench:      89,131 ns/iter (+/- 28,346)
+test tests::fib4_bench ... bench:      16,307 ns/iter (+/- 2,087)
+</pre></div>
+</div>
+<p>For <span class="docutils literal"><span class="pre">N</span> <span class="pre">=</span> <span class="pre">10_000</span></span>:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>test tests::fib2_bench ... bench:   2,121,140 ns/iter (+/- 132,448)
+test tests::fib4_bench ... bench:     184,625 ns/iter (+/- 12,184)
+</pre></div>
+</div>
+<p>For <span class="docutils literal"><span class="pre">N</span> <span class="pre">=</span> <span class="pre">100_000</span></span>:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>test tests::fib2_bench ... bench: 128,769,418 ns/iter (+/- 5,198,789)
+test tests::fib4_bench ... bench:   7,176,026 ns/iter (+/- 364,400)
+</pre></div>
+</div>
+<p>While <span class="docutils literal"><span class="pre">fib2</span></span> and <span class="docutils literal"><span class="pre">fib4</span></span> start with about the same performance at
+<span class="docutils literal"><span class="pre">N</span> <span class="pre">=</span> <span class="pre">100</span></span>, for <span class="docutils literal"><span class="pre">N</span> <span class="pre">=</span> <span class="pre">100_000</span></span>, <span class="docutils literal"><span class="pre">fib4</span></span> is significantly faster. The
+benchmark results don’t seem to reflect the algorithmic complexity of <span class="docutils literal"><span class="pre">fib2</span></span>
+(linear) and <span class="docutils literal"><span class="pre">fib4</span></span> (logarithmic), I suspect because of the introduction of
+<span class="docutils literal"><span class="pre">BigUint</span></span> and operations on large numbers. Still, the algorithm relying on
+fast exponentiation performs many times faster on large Ns.</p>
+</div>
+<div class="section" id="summary">
+<h2>Summary</h2>
+<p>This blog post covered:</p>
+<ul class="simple">
+<li>Algorithms to generate Fibonacci numbers: naïve recursive (exponential),
+bottom-up (linear), matrix exponentiation (linear or logarithmic, depending on
+the matrix exponentiation algorithm).</li>
+<li>Ancient Egyptian multiplication and fast matrix exponentiation are the same
+algorithm applied to different operations.</li>
+<li>A generic algorithm of efficiently applying an operation n times.</li>
+<li>Algorithms to generate Fibonacci numbers implemented with <span class="docutils literal"><span class="pre">BigUint</span></span> for
+arbitrary precision numbers.</li>
+<li>Benchmarking the <span class="docutils literal"><span class="pre">fib2</span></span> and <span class="docutils literal"><span class="pre">fib4</span></span> algorithms shows <span class="docutils literal"><span class="pre">fib4</span></span> to be much
+better as <span class="docutils literal"><span class="pre">N</span></span> increases.</li>
+</ul>
+<p>My humble conclusion is that generating Fibonacci numbers is more than an
+introductory exercise.</p>
+</div>
+</div>
+
+    <div class="postmeta">
+        
+        
+        
+        </div><ul class="related clearfix">
+            <li class="left"></li>
+            <li class="right"><a href="../../01/27/notes-on-oop.html">Notes on OOP</a> &raquo; </li>
+        </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "vladris";    var disqus_identifier = "2018/02/11/fibonacci";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article></div> <!-- #main --></div> <!-- #main-container -->
+
+        <div class="footer-container" role="contentinfo"><div style="text-align: center; color: #93a4ad">
+    By Vlad Rișcuția | <a href="http://feeds.feedburner.com/vladris">Subscribe</a> | <a href="http://vladris.com/blog/archive">Archive</a>
+</div></div> <!-- footer-container -->
+
+      </div> <!--! end of #container --><!--[if lt IE 7 ]>
+          <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+          <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+        <![endif]-->
+    </body>
+</html>
