@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Binary Relations" href="../10/binary-relations.html" /><link rel="prev" title="Notes on OOP" href="../../../2018/01/27/notes-on-oop.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.7.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -67,7 +67,7 @@ they had in the input.</p>
 <p>An easy solution is to traverse the input once and store all even numbers
 encountered during the traversal into a separate array, then traverse it again
 and do the same for the odd numbers:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">auto</span> <span class="nf">evens_before_odds</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">numbers</span><span class="p">)</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span> <span class="nf">evens_before_odds</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">numbers</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">result</span><span class="p">;</span>
     <span class="n">result</span><span class="p">.</span><span class="n">reserve</span><span class="p">(</span><span class="n">numbers</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
@@ -105,7 +105,7 @@ iteration, we find another even number that appears after the first odd number
 so we swap them, putting the even in the right place. We stop when we run out of
 numbers to swap, either odd or even. An implementation of this algorithm looks
 like this:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">evens_before_odds</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">numbers</span><span class="p">)</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">evens_before_odds</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">numbers</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">numbers</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
 
@@ -144,7 +144,7 @@ odd and even numbers, after we swap them, the new first odd number is right
 after the even we just swapped, so we can hoist the first while statement out of
 the main loop - we only need to find the first odd once, then we just increment
 after each swap:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">evens_before_odds</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">numbers</span><span class="p">)</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">evens_before_odds</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">numbers</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">numbers</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
 
@@ -182,7 +182,7 @@ after each swap:</p>
 after the last even are already in place. With each iteration, we move the first
 odd and last even. We stop when the first odd appears after the last even, which
 means all evens appear before the odds. Here is a possible implementation:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">evens_before_odds</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">numbers</span><span class="p">)</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">evens_before_odds</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">numbers</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="n">numbers</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
 
@@ -237,7 +237,7 @@ would we extend our code?</div></blockquote>
 <p>A clever answer (which I’m also not looking for) is <em>we provide an</em>
 <span class="docutils literal"><span class="pre">odds_before_evens</span></span> <em>which internally calls</em> <span class="docutils literal"><span class="pre">evens_before_odds</span></span> <em>, then
 reverses the output</em>:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">odds_before_evens</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">numbers</span><span class="p">)</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">odds_before_evens</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">numbers</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="n">evens_before_odds</span><span class="p">(</span><span class="n">numbers</span><span class="p">);</span>
     <span class="n">std</span><span class="o">::</span><span class="n">reverse</span><span class="p">(</span><span class="n">numbers</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">numbers</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
@@ -245,7 +245,7 @@ reverses the output</em>:</p>
 </pre></div>
 </div>
 <p>A common answer is <em>we add a flag</em>:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">arrange_numbers</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">numbers</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">evensFirst</span><span class="p">)</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">arrange_numbers</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">numbers</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">evensFirst</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="n">numbers</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
 
@@ -279,7 +279,7 @@ reverses the output</em>:</p>
 <p>What if we also want to move prime numbers before non-prime numbers, given some
 <span class="docutils literal"><span class="pre">bool</span> <span class="pre">is_prime(int)</span></span> primality-testing function?</p>
 <p>We can keep adding flags and extending the <span class="docutils literal"><span class="pre">if</span></span> conditions:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">enum</span> <span class="k">class</span> <span class="nc">Arrangement</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">enum</span> <span class="k">class</span> <span class="nc">Arrangement</span>
 <span class="p">{</span>
     <span class="n">EvensBeforeOdds</span><span class="p">,</span>
     <span class="n">OddsBeforeEvens</span><span class="p">,</span>
@@ -317,7 +317,7 @@ reverses the output</em>:</p>
 </div>
 <p>This doesn’t scale very well though. What we actually want to do here is
 abstract away the predicate based on which we move elements around:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Pred</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Pred</span><span class="o">&gt;</span>
 <span class="kt">void</span> <span class="n">arrange_numbers</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">numbers</span><span class="p">,</span> <span class="n">Pred</span> <span class="n">pred</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="n">numbers</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
@@ -369,7 +369,7 @@ code actually becomes smaller and more readable.</p>
 <p>This is actually a well-known algorithm called a <em>partitioning algorithm</em>. A
 partitioning algorithm moves elements that satisfy a predicate before elements
 that don’t satisfy it. Let’s start with the above implementation:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Pred</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Pred</span><span class="o">&gt;</span>
 <span class="kt">void</span> <span class="n">partition</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">numbers</span><span class="p">,</span> <span class="n">Pred</span> <span class="n">pred</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="n">numbers</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
@@ -398,7 +398,7 @@ that don’t satisfy it. Let’s start with the above implementation:</p>
 <p>This works for vectors, but what if we want to partition a doubly-linked list?
 Can we abstract away the data structure we are partitioning? The answer is
 <em>yes</em>. We can use iterators to access the data structure:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">It</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Pred</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">It</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Pred</span><span class="o">&gt;</span>
 <span class="kt">void</span> <span class="n">partition</span><span class="p">(</span><span class="n">It</span> <span class="n">first</span><span class="p">,</span> <span class="n">It</span> <span class="n">last</span><span class="p">,</span> <span class="n">Pred</span> <span class="n">pred</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">for</span> <span class="p">(;;)</span>
@@ -426,7 +426,7 @@ Can we abstract away the data structure we are partitioning? The answer is
 are using the iterators provided as arguments for traversal. The implementation
 does not increase in complexity, but is now usable beyond vectors. For example
 we can now partition a C-style array:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">evens_before_odds</span><span class="p">(</span><span class="kt">int</span> <span class="n">arr</span><span class="p">[],</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">evens_before_odds</span><span class="p">(</span><span class="kt">int</span> <span class="n">arr</span><span class="p">[],</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="n">partition</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">arr</span> <span class="o">+</span> <span class="n">n</span><span class="p">,</span> <span class="p">[](</span><span class="kt">int</span> <span class="n">i</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">;</span> <span class="p">});</span>
 <span class="p">}</span>
@@ -438,7 +438,7 @@ we can now partition a C-style array:</p>
 first element that does not satisfy our predicate. We have this implicitly and
 callers might be interested in it. To avoid making callers have to recompute it,
 we should return it:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">It</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Pred</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">It</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Pred</span><span class="o">&gt;</span>
 <span class="k">auto</span> <span class="n">partition</span><span class="p">(</span><span class="n">It</span> <span class="n">first</span><span class="p">,</span> <span class="n">It</span> <span class="n">last</span><span class="p">,</span> <span class="n">Pred</span> <span class="n">pred</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">for</span> <span class="p">(;;)</span>
@@ -463,7 +463,7 @@ we should return it:</p>
 </pre></div>
 </div>
 <p>For example, <span class="docutils literal"><span class="pre">partition</span></span> is a key ingredient in quicksort:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">It</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Comp</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">It</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Comp</span><span class="o">&gt;</span>
 <span class="kt">void</span> <span class="n">quick_sort</span><span class="p">(</span><span class="n">It</span> <span class="n">first</span><span class="p">,</span> <span class="n">It</span> <span class="n">last</span><span class="p">,</span> <span class="n">Comp</span> <span class="n">comp</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="c1">// Stop if we have no elements or one element</span>
@@ -494,7 +494,7 @@ we should return it:</p>
 <p>The <span class="docutils literal"><span class="pre">partition</span></span> algorithm we ended up with is fairly efficient, but it’s worth
 taking a look at some of the highly-optimized STL implementations. This is the
 MSVC STL implementation:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">It</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Pred</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">It</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Pred</span><span class="o">&gt;</span>
 <span class="k">auto</span> <span class="n">partition</span><span class="p">(</span><span class="n">It</span> <span class="n">first</span><span class="p">,</span> <span class="n">It</span> <span class="n">last</span><span class="p">,</span> <span class="n">Pred</span> <span class="n">pred</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">for</span> <span class="p">(;;</span> <span class="o">++</span><span class="n">first</span><span class="p">)</span>
@@ -515,7 +515,7 @@ MSVC STL implementation:</p>
 <p>Note this performs the least possible amount of operations. It also seems to
 favor <span class="docutils literal"><span class="pre">for</span></span> loops. Contrast this with the LLVM libc++ implementation, which
 seems to favor <span class="docutils literal"><span class="pre">while</span></span> loops:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">It</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Pred</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">It</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Pred</span><span class="o">&gt;</span>
 <span class="k">auto</span> <span class="n">partition</span><span class="p">(</span><span class="n">It</span> <span class="n">first</span><span class="p">,</span> <span class="n">It</span> <span class="n">last</span><span class="p">,</span> <span class="n">Pred</span> <span class="n">pred</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span>
@@ -543,7 +543,7 @@ seems to favor <span class="docutils literal"><span class="pre">while</span></sp
 even, and swaps them. We had another algorithm which was looking for <em>the first
 even after the first odd</em> during each iteration. Let’s provide a generic
 implementation for it too:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">It</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Pred</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">It</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Pred</span><span class="o">&gt;</span>
 <span class="k">auto</span> <span class="n">partition</span><span class="p">(</span><span class="n">It</span> <span class="n">first</span><span class="p">,</span> <span class="n">It</span> <span class="n">last</span><span class="p">,</span> <span class="n">Pred</span> <span class="n">pred</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">while</span> <span class="p">(</span><span class="n">first</span> <span class="o">!=</span> <span class="n">last</span> <span class="o">&amp;&amp;</span> <span class="n">pred</span><span class="p">(</span><span class="o">*</span><span class="n">first</span><span class="p">))</span>
@@ -572,7 +572,7 @@ requires a <span class="docutils literal"><span class="pre">BidirectionalIterato
 singly-linked list (<span class="docutils literal"><span class="pre">forward_list</span></span>), while the other one can’t (we can only
 traverse a singly-linked list forward in <span class="docutils literal"><span class="pre">O(1)</span></span> time, not backwards).</p>
 <p>The MSVC STL implementation of the forward-iterator algorithm is:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">It</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Pred</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">It</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Pred</span><span class="o">&gt;</span>
 <span class="k">auto</span> <span class="n">partition</span><span class="p">(</span><span class="n">It</span> <span class="n">first</span><span class="p">,</span> <span class="n">It</span> <span class="n">last</span><span class="p">,</span> <span class="n">Pred</span> <span class="n">pred</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">while</span> <span class="p">(</span><span class="n">first</span> <span class="o">!=</span> <span class="n">last</span> <span class="o">&amp;&amp;</span> <span class="n">pred</span><span class="p">(</span><span class="o">*</span><span class="n">first</span><span class="p">))</span>
@@ -590,7 +590,7 @@ traverse a singly-linked list forward in <span class="docutils literal"><span cl
 </pre></div>
 </div>
 <p>The libc++ one is:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">It</span><span class="p">,</span> <span class="n">tpyename</span> <span class="n">Pred</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">It</span><span class="p">,</span> <span class="n">tpyename</span> <span class="n">Pred</span><span class="o">&gt;</span>
 <span class="k">auto</span> <span class="n">partition</span><span class="p">(</span><span class="n">It</span> <span class="n">first</span><span class="p">,</span> <span class="n">It</span> <span class="n">last</span><span class="p">,</span> <span class="n">Pred</span> <span class="n">pred</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span>
@@ -627,7 +627,7 @@ would swap <span class="docutils literal"><span class="pre">1</span></span> with
 <h2>In C#</h2>
 <p>Partitioning is not specific to the C++ language. The same implementation can be
 used, for example, in C#, up to abstracting away data structure traversal:</p>
-<div class="highlight-C#"><div class="highlight"><pre><span></span><span class="k">public</span> <span class="k">static</span> <span class="k">class</span> <span class="nc">IListPartition</span>
+<div class="highlight-C# notranslate"><div class="highlight"><pre><span></span><span class="k">public</span> <span class="k">static</span> <span class="k">class</span> <span class="nc">IListPartition</span>
 <span class="p">{</span>
     <span class="k">public</span> <span class="k">static</span> <span class="kt">int</span> <span class="n">Partition</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;(</span><span class="k">this</span> <span class="n">IList</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="n">self</span><span class="p">,</span> <span class="n">Func</span><span class="p">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="kt">bool</span><span class="p">&gt;</span> <span class="n">pred</span><span class="p">)</span>
     <span class="p">{</span>

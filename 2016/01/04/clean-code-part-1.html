@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Hello World" href="../../../2015/12/28/hello-world.html" /><link rel="prev" title="Clean Code - Part 2" href="../07/clean-code-part-2.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.7.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -84,7 +84,7 @@ already does what needs to be done. Case in point, we refactored some code for
 a project (C#), extracted some interfaces, componentized things, and wrote a
 bunch of unit tests. All of this was great, except we ended up with a bunch of
 handcrafted stub classes: for</p>
-<div class="highlight-c#"><div class="highlight"><pre><span></span><span class="k">interface</span> <span class="n">IMyComponent</span>
+<div class="highlight-c# notranslate"><div class="highlight"><pre><span></span><span class="k">interface</span> <span class="n">IMyComponent</span>
 <span class="p">{</span>
     <span class="k">void</span> <span class="nf">Foo</span><span class="p">();</span>
     <span class="kt">int</span> <span class="nf">Bar</span><span class="p">();</span>
@@ -93,7 +93,7 @@ handcrafted stub classes: for</p>
 </pre></div>
 </div>
 <p>we had</p>
-<div class="highlight-c#"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyComponentStub</span> <span class="p">:</span> <span class="n">IMyComponent</span>
+<div class="highlight-c# notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyComponentStub</span> <span class="p">:</span> <span class="n">IMyComponent</span>
 <span class="p">{</span>
     <span class="k">public</span> <span class="k">void</span> <span class="nf">Foo</span><span class="p">()</span>
     <span class="p">{</span>
@@ -115,7 +115,7 @@ handcrafted stub classes: for</p>
 <p>and so on. Implementing these stubs was tedious, needless work - we integrated
 <a class="reference external" href="https://github.com/Moq/moq4">Moq</a> , a mocking library, and the above code
 turned into:</p>
-<div class="highlight-c#"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="nn">Moq</span><span class="p">;</span>
+<div class="highlight-c# notranslate"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="nn">Moq</span><span class="p">;</span>
 <span class="p">...</span>
 <span class="kt">var</span> <span class="n">myComponentStub</span> <span class="p">=</span> <span class="n">Mock</span><span class="p">.</span><span class="n">Of</span><span class="p">&lt;</span><span class="n">IMyComponent</span><span class="p">&gt;();</span>
 </pre></div>
@@ -131,7 +131,7 @@ replace a lot of code.</p>
 talk, one of the best tech talks I’ve seen. The example he gives in the talk
 (from the Chrome codebase) shows how a couple of lines of STL code can be used
 instead of a whole convoluted function:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="n">PanelBar</span><span class="o">::</span><span class="n">RepositionExpandedPanels</span><span class="p">(</span><span class="n">Panel</span><span class="o">*</span> <span class="n">fixed_panel</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="n">PanelBar</span><span class="o">::</span><span class="n">RepositionExpandedPanels</span><span class="p">(</span><span class="n">Panel</span><span class="o">*</span> <span class="n">fixed_panel</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">CHECK</span><span class="p">(</span><span class="n">fixed_panel</span><span class="p">);</span>
 
   <span class="c1">// First, find the index of the fixed panel.</span>
@@ -247,7 +247,7 @@ instead of a whole convoluted function:</p>
 </pre></div>
 </div>
 <p>becomes:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="n">PanelBar</span><span class="o">::</span><span class="n">RepositionExpandedPanels</span><span class="p">(</span><span class="n">Panel</span><span class="o">*</span> <span class="n">fixed_panel</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="n">PanelBar</span><span class="o">::</span><span class="n">RepositionExpandedPanels</span><span class="p">(</span><span class="n">Panel</span><span class="o">*</span> <span class="n">fixed_panel</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">CHECK</span><span class="p">(</span><span class="n">fixed_panel</span><span class="p">);</span>
 
   <span class="c1">// First, find the index of the fixed panel.</span>
@@ -304,7 +304,7 @@ less opportunities for bugs.</p>
 exceptions instead of propagating errors through return values.</p>
 <p>Here is an example of error code propagation through return values using the
 Windows API’s <span class="docutils literal"><span class="pre">HRESULT</span></span>:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">HRESULT</span> <span class="nf">foo</span><span class="p">();</span> <span class="c1">// Does some work and returns an HRESULT</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">HRESULT</span> <span class="nf">foo</span><span class="p">();</span> <span class="c1">// Does some work and returns an HRESULT</span>
 <span class="n">HRESULT</span> <span class="nf">bar</span><span class="p">();</span> <span class="c1">// Does some work and returns an HRESULT</span>
 
 <span class="n">HRESULT</span> <span class="nf">baz</span><span class="p">()</span>
@@ -335,7 +335,7 @@ Windows API’s <span class="docutils literal"><span class="pre">HRESULT</span><
 </pre></div>
 </div>
 <p>This can be replaced with the more concise and much easier to read:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">foo</span><span class="p">();</span> <span class="c1">// Does some work, might throw</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">foo</span><span class="p">();</span> <span class="c1">// Does some work, might throw</span>
 <span class="kt">void</span> <span class="nf">bar</span><span class="p">();</span> <span class="c1">// Does some work, might throw</span>
 
 <span class="kt">void</span> <span class="nf">baz</span><span class="p">()</span>
@@ -368,7 +368,7 @@ the public API boundary.</p>
 instead of checking for null. For example, take an <span class="docutils literal"><span class="pre">IActivity</span></span> interface on
 which we can log success or failure, and an <span class="docutils literal"><span class="pre">ActivityScope</span></span> which can retrieve
 the current activity from a context:</p>
-<div class="highlight-c#"><div class="highlight"><pre><span></span><span class="k">interface</span> <span class="n">IActivity</span>
+<div class="highlight-c# notranslate"><div class="highlight"><pre><span></span><span class="k">interface</span> <span class="n">IActivity</span>
 <span class="p">{</span>
     <span class="k">void</span> <span class="nf">LogSuccess</span><span class="p">();</span>
     <span class="k">void</span> <span class="nf">LogFailure</span><span class="p">();</span>
@@ -391,7 +391,7 @@ the current activity from a context:</p>
 </div>
 <p>With this implementation, all clients of the API have to make sure <span class="docutils literal"><span class="pre">GetCurrentActivity()</span></span>
 returns an object as opposed to null. All callers look like this:</p>
-<div class="highlight-c#"><div class="highlight"><pre><span></span><span class="n">ActivityScope</span> <span class="n">activityScope</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ActivityScope</span><span class="p">();</span>
+<div class="highlight-c# notranslate"><div class="highlight"><pre><span></span><span class="n">ActivityScope</span> <span class="n">activityScope</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ActivityScope</span><span class="p">();</span>
 <span class="n">activityScope</span><span class="p">.</span><span class="n">CreateActivity</span><span class="p">();</span>
 
 <span class="p">...</span> <span class="c1">// Do a bunch of stuff</span>
@@ -408,7 +408,7 @@ calls to <span class="docutils literal"><span class="pre">GetCurrentActivity</sp
 Null Object alternative for this is to provide a <span class="docutils literal"><span class="pre">NullActivity</span></span>, for which
 <span class="docutils literal"><span class="pre">LogSuccess</span></span> and <span class="docutils literal"><span class="pre">LogFailure</span></span> don’t do anything. <span class="docutils literal"><span class="pre">ActivityScope</span></span> can return
 <span class="docutils literal"><span class="pre">NullActivity</span></span> instead of null if there is no <span class="docutils literal"><span class="pre">Activity</span></span> in the context:</p>
-<div class="highlight-c#"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">NullActivity</span> <span class="p">:</span> <span class="n">IActivity</span>
+<div class="highlight-c# notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">NullActivity</span> <span class="p">:</span> <span class="n">IActivity</span>
 <span class="p">{</span>
     <span class="k">public</span> <span class="k">void</span> <span class="nf">LogSuccess</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span>
     <span class="k">public</span> <span class="k">void</span> <span class="nf">LogFailure</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span>
@@ -432,11 +432,11 @@ Null Object alternative for this is to provide a <span class="docutils literal">
 </div>
 <p>Now callers don’t need to worry about getting back a null, and can use the API
 like this:</p>
-<div class="highlight-c#"><div class="highlight"><pre><span></span><span class="n">activityScope</span><span class="p">.</span><span class="n">GetCurrentActivity</span><span class="p">().</span><span class="n">LogSuccess</span><span class="p">();</span>
+<div class="highlight-c# notranslate"><div class="highlight"><pre><span></span><span class="n">activityScope</span><span class="p">.</span><span class="n">GetCurrentActivity</span><span class="p">().</span><span class="n">LogSuccess</span><span class="p">();</span>
 </pre></div>
 </div>
 <p>Yet another way to reduce branching is when it used for mapping between two types:</p>
-<div class="highlight-c#"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="p">(</span><span class="n">a</span> <span class="p">==</span> <span class="n">IdType</span><span class="p">.</span><span class="n">Foo</span><span class="p">)</span>
+<div class="highlight-c# notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="p">(</span><span class="n">a</span> <span class="p">==</span> <span class="n">IdType</span><span class="p">.</span><span class="n">Foo</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="n">b</span> <span class="p">=</span> <span class="s">&quot;Foo string&quot;</span><span class="p">;</span>
 <span class="p">}</span>
@@ -450,7 +450,7 @@ like this:</p>
 <p>A pattern like this (which can also take the form of a big switch/case statement)
 can usually be replaced with indexing into an array or looking up the
 corresponding value in a hash map:</p>
-<div class="highlight-c#"><div class="highlight"><pre><span></span><span class="n">Dictionary</span><span class="p">&lt;</span><span class="n">IdType</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;</span> <span class="n">IdTypeToStringMap</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Dictionary</span><span class="p">&lt;</span><span class="n">IdType</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;()</span>
+<div class="highlight-c# notranslate"><div class="highlight"><pre><span></span><span class="n">Dictionary</span><span class="p">&lt;</span><span class="n">IdType</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;</span> <span class="n">IdTypeToStringMap</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Dictionary</span><span class="p">&lt;</span><span class="n">IdType</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;()</span>
 <span class="p">{</span>
     <span class="p">{</span> <span class="n">IdType</span><span class="p">.</span><span class="n">Foo</span><span class="p">,</span> <span class="s">&quot;Foo&quot;</span> <span class="p">},</span>
     <span class="p">{</span> <span class="n">IdType</span><span class="p">.</span><span class="n">Bar</span><span class="p">,</span> <span class="s">&quot;Bar&quot;</span> <span class="p">},</span>
@@ -468,14 +468,14 @@ data (<span class="docutils literal"><span class="pre">IdTypeToStringMap</span><
 <p>This goes back to the C++ Seasoning talk, namely the <em>No Raw Loops</em> guideline. Here’s
 a C# example: given a list of numbers, we want to get the square of all the odd
 numbers in the list.</p>
-<div class="highlight-c#"><div class="highlight"><pre><span></span><span class="kt">var</span> <span class="n">numbers</span> <span class="p">=</span> <span class="k">new</span> <span class="n">List</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;</span> <span class="p">{</span> <span class="m">6</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">2</span><span class="p">,</span> <span class="m">7</span><span class="p">,</span> <span class="m">3</span><span class="p">,</span> <span class="m">4</span><span class="p">,</span> <span class="m">9</span><span class="p">,</span> <span class="m">5</span><span class="p">,</span> <span class="m">8</span> <span class="p">};</span>
+<div class="highlight-c# notranslate"><div class="highlight"><pre><span></span><span class="kt">var</span> <span class="n">numbers</span> <span class="p">=</span> <span class="k">new</span> <span class="n">List</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;</span> <span class="p">{</span> <span class="m">6</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">2</span><span class="p">,</span> <span class="m">7</span><span class="p">,</span> <span class="m">3</span><span class="p">,</span> <span class="m">4</span><span class="p">,</span> <span class="m">9</span><span class="p">,</span> <span class="m">5</span><span class="p">,</span> <span class="m">8</span> <span class="p">};</span>
 
 <span class="c1">// Get the squares of all odd numbers</span>
 </pre></div>
 </div>
 <p>One way to do this is to maintain a list of numbers, iterate over the list, check
 if numbers are odd, and if so, square them and add them to the list:</p>
-<div class="highlight-c#"><div class="highlight"><pre><span></span><span class="c1">// Get the squares of all odd numbers</span>
+<div class="highlight-c# notranslate"><div class="highlight"><pre><span></span><span class="c1">// Get the squares of all odd numbers</span>
 <span class="n">IEnumerable</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;</span> <span class="n">SquareOdds</span><span class="p">(</span><span class="n">IEnumerable</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;</span> <span class="n">numbers</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="kt">var</span> <span class="n">squares</span> <span class="p">=</span> <span class="k">new</span> <span class="n">List</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;();</span>
@@ -496,7 +496,7 @@ if numbers are odd, and if so, square them and add them to the list:</p>
 </div>
 <p>A neater way to do this is to use a generator instead of manually maintaining
 the list of squares:</p>
-<div class="highlight-c#"><div class="highlight"><pre><span></span><span class="c1">// Get the squares of all odd numbers</span>
+<div class="highlight-c# notranslate"><div class="highlight"><pre><span></span><span class="c1">// Get the squares of all odd numbers</span>
 <span class="n">IEnumerable</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;</span> <span class="n">SquareOdds</span><span class="p">(</span><span class="n">IEnumerable</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;</span> <span class="n">numbers</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">foreach</span> <span class="p">(</span><span class="kt">int</span> <span class="n">number</span> <span class="k">in</span> <span class="n">numbers</span><span class="p">)</span>
@@ -512,7 +512,7 @@ the list of squares:</p>
 </pre></div>
 </div>
 <p>That being said, what I would actually recommend is using Linq:</p>
-<div class="highlight-c#"><div class="highlight"><pre><span></span><span class="c1">// Get the squares of all odd numbers</span>
+<div class="highlight-c# notranslate"><div class="highlight"><pre><span></span><span class="c1">// Get the squares of all odd numbers</span>
 <span class="kt">var</span> <span class="n">squares</span> <span class="p">=</span> <span class="n">numbers</span><span class="p">.</span>
                 <span class="n">Where</span><span class="p">(</span><span class="n">number</span> <span class="p">=&gt;</span> <span class="n">number</span> <span class="p">%</span> <span class="m">2</span> <span class="p">!=</span> <span class="m">0</span><span class="p">).</span>
                 <span class="n">Select</span><span class="p">(</span><span class="n">number</span> <span class="p">=&gt;</span> <span class="n">number</span> <span class="p">*</span> <span class="n">number</span><span class="p">);</span>

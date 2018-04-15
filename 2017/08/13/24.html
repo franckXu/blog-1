@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Idris: Totality, Dependent Types, Proofs" href="../../07/20/idris-totality-dependent-types-proofs.html" /><link rel="prev" title="Notes on Unit Testing" href="../../11/09/notes-on-unit-testing.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.7.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -60,7 +60,7 @@ subtraction, multiplication, and division, with any grouping of operations
 (paranthesis can be added anywhere), try to come up with an expression that
 uses all four cards once and equals 24. Division is fractional, so <span class="docutils literal"><span class="pre">5</span> <span class="pre">/</span> <span class="pre">2</span></span>
 is <span class="docutils literal"><span class="pre">2.5</span></span>.</p>
-<p>For example for <span class="docutils literal"><span class="pre">A</span> <span class="pre">4</span> <span class="pre">5</span> <span class="pre">8</span></span> we have <span class="math">\((1 + 5) * (8 - 4)\)</span>.</p>
+<p>For example for <span class="docutils literal"><span class="pre">A</span> <span class="pre">4</span> <span class="pre">5</span> <span class="pre">8</span></span> we have <span class="math notranslate">\((1 + 5) * (8 - 4)\)</span>.</p>
 </div></blockquote>
 <p>There is the problem of implementing an algorithm to find a solution given the
 cards as input.</p>
@@ -72,14 +72,14 @@ and all possible groupings.</p>
 which is <span class="docutils literal"><span class="pre">4!</span></span>. Each ace doubles this number as we need to consider the case in
 which we use it as 1 and the case in which we use it as 11.</p>
 <p>There are 64 ways to combine operations, since we have 4 operations in 3
-possitions, which means <span class="math">\(4^3\)</span> total.</p>
+possitions, which means <span class="math notranslate">\(4^3\)</span> total.</p>
 <p>We also have 5 possible groupings:</p>
-<div class="math">
+<div class="math notranslate">
 \[ \begin{align}\begin{aligned}(x_0 \odot x_1) \oplus (x_2 \otimes x_3)\\((x_0 \odot x_1) \oplus x_2) \otimes x_3\\(x_0 \odot (x_1 \oplus x_2)) \otimes x_3\\x_0 \odot ((x_1 \oplus x_2) \otimes x_3)\\x_0 \odot (x_1 \oplus (x_2 \otimes x_3))\end{aligned}\end{align} \]</div>
-<p>where <span class="math">\(\odot, \oplus, \otimes\)</span> are placeholders for any operators (they
+<p>where <span class="math notranslate">\(\odot, \oplus, \otimes\)</span> are placeholders for any operators (they
 could potentially be the same operator).</p>
 <p>A simple solver implementation looks like this:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">permutations</span><span class="p">,</span> <span class="n">product</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">permutations</span><span class="p">,</span> <span class="n">product</span>
 <span class="kn">from</span> <span class="nn">sys</span> <span class="kn">import</span> <span class="n">argv</span>
 
 <span class="c1"># Transform arguments to numbers, replace &#39;A&#39; and &#39;a&#39; with [1, 11]</span>
@@ -120,39 +120,39 @@ could potentially be the same operator).</p>
 </pre></div>
 </div>
 <p>We have ten possible cards (ace and number cards), and taking combination with
-repetition of 4 cards, we have <span class="math">\(\frac{(n + r - 1)!}{r! * (n - 1)!}\)</span> for
-<span class="math">\(n = 10, r = 4\)</span>, so a total of <span class="math">\(\frac{(10 + 4 - 1)!}{4! * (10 - 1)!}
+repetition of 4 cards, we have <span class="math notranslate">\(\frac{(n + r - 1)!}{r! * (n - 1)!}\)</span> for
+<span class="math notranslate">\(n = 10, r = 4\)</span>, so a total of <span class="math notranslate">\(\frac{(10 + 4 - 1)!}{4! * (10 - 1)!}
 = 715\)</span> possible games.</p>
 <p>Feeding all possible games to the code above, we can see that there are 117
 games which have no solution. The remaining 598 games are solvable.</p>
 <p>We can optimize the above solution further by observing that we only need three
 of the five groupings to cover all cases. Take, for example,
-<span class="math">\(x_0 \odot ((x_1 \oplus x_2) \otimes x_3)\)</span>. Now if <span class="math">\(\odot\)</span> is a
+<span class="math notranslate">\(x_0 \odot ((x_1 \oplus x_2) \otimes x_3)\)</span>. Now if <span class="math notranslate">\(\odot\)</span> is a
 commutative operation (addition or multiplication), we can rewrite this to the
-equivalent <span class="math">\(((x_1 \oplus x_2) \otimes x_3) \odot x_0\)</span>, and since we any
+equivalent <span class="math notranslate">\(((x_1 \oplus x_2) \otimes x_3) \odot x_0\)</span>, and since we any
 way take all permuations of arguments and operators, this ends up getting
-covered by the <span class="math">\(((x_0 \odot x_1) \oplus x_2) \otimes x_3\)</span> case. For
+covered by the <span class="math notranslate">\(((x_0 \odot x_1) \oplus x_2) \otimes x_3\)</span> case. For
 non-commutative operations, for example subtraction, notice that if we do have
-a solution <span class="math">\(x_0 - ((x_1 \oplus x_2) \otimes x_3) = 24\)</span>, since <span class="math">\(x_0\)</span>
+a solution <span class="math notranslate">\(x_0 - ((x_1 \oplus x_2) \otimes x_3) = 24\)</span>, since <span class="math notranslate">\(x_0\)</span>
 is at most 11, it means we need to subtract a negative number from it in order
-to get 24. This implies that at least <span class="math">\(\oplus\)</span> or <span class="math">\(\otimes\)</span> is also
-a subtraction. If <span class="math">\(\otimes\)</span> is a subtraction, we can rewrite the
-expression <span class="math">\(x_0 - ((x_1 \oplus x_2) - x_3)\)</span> as <span class="math">\((x_0 + x_3) -
-(x_1 \oplus x_2)\)</span>. If <span class="math">\(\otimes\)</span> is not a subtraction but <span class="math">\(\oplus\)</span>
-is, we have <span class="math">\(x_0 - ((x_1 - x_2) \otimes x_3)\)</span> which is equivalent with
-<span class="math">\(x_0 - (- (x_2 - x_1) \otimes x_3)\)</span>. If <span class="math">\(\otimes\)</span> is addition, this
-becomes <span class="math">\(x_0 - (x_3 - (x_2 - x_1))\)</span> = <span class="math">\((x_0 - x_3) + (x_2 - x_1)\)</span>.
-If <span class="math">\(\otimes\)</span> is multiplication or division, this becomes <span class="math">\(x_0 - (-
-(x_2 - x_1) \otimes x_3)\)</span> = <span class="math">\(x_0 + ((x_2 - x_1) \otimes x_3)\)</span> =
-<span class="math">\(((x_2 - x_1) \otimes x_3) + x_0\)</span>.</p>
-<p>Similar rewrites can be done if <span class="math">\(\odot\)</span> is division by observing that we
+to get 24. This implies that at least <span class="math notranslate">\(\oplus\)</span> or <span class="math notranslate">\(\otimes\)</span> is also
+a subtraction. If <span class="math notranslate">\(\otimes\)</span> is a subtraction, we can rewrite the
+expression <span class="math notranslate">\(x_0 - ((x_1 \oplus x_2) - x_3)\)</span> as <span class="math notranslate">\((x_0 + x_3) -
+(x_1 \oplus x_2)\)</span>. If <span class="math notranslate">\(\otimes\)</span> is not a subtraction but <span class="math notranslate">\(\oplus\)</span>
+is, we have <span class="math notranslate">\(x_0 - ((x_1 - x_2) \otimes x_3)\)</span> which is equivalent with
+<span class="math notranslate">\(x_0 - (- (x_2 - x_1) \otimes x_3)\)</span>. If <span class="math notranslate">\(\otimes\)</span> is addition, this
+becomes <span class="math notranslate">\(x_0 - (x_3 - (x_2 - x_1))\)</span> = <span class="math notranslate">\((x_0 - x_3) + (x_2 - x_1)\)</span>.
+If <span class="math notranslate">\(\otimes\)</span> is multiplication or division, this becomes <span class="math notranslate">\(x_0 - (-
+(x_2 - x_1) \otimes x_3)\)</span> = <span class="math notranslate">\(x_0 + ((x_2 - x_1) \otimes x_3)\)</span> =
+<span class="math notranslate">\(((x_2 - x_1) \otimes x_3) + x_0\)</span>.</p>
+<p>Similar rewrites can be done if <span class="math notranslate">\(\odot\)</span> is division by observing that we
 would have to divide with a fractional number in order to get 24, so at least
-one of <span class="math">\(\oplus\)</span> or <span class="math">\(\otimes\)</span> is also a division. This means we only
+one of <span class="math notranslate">\(\oplus\)</span> or <span class="math notranslate">\(\otimes\)</span> is also a division. This means we only
 need the groupings</p>
-<div class="math">
+<div class="math notranslate">
 \[ \begin{align}\begin{aligned}(x_0 \odot x_1) \oplus (x_2 \otimes x_3)\\((x_0 \odot x_1) \oplus x_2) \otimes x_3\\(x_0 \odot (x_1 \oplus x_2)) \otimes x_3\end{aligned}\end{align} \]</div>
 <p>to find all possible solutions. Our solution becomes:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">permutations</span><span class="p">,</span> <span class="n">product</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">permutations</span><span class="p">,</span> <span class="n">product</span>
 <span class="kn">from</span> <span class="nn">sys</span> <span class="kn">import</span> <span class="n">argv</span>
 
 <span class="n">args</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">]</span> <span class="k">if</span> <span class="n">arg</span> <span class="ow">in</span> <span class="s1">&#39;aA&#39;</span> <span class="k">else</span>
@@ -180,9 +180,9 @@ need the groupings</p>
 <span class="k">print</span><span class="p">(</span><span class="s1">&#39;No solution&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>This means that for games without aces, we need to check 24 (<span class="math">\(4!\)</span>)
-permutations of cards, 64 (<span class="math">\(4^3\)</span>) combinations of operators, and 3
-groupings. That is <span class="math">\(4! * 4^3 * 3 = 4608\)</span> tests. For games with aces, we
+<p>This means that for games without aces, we need to check 24 (<span class="math notranslate">\(4!\)</span>)
+permutations of cards, 64 (<span class="math notranslate">\(4^3\)</span>) combinations of operators, and 3
+groupings. That is <span class="math notranslate">\(4! * 4^3 * 3 = 4608\)</span> tests. For games with aces, we
 double this number for each ace to account for both the 1 and 11 cases.</p>
 </div>
 <div class="section" id="minimizing-number-of-tests">
@@ -190,16 +190,16 @@ double this number for each ace to account for both the 1 and 11 cases.</p>
 <p>A more interesting question is what is the minimum number of tests we need to
 perform in order to correctly find a solution for all solvable games.</p>
 <p>It is obvious that there are expressions which can never evaluate to 24 for any
-game. For example <span class="math">\((x_0 - x_1) - x_2) - x_3\)</span>, since <span class="math">\(x_i \in \{1,
+game. For example <span class="math notranslate">\((x_0 - x_1) - x_2) - x_3\)</span>, since <span class="math notranslate">\(x_i \in \{1,
 2, ... 11\}\)</span>.</p>
 <p>It is also obvious that we perform a lot of redundant tests, since, for example,
 all of the below expressions are equivalent for all possible inputs:</p>
-<div class="math">
+<div class="math notranslate">
 \[ \begin{align}\begin{aligned}(x_0 + x_1) + (x_2 + x_3)\\((x_0 + x_1) + x_2) + x_3\\(x_0 + (x_1 + x_2)) + x_3\\(x_0 + x_1) + (x_3 + x_2)\\((x_0 + x_1) + x_3) + x_2\\(x_0 + (x_1 + x_3)) + x_2\\...\end{aligned}\end{align} \]</div>
-<p>and so on for all permutations of <span class="math">\(x_0, x_1, x_2, x_3\)</span>.</p>
+<p>and so on for all permutations of <span class="math notranslate">\(x_0, x_1, x_2, x_3\)</span>.</p>
 <p>Let’s generate all possible permutations of cards, combinations of operators,
 and groupings as above:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">itertools</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">itertools</span>
 
 <span class="n">operands</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">permutations</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="mi">4</span><span class="p">))</span> <span class="c1"># 24 of these</span>
 <span class="n">operators</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="s1">&#39;+-*/&#39;</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">3</span><span class="p">))</span> <span class="c1"># 64 of these</span>
@@ -212,13 +212,13 @@ and groupings as above:</p>
 of indexes from 0 to 3, not actual cards. We can also take all possible games as
 combinations of 4 numbers from 1 to 11. Here we generate 1 and 11 games for each
 ace, so we end up with 1001 possible games instead of 715:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">inputs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">combinations_with_replacement</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span> <span class="mi">4</span><span class="p">))</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">inputs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">combinations_with_replacement</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span> <span class="mi">4</span><span class="p">))</span>
 <span class="c1"># 1001 of these</span>
 </pre></div>
 </div>
 <p>We can now write a function that, for a given game, generates all possible
 expressions which evaluate to 24:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">solutions_for</span><span class="p">(</span><span class="n">inp</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">solutions_for</span><span class="p">(</span><span class="n">inp</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">xs</span> <span class="ow">in</span> <span class="n">operands</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">ops</span> <span class="ow">in</span> <span class="n">operators</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">exp</span> <span class="ow">in</span> <span class="n">groupings</span><span class="p">:</span>
@@ -246,11 +246,11 @@ instead. We also return the expression replacing the operands with <span class="
 <span class="pre">x3</span></span> since we don’t care about their particular values, rather the expression
 we are using.</p>
 <p>For example calling:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="nb">list</span><span class="p">(</span><span class="n">solutions_for</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">]))</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">list</span><span class="p">(</span><span class="n">solutions_for</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">]))</span>
 </pre></div>
 </div>
 <p>yields</p>
-<div class="highlight-text"><div class="highlight"><pre><span></span>[&#39;((x0 * x2) - x3) * x1&#39;, &#39;(x1 * x2) - (x3 / x0)&#39;,
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>[&#39;((x0 * x2) - x3) * x1&#39;, &#39;(x1 * x2) - (x3 / x0)&#39;,
  &#39;((x2 * x0) - x3) * x1&#39;, &#39;((x2 / x0) * x3) - x1&#39;,
  &#39;(x2 / (x0 / x3)) - x1&#39;, &#39;(x2 * x1) - (x3 / x0)&#39;,
  &#39;((x2 * x3) / x0) - x1&#39;, &#39;(x2 * (x3 / x0)) - x1&#39;,
@@ -261,7 +261,7 @@ we are using.</p>
 <p>These are all possible expression which evaluate to 24 for the game <span class="docutils literal"><span class="pre">2</span> <span class="pre">4</span> <span class="pre">7</span> <span class="pre">8</span></span>.</p>
 <p>We can compute the list of all expressions which evaluate to 24 for every
 possible game:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">inp</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">:</span>
     <span class="n">result</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">solutions_for</span><span class="p">(</span><span class="n">inp</span><span class="p">))</span>
 
@@ -273,7 +273,7 @@ possible game:</p>
 </div>
 <p>We can take the union of the sets in <span class="docutils literal"><span class="pre">results</span></span> and get the set of all
 expressions that evaluate to 24 for at least one game:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">expressions</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">expressions</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
     <span class="n">expressions</span> <span class="o">=</span> <span class="n">expressions</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 </pre></div>
@@ -285,18 +285,18 @@ game and determine whether it is solvable or not, which is better than our
 original 4608 (or more for games with aces).</p>
 <p>Here we eliminated all expressions which never evaluate to 24, but we still have
 all the redundant tests in our set of expressions. It is also possible to have
-an expression <span class="math">\(E_0\)</span> which solves all games some expression <span class="math">\(E_1\)</span>
+an expression <span class="math notranslate">\(E_0\)</span> which solves all games some expression <span class="math notranslate">\(E_1\)</span>
 solves, plus some other games. In which case we wouldn’t ever need to test using
-<span class="math">\(E_1\)</span> since <span class="math">\(E_0\)</span> would still solve all games that <span class="math">\(E_1\)</span> would
+<span class="math notranslate">\(E_1\)</span> since <span class="math notranslate">\(E_0\)</span> would still solve all games that <span class="math notranslate">\(E_1\)</span> would
 solve.</p>
-<p>More formally, <span class="docutils literal"><span class="pre">expressions</span></span> is our universe <span class="math">\(\mathcal{U}\)</span> of tests and
-<span class="docutils literal"><span class="pre">results</span></span> is a set of sets <span class="math">\(R = \{ R_0, R_1 ... R_n \}\)</span> where
-<span class="math">\(R_i \subset \mathcal{U} \space \forall i \in \{ 0, 1 ... n \}\)</span>. We want
-to find the smallest set <span class="math">\(H \subset \mathcal{U}\)</span> such that <span class="math">\(H \cap
+<p>More formally, <span class="docutils literal"><span class="pre">expressions</span></span> is our universe <span class="math notranslate">\(\mathcal{U}\)</span> of tests and
+<span class="docutils literal"><span class="pre">results</span></span> is a set of sets <span class="math notranslate">\(R = \{ R_0, R_1 ... R_n \}\)</span> where
+<span class="math notranslate">\(R_i \subset \mathcal{U} \space \forall i \in \{ 0, 1 ... n \}\)</span>. We want
+to find the smallest set <span class="math notranslate">\(H \subset \mathcal{U}\)</span> such that <span class="math notranslate">\(H \cap
 R_i \neq \varnothing \space \forall i \in \{ 0, 1 ... n \}\)</span>.</p>
 <p>The good news is that this is actually a well known problem called <strong>the hitting
 set problem</strong> <a class="footnote-reference" href="#id3" id="id2">[1]</a>. The bad news is this problem is NP-hard. Even with clever
-pruning, trying out combinations of expressions to find the smallest <span class="math">\(H\)</span>
+pruning, trying out combinations of expressions to find the smallest <span class="math notranslate">\(H\)</span>
 has factorial complexity and even for small sets it quickly reaches astronomical
 numbers.</p>
 </div>
@@ -307,7 +307,7 @@ least attempt to find a <em>good enough</em> solution.</p>
 <p>The greedy algorithm which solves the hitting set problem works as follows:
 build up the solution by selecting at each step the element which hits the
 highest number of sets which were not hit so far.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># Start with an empty set</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Start with an empty set</span>
 <span class="n">min_expressions</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 
 <span class="c1"># While we have unhit sets</span>
@@ -337,7 +337,7 @@ sets is based on the randomized key order. I got solutions ranging from 110 to
 110 tests to find a solution for a game.</p>
 <p>We can use the above code to generate a set of expressions and dump it into a
 source file, together with the code to test input:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sys</span> <span class="kn">import</span> <span class="n">argv</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sys</span> <span class="kn">import</span> <span class="n">argv</span>
 
 <span class="n">expressions</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;(x3 + x1) * (x2 - x0)&quot;</span><span class="p">,</span> <span class="s2">&quot;((x2 * x3) - x0) / x1&quot;</span><span class="p">,</span>
@@ -438,13 +438,13 @@ subset of expressions which are absolutely required in order to solve all
 possible games.</p>
 <p>By <em>unique expression</em> I mean picking an expression and eliminating all other
 equivalent expressions from the set (for example keeping only
-<span class="math">\(((x_0 + x_1) + x_2) + x_3\)</span> while dropping all other permutations and
+<span class="math notranslate">\(((x_0 + x_1) + x_2) + x_3\)</span> while dropping all other permutations and
 groupings of addition). We can easily do this by defining equivalent expressions
-as expressions which solve the exact same games. So if <span class="math">\(E_1\)</span> solves some
-subset <span class="math">\(R_{E_1}\)</span> of <span class="math">\(R\)</span>, an expression <span class="math">\(E_2\)</span> is equivalent to
-it if the set <span class="math">\(R_{E_2}\)</span> of games it solves is equal to <span class="math">\(R_{E_1}\)</span>. We
+as expressions which solve the exact same games. So if <span class="math notranslate">\(E_1\)</span> solves some
+subset <span class="math notranslate">\(R_{E_1}\)</span> of <span class="math notranslate">\(R\)</span>, an expression <span class="math notranslate">\(E_2\)</span> is equivalent to
+it if the set <span class="math notranslate">\(R_{E_2}\)</span> of games it solves is equal to <span class="math notranslate">\(R_{E_1}\)</span>. We
 can define equivalence as:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">equivalent</span><span class="p">(</span><span class="n">exp1</span><span class="p">,</span> <span class="n">exp2</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">equivalent</span><span class="p">(</span><span class="n">exp1</span><span class="p">,</span> <span class="n">exp2</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">exp1</span> <span class="ow">in</span> <span class="n">result</span> <span class="ow">and</span> <span class="n">exp2</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">False</span>
@@ -453,10 +453,10 @@ can define equivalence as:</p>
     <span class="k">return</span> <span class="bp">True</span>
 </pre></div>
 </div>
-<p>With this function, we can go over our univese <span class="math">\(\mathcal{U}\)</span> of
+<p>With this function, we can go over our univese <span class="math notranslate">\(\mathcal{U}\)</span> of
 expressions and eliminate all expressions which are the equivalent of another
 expression:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">expressions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">expressions</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">expressions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">expressions</span><span class="p">)</span>
 <span class="n">i1</span><span class="p">,</span> <span class="n">i2</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
 <span class="k">while</span> <span class="n">i1</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">expressions</span><span class="p">):</span>
     <span class="n">i2</span> <span class="o">=</span> <span class="n">i1</span> <span class="o">+</span> <span class="mi">1</span>
@@ -480,15 +480,15 @@ since it eliminates all games which are solved by the picked expression from the
 search space. This should put the problem in combinatorial perspective though,
 as we need to select from 273 candidates to find the smallest hitting set.</p>
 <p>Once we have eliminated equivalent expressions, we can update the set of game
-results accordingly, by intersecting each <span class="math">\(R_i\)</span> with our new
-<span class="math">\(\mathcal{U}\)</span>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">expressions</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">result</span><span class="p">))</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]</span>
+results accordingly, by intersecting each <span class="math notranslate">\(R_i\)</span> with our new
+<span class="math notranslate">\(\mathcal{U}\)</span>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">expressions</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">result</span><span class="p">))</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>Now we can search <span class="math">\(R\)</span> for sets with a single element. This will give us
+<p>Now we can search <span class="math notranslate">\(R\)</span> for sets with a single element. This will give us
 expressions which must be part of our solution, otherwise eliminating them would
 cause a solvable game to appear as unsolvable:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">min_expressions</span><span class="p">,</span> <span class="n">games_with_unique_result</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(),</span> <span class="mi">0</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">min_expressions</span><span class="p">,</span> <span class="n">games_with_unique_result</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(),</span> <span class="mi">0</span>
 <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">min_expressions</span> <span class="o">=</span> <span class="n">min_expressions</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
@@ -497,7 +497,7 @@ cause a solvable game to appear as unsolvable:</p>
 </div>
 <p>Turns out there are 62 expressions which (ignoring equivalences) provide unique
 solutions to games. They are:</p>
-<div class="highlight-text"><div class="highlight"><pre><span></span>{&#39;(x1 + x2) - (x0 - x3)&#39;, &#39;(x1 + x0) * (x2 * x3)&#39;,
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>{&#39;(x1 + x2) - (x0 - x3)&#39;, &#39;(x1 + x0) * (x2 * x3)&#39;,
  &#39;((x1 + x0) - x2) * x3&#39;, &#39;((x3 + x2) * x0) + x1&#39;,
  &#39;(x0 + x3) * (x2 - x1)&#39;, &#39;((x2 * x1) / x0) + x3&#39;,
  &#39;((x3 - x1) * x2) - x0&#39;, &#39;(x1 - (x3 / x2)) * x0&#39;,

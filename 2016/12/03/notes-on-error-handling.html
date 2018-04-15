@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Notes on Types" href="../../10/16/notes-on-types.html" /><link rel="prev" title="Memory Management" href="../../../2017/02/20/memory-management.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.7.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -68,7 +68,7 @@ If this invalid value is passed down to called functions, it can manifests
 itself deep in the stack when it could’ve been caught earlier. A simple example
 would be move directions for a game - let’s say the player can move <span class="docutils literal"><span class="pre">Up</span></span>,
 <span class="docutils literal"><span class="pre">Down</span></span>, <span class="docutils literal"><span class="pre">Left</span></span>, or <span class="docutils literal"><span class="pre">Right</span></span>. This can be encoded as:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="kt">int</span> <span class="n">UP</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="kt">int</span> <span class="n">UP</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 <span class="k">const</span> <span class="kt">int</span> <span class="n">LEFT</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
 <span class="k">const</span> <span class="kt">int</span> <span class="n">DOWN</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
 <span class="k">const</span> <span class="kt">int</span> <span class="n">RIGHT</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
@@ -92,7 +92,7 @@ would be move directions for a game - let’s say the player can move <span clas
 <p>but ultimately a caller can still pass any int value to this function which
 would end up in the default branch as a direction the code doesn’t know how to
 handle. The alternative is, of course:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">enum</span> <span class="k">class</span> <span class="nc">direction</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">enum</span> <span class="k">class</span> <span class="nc">direction</span>
 <span class="p">{</span>
     <span class="n">up</span><span class="p">,</span>
     <span class="n">left</span><span class="p">,</span>
@@ -113,7 +113,7 @@ the allowed values. This is a trivial example but there are many more
 interesting ones. Take for example some connection which, if opened, can receive
 data and close and, if not opened, can be opened. This can be modelled like
 this:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">connection</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">connection</span>
 <span class="p">{</span>
     <span class="k">auto</span> <span class="n">open</span><span class="p">()</span>
     <span class="p">{</span>
@@ -142,7 +142,7 @@ this:</p>
 operation on a connection that hasn’t been opened yet, and vice-versa. Another
 way to model this (as of C++17) is using a variant and separate types for open
 and closed connections:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">opened_connection</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">opened_connection</span>
 <span class="p">{</span>
     <span class="k">auto</span> <span class="n">close</span><span class="p">()</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
     <span class="k">auto</span> <span class="n">receive</span><span class="p">()</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
@@ -168,7 +168,7 @@ had to handle above go away as the type system ensures we can never call
 alternative to using return codes. For example, assume we have a function which
 parses a phone number provided by the user into some <span class="docutils literal"><span class="pre">phone_number_t</span></span> used
 internally. There are a few ways to implement this:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">phone_number_t</span> <span class="nf">parse_phone_number</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">input</span><span class="p">)</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">phone_number_t</span> <span class="nf">parse_phone_number</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">input</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">phone_number_t</span><span class="o">::</span><span class="n">is_valid</span><span class="p">(</span><span class="n">input</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">phone_number_t</span><span class="o">::</span><span class="n">from_string</span><span class="p">(</span><span class="n">input</span><span class="p">);</span> <span class="c1">// assume we can construct a phone_number_t from a valid string</span>
@@ -180,7 +180,7 @@ internally. There are a few ways to implement this:</p>
 <p>This is not ideal though, since exception should really be exceptional (more on
 this below), and user providing invalid input should be a completely valid
 scenario. The alternative would be to use a return code:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">bool</span> <span class="nf">parse_phone_number</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">input</span><span class="p">,</span> <span class="n">phone_number_t</span><span class="o">&amp;</span> <span class="n">output</span><span class="p">)</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">bool</span> <span class="nf">parse_phone_number</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">input</span><span class="p">,</span> <span class="n">phone_number_t</span><span class="o">&amp;</span> <span class="n">output</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">phone_number_t</span><span class="o">::</span><span class="n">is_valid</span><span class="p">(</span><span class="n">input</span><span class="p">))</span>
         <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
@@ -191,11 +191,11 @@ scenario. The alternative would be to use a return code:</p>
 </pre></div>
 </div>
 <p>This works, but calling code is uglier:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">auto</span> <span class="n">phone_number</span> <span class="o">=</span> <span class="n">parse_phone_number</span><span class="p">(</span><span class="n">input</span><span class="p">);</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span> <span class="n">phone_number</span> <span class="o">=</span> <span class="n">parse_phone_number</span><span class="p">(</span><span class="n">input</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>now becomes:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">phone_number_t</span> <span class="n">phone_number</span><span class="p">;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">phone_number_t</span> <span class="n">phone_number</span><span class="p">;</span>
 <span class="kt">bool</span> <span class="n">result</span> <span class="o">=</span> <span class="n">parse_phone_number</span><span class="p">(</span><span class="n">input</span><span class="p">,</span> <span class="n">phone_number</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -203,7 +203,7 @@ scenario. The alternative would be to use a return code:</p>
 alternative is to encode the information that we either have a
 <span class="docutils literal"><span class="pre">phone_number_t</span></span> or an invalid number in a type. In C++ we have (as of C++17)
 <span class="docutils literal"><span class="pre">optional&lt;T&gt;</span></span> for this:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">optional</span><span class="o">&lt;</span><span class="n">phone_number_t</span><span class="o">&gt;</span> <span class="n">parse_phone_number</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">input</span><span class="p">)</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">optional</span><span class="o">&lt;</span><span class="n">phone_number_t</span><span class="o">&gt;</span> <span class="n">parse_phone_number</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">input</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">phone_number_t</span><span class="o">::</span><span class="n">is_valid</span><span class="p">(</span><span class="n">input</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">nullopt</span><span class="p">;</span>
@@ -274,7 +274,7 @@ better - take, for example, a generic algorithm that takes some throwing
 function. Since we supply the predicate, we know what exception it can throw and
 we can catch it in the code that invokes the generic algorithm, keeping this
 invisible to the algorithm:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">InputIt</span><span class="p">,</span> <span class="k">typename</span> <span class="n">UnaryFunction</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">InputIt</span><span class="p">,</span> <span class="k">typename</span> <span class="n">UnaryFunction</span><span class="o">&gt;</span>
 <span class="kt">void</span> <span class="n">for_each</span><span class="p">(</span><span class="n">InputIt</span> <span class="n">first</span><span class="p">,</span> <span class="n">InputIt</span> <span class="n">last</span><span class="p">,</span> <span class="n">UnaryFunction</span> <span class="n">f</span><span class="p">)</span> <span class="k">noexcept</span><span class="p">(</span><span class="k">noexcept</span><span class="p">(</span><span class="n">UnaryFunction</span><span class="p">))</span>
 <span class="p">{</span>
     <span class="k">for</span> <span class="p">(;</span> <span class="n">first</span> <span class="o">!=</span> <span class="n">last</span><span class="p">;</span> <span class="o">++</span><span class="n">first</span><span class="p">)</span>
@@ -284,7 +284,7 @@ invisible to the algorithm:</p>
 </div>
 <p>If our predicate returns an error code instead, the generic algorithm must be
 aware of this:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">InputIt</span><span class="p">,</span> <span class="k">typename</span> <span class="n">UnaryFunction</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">InputIt</span><span class="p">,</span> <span class="k">typename</span> <span class="n">UnaryFunction</span><span class="o">&gt;</span>
 <span class="k">auto</span> <span class="n">for_each</span><span class="p">(</span><span class="n">InputIt</span> <span class="n">first</span><span class="p">,</span> <span class="n">InputIt</span> <span class="n">last</span><span class="p">,</span> <span class="n">UnaryFunction</span> <span class="n">f</span><span class="p">)</span> <span class="k">noexcept</span>
 <span class="p">{</span>
     <span class="k">for</span> <span class="p">(;</span> <span class="n">first</span> <span class="o">!=</span> <span class="n">last</span><span class="p">;</span> <span class="o">++</span><span class="n">first</span><span class="p">)</span>

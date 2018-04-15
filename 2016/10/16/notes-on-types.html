@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Composable Generators" href="../09/composable-generators.html" /><link rel="prev" title="Notes on Error Handling" href="../../12/03/notes-on-error-handling.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.7.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -62,7 +62,7 @@ common distinctions between the type systems of various programming languages:</
 function was declared as only accepting a certain type <span class="docutils literal"><span class="pre">T</span></span> but we attempt to
 pass it an unrelated type <span class="docutils literal"><span class="pre">U</span></span>, the program is considered invalid. This is
 invalid C++:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">sqr</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">)</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">sqr</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span><span class="p">;</span>
 <span class="p">}</span>
@@ -73,7 +73,7 @@ invalid C++:</p>
 <p>On the other hand, in a dynamically typed language, we do not perform any
 compile time checks and, if the data we get is of an unexpected type, we treat
 it as a runtime error. Below is a Python function that squares a number:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">sqr</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">sqr</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">2</span>
 <span class="o">...</span>
 <span class="n">sqr</span><span class="p">(</span><span class="s2">&quot;not an int&quot;</span><span class="p">)</span>
@@ -85,7 +85,7 @@ it as a runtime error. Below is a Python function that squares a number:</p>
 walks like a duck, and it quacks like a duck…”) and <em>monkey patching</em>. Duck
 typing means that accessing a member of an object works as long as that object
 has such a member, regardless of the type of the object. In Python:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Foo</span><span class="p">:</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Foo</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">print</span><span class="p">(</span><span class="s2">&quot;foo&quot;</span><span class="p">)</span>
 
@@ -102,7 +102,7 @@ they contain a <span class="docutils literal"><span class="pre">func()</span></s
 <p>Monkey patching refers to the ability to change the structure of an object at
 runtime. For example we can swap the <span class="docutils literal"><span class="pre">func</span></span> method from an instance of <span class="docutils literal"><span class="pre">foo</span></span>
 with another function like this:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Foo</span><span class="p">:</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Foo</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">print</span><span class="p">(</span><span class="s2">&quot;foo&quot;</span><span class="p">)</span>
 
@@ -135,13 +135,13 @@ a list of characters. This can either result in runtime errors or garbage data.
 In contrast, a strongly typed language will not accept code that attempts to do
 this.</p>
 <p>In Python, which is strongly typed, this doesn’t work:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">foo</span> <span class="o">=</span> <span class="s2">&quot;foo&quot;</span> <span class="c1"># foo is &quot;foo&quot;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">foo</span> <span class="o">=</span> <span class="s2">&quot;foo&quot;</span> <span class="c1"># foo is &quot;foo&quot;</span>
 <span class="n">foo</span> <span class="o">=</span> <span class="n">foo</span> <span class="o">+</span> <span class="s2">&quot; bar&quot;</span> <span class="c1"># foo is &quot;foo bar&quot;</span>
 <span class="n">foo</span> <span class="o">=</span> <span class="n">foo</span> <span class="o">+</span> <span class="mi">5</span> <span class="c1"># TypeError: Can&#39;t convert &#39;int&#39; object to str implicitly</span>
 </pre></div>
 </div>
 <p>It works just fine in JavaScript though:</p>
-<div class="highlight-javascript"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="s2">&quot;foo&quot;</span><span class="p">;</span> <span class="c1">// foo is &quot;foo&quot;</span>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="s2">&quot;foo&quot;</span><span class="p">;</span> <span class="c1">// foo is &quot;foo&quot;</span>
 <span class="nx">foo</span> <span class="o">=</span> <span class="nx">foo</span> <span class="o">+</span> <span class="s2">&quot; bar&quot;</span><span class="p">;</span> <span class="c1">// foo is &quot;foo bar&quot;</span>
 <span class="nx">foo</span> <span class="o">=</span> <span class="nx">foo</span> <span class="o">+</span> <span class="mi">5</span><span class="p">;</span> <span class="c1">// foo is &quot;foo bar5&quot;</span>
 </pre></div>
@@ -156,7 +156,7 @@ so.</p>
 <p>Another difference to note is between static and dynamic polymorphism. Dynamic
 polymorphism happens at runtime, when calling a function on a base type gets
 resolved to the actual function of the deriving type:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">base</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">base</span>
 <span class="p">{</span>
     <span class="k">virtual</span> <span class="kt">void</span> <span class="n">func</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">};</span>
@@ -192,7 +192,7 @@ takes a reference to a <span class="docutils literal"><span class="pre">base</sp
 the actual implementation of the function, which is different between the
 inheriting types <span class="docutils literal"><span class="pre">foo</span></span> and <span class="docutils literal"><span class="pre">bar</span></span>.</p>
 <p>Contrast this with the static alternative:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">foo</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">foo</span>
 <span class="p">{</span>
     <span class="kt">void</span> <span class="n">func</span><span class="p">()</span>
     <span class="p">{</span>
@@ -259,7 +259,7 @@ all functions must return a value, so it does not make sense to have a function
 that returns <span class="docutils literal"><span class="pre">Void</span></span> - the same way it doesn’t make sense to define a
 mathematical function with the empty set as its codomain. We do have an
 <span class="docutils literal"><span class="pre">absurd</span></span> function though, which maps the empty set to any value:</p>
-<div class="highlight-haskell"><div class="highlight"><pre><span></span><span class="nf">absurd</span> <span class="ow">::</span> <span class="kt">Void</span> <span class="ow">-&gt;</span> <span class="n">a</span>
+<div class="highlight-haskell notranslate"><div class="highlight"><pre><span></span><span class="nf">absurd</span> <span class="ow">::</span> <span class="kt">Void</span> <span class="ow">-&gt;</span> <span class="n">a</span>
 </pre></div>
 </div>
 <p>This function cannot be called though.</p>
@@ -267,11 +267,11 @@ mathematical function with the empty set as its codomain. We do have an
 not purely functional, we can define functions that don’t return anything. We
 can even say that a function does not take any arguments by putting a <span class="docutils literal"><span class="pre">void</span></span>
 between the parenthesis:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>This is the equivalent of:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">foo</span><span class="p">();</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">foo</span><span class="p">();</span>
 </pre></div>
 </div>
 <p>Note though that we cannot have a <em>real</em> argument of type <span class="docutils literal"><span class="pre">void</span></span>, that is a
@@ -286,19 +286,19 @@ with <span class="docutils literal"><span class="pre">|T|</span> <span class="pr
 type can only ever have a single possible value. In Haskell, the anonymous
 representation is the empty tuple <span class="docutils literal"><span class="pre">()</span></span>. Here is an example of a function that
 maps anything to this type:</p>
-<div class="highlight-haskell"><div class="highlight"><pre><span></span><span class="nf">unit</span> <span class="ow">::</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="nb">()</span>
+<div class="highlight-haskell notranslate"><div class="highlight"><pre><span></span><span class="nf">unit</span> <span class="ow">::</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="nb">()</span>
 <span class="nf">unit</span> <span class="kr">_</span> <span class="ow">=</span> <span class="nb">()</span>
 </pre></div>
 </div>
 <p>Of course, we can declare our own singleton types. Below is a custom
 <span class="docutils literal"><span class="pre">Singleton</span></span> type and an equivalent unit function:</p>
-<div class="highlight-haskell"><div class="highlight"><pre><span></span><span class="kr">data</span> <span class="kt">Singleton</span> <span class="ow">=</span> <span class="kt">Singleton</span>
+<div class="highlight-haskell notranslate"><div class="highlight"><pre><span></span><span class="kr">data</span> <span class="kt">Singleton</span> <span class="ow">=</span> <span class="kt">Singleton</span>
 <span class="nf">unit</span> <span class="ow">::</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Singleton</span>
 <span class="nf">unit</span> <span class="kr">_</span> <span class="ow">=</span> <span class="kt">Singleton</span>
 </pre></div>
 </div>
 <p>In C++, the anonymous representation of a singleton is an empty <span class="docutils literal"><span class="pre">std::tuple</span></span>:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span> <span class="n">std</span><span class="o">::</span><span class="n">tuple</span><span class="o">&lt;&gt;</span> <span class="n">unit</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span> <span class="n">std</span><span class="o">::</span><span class="n">tuple</span><span class="o">&lt;&gt;</span> <span class="n">unit</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">return</span> <span class="p">{</span> <span class="p">};</span>
 <span class="p">}</span>
@@ -310,7 +310,7 @@ parameters (<span class="docutils literal"><span class="pre">a</span></span> in 
 template, but they boil down to the same thing. The non-anonymous C++
 representation is a struct which doesn’t contain anything. All instances of such
 a struct are equivalent:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">singleton</span> <span class="p">{</span> <span class="p">};</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">singleton</span> <span class="p">{</span> <span class="p">};</span>
 
 <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span> <span class="n">singleton</span> <span class="n">unit</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
 <span class="p">{</span>
@@ -332,11 +332,11 @@ simpler ones. Once we have unit types, we can build up more complex types out
 of them by summing them. For example, a boolean type which can be either
 <span class="docutils literal"><span class="pre">true</span></span> or <span class="docutils literal"><span class="pre">false</span></span> can be thought of as the sum of the singleton <span class="docutils literal"><span class="pre">true</span></span>
 type and the singleton <span class="docutils literal"><span class="pre">false</span></span> type. In Haskell, a boolean is defined as:</p>
-<div class="highlight-haskell"><div class="highlight"><pre><span></span><span class="kr">data</span> <span class="kt">Bool</span> <span class="ow">=</span> <span class="kt">True</span> <span class="o">|</span> <span class="kt">False</span>
+<div class="highlight-haskell notranslate"><div class="highlight"><pre><span></span><span class="kr">data</span> <span class="kt">Bool</span> <span class="ow">=</span> <span class="kt">True</span> <span class="o">|</span> <span class="kt">False</span>
 </pre></div>
 </div>
 <p>Similarly, a <span class="docutils literal"><span class="pre">Weekday</span></span> type can be defined as:</p>
-<div class="highlight-haskell"><div class="highlight"><pre><span></span><span class="kr">data</span> <span class="kt">Weekday</span> <span class="ow">=</span> <span class="kt">Monday</span> <span class="o">|</span> <span class="kt">Tuesday</span> <span class="o">|</span> <span class="kt">Wednesday</span> <span class="o">|</span> <span class="kt">Thursday</span> <span class="o">|</span> <span class="kt">Friday</span> <span class="o">|</span> <span class="kt">Saturday</span> <span class="o">|</span> <span class="kt">Sunday</span>
+<div class="highlight-haskell notranslate"><div class="highlight"><pre><span></span><span class="kr">data</span> <span class="kt">Weekday</span> <span class="ow">=</span> <span class="kt">Monday</span> <span class="o">|</span> <span class="kt">Tuesday</span> <span class="o">|</span> <span class="kt">Wednesday</span> <span class="o">|</span> <span class="kt">Thursday</span> <span class="o">|</span> <span class="kt">Friday</span> <span class="o">|</span> <span class="kt">Saturday</span> <span class="o">|</span> <span class="kt">Sunday</span>
 </pre></div>
 </div>
 <p>Theoretically, numerical types could also be defined as huge sum types of every
@@ -345,7 +345,7 @@ reason about them the same way we reason about other sum types, we don’t have 
 treat them as a special case.</p>
 <p>In C++, an equivalent of the above is an <span class="docutils literal"><span class="pre">enum</span> <span class="pre">class</span></span>. <span class="docutils literal"><span class="pre">bool</span></span> is a built-in
 type with special syntax, but we could define an equivalent as:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">enum</span> <span class="k">class</span> <span class="nc">Boolean</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">enum</span> <span class="k">class</span> <span class="nc">Boolean</span>
 <span class="p">{</span>
     <span class="n">True</span><span class="p">,</span>
     <span class="n">False</span>
@@ -355,7 +355,7 @@ type with special syntax, but we could define an equivalent as:</p>
 <p>It’s easy to see how a <span class="docutils literal"><span class="pre">Weekday</span></span> definition would look like. Things get more
 interesting when we throw type parameters into the mix. In Haskell, we have the
 <span class="docutils literal"><span class="pre">Either</span></span> type, which is declared as follows:</p>
-<div class="highlight-haskell"><div class="highlight"><pre><span></span><span class="kr">data</span> <span class="kt">Either</span> <span class="n">a</span> <span class="n">b</span> <span class="ow">=</span> <span class="kt">Left</span> <span class="n">a</span> <span class="o">|</span> <span class="kt">Right</span> <span class="n">b</span>
+<div class="highlight-haskell notranslate"><div class="highlight"><pre><span></span><span class="kr">data</span> <span class="kt">Either</span> <span class="n">a</span> <span class="n">b</span> <span class="ow">=</span> <span class="kt">Left</span> <span class="n">a</span> <span class="o">|</span> <span class="kt">Right</span> <span class="n">b</span>
 </pre></div>
 </div>
 <p>An instance of this could be either a <span class="docutils literal"><span class="pre">Left</span> <span class="pre">a</span></span>, where <span class="docutils literal"><span class="pre">a</span></span> is a type itself,
@@ -363,7 +363,7 @@ which means it can be any of the values of <span class="docutils literal"><span 
 any of the values of <span class="docutils literal"><span class="pre">b</span></span>. In Haskell we use pattern-matching to operate on
 such a type, so we can declare a simple function that tells us whether we were
 given a <span class="docutils literal"><span class="pre">Left</span> <span class="pre">a</span></span> like this:</p>
-<div class="highlight-haskell"><div class="highlight"><pre><span></span><span class="nf">isLeft</span> <span class="ow">::</span> <span class="kt">Either</span> <span class="n">a</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span>
+<div class="highlight-haskell notranslate"><div class="highlight"><pre><span></span><span class="nf">isLeft</span> <span class="ow">::</span> <span class="kt">Either</span> <span class="n">a</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span>
 <span class="nf">isLeft</span> <span class="p">(</span><span class="kt">Left</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">True</span>
 <span class="nf">isLeft</span> <span class="p">(</span><span class="kt">Right</span> <span class="n">b</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">False</span>
 </pre></div>
@@ -373,7 +373,7 @@ functions. For example, say we have a function <span class="docutils literal"><s
 returns an <span class="docutils literal"><span class="pre">a</span></span>, a function <span class="docutils literal"><span class="pre">bar</span></span> that takes a <span class="docutils literal"><span class="pre">b</span></span> and returns a <span class="docutils literal"><span class="pre">b</span></span>. We
 can then write a <span class="docutils literal"><span class="pre">transform</span></span> function which takes an <span class="docutils literal"><span class="pre">Either</span> <span class="pre">a</span> <span class="pre">b</span></span> and,
 depending on the contained type, it applies the appropriate function:</p>
-<div class="highlight-haskell"><div class="highlight"><pre><span></span><span class="c1">-- Implementation of foo and bar not provided in this example</span>
+<div class="highlight-haskell notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Implementation of foo and bar not provided in this example</span>
 <span class="nf">foo</span> <span class="ow">::</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span>
 <span class="nf">bar</span> <span class="ow">::</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">b</span>
 
@@ -385,7 +385,7 @@ depending on the contained type, it applies the appropriate function:</p>
 <p>This is way beyond the capabilities of a C++ <span class="docutils literal"><span class="pre">enum</span> <span class="pre">class</span></span>. The old way of
 implementing something like this in C++ was using a union and a tag enum to keep
 track of which is the actual type we’re working with:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="c1">// Declaration of A and B not provided in this example</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// Declaration of A and B not provided in this example</span>
 <span class="k">struct</span> <span class="n">A</span><span class="p">;</span>
 <span class="k">struct</span> <span class="n">B</span><span class="p">;</span>
 
@@ -418,7 +418,7 @@ track of which is the actual type we’re working with:</p>
 </pre></div>
 </div>
 <p>Our implementation of transform would look like this:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="c1">// Implementation of A and B not provided in this example</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// Implementation of A and B not provided in this example</span>
 <span class="n">A</span> <span class="nf">foo</span><span class="p">(</span><span class="n">A</span><span class="p">);</span>
 <span class="n">B</span> <span class="nf">bar</span><span class="p">(</span><span class="n">B</span><span class="p">);</span>
 
@@ -446,7 +446,7 @@ union.</p>
 <p>C++17 introduces a better, safer, parameterized type for this: <span class="docutils literal"><span class="pre">std::variant</span></span>.
 Variant takes any number of types as template arguments and stores an instance
 of any one of those types. Using variant, we can re-write the above as:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">variant</span><span class="o">&lt;</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="o">&gt;</span> <span class="n">transform</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">variant</span><span class="o">&lt;</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="o">&gt;</span> <span class="n">either</span><span class="p">)</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">variant</span><span class="o">&lt;</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="o">&gt;</span> <span class="n">transform</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">variant</span><span class="o">&lt;</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="o">&gt;</span> <span class="n">either</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">visit</span><span class="p">([](</span><span class="k">auto</span> <span class="n">e</span><span class="o">&amp;&amp;</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="k">constexpr</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">is_same_v</span><span class="o">&lt;</span><span class="k">decltype</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="n">A</span><span class="o">&gt;</span><span class="p">)</span>
@@ -486,13 +486,13 @@ one. For types <span class="docutils literal"><span class="pre">A</span></span> 
 while the named version is represented by records. An example of a <span class="docutils literal"><span class="pre">perimeter</span></span>
 function which computes the perimeter of a rectangle defined by two points,
 where each point is a tuple of numbers:</p>
-<div class="highlight-haskell"><div class="highlight"><pre><span></span><span class="nf">perimeter</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Num</span> <span class="n">n</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">n</span>
+<div class="highlight-haskell notranslate"><div class="highlight"><pre><span></span><span class="nf">perimeter</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Num</span> <span class="n">n</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">n</span>
 <span class="nf">perimeter</span> <span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">)</span> <span class="p">(</span><span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">)</span> <span class="ow">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">abs</span><span class="p">(</span><span class="n">x1</span> <span class="o">-</span> <span class="n">x2</span><span class="p">)</span> <span class="o">+</span> <span class="n">abs</span><span class="p">(</span><span class="n">y1</span> <span class="o">-</span> <span class="n">y2</span><span class="p">))</span>
 </pre></div>
 </div>
 <p>The named version would declare a <span class="docutils literal"><span class="pre">Point</span></span> type with <span class="docutils literal"><span class="pre">Int</span></span> coordinates and
 use that instead:</p>
-<div class="highlight-haskell"><div class="highlight"><pre><span></span><span class="kr">data</span> <span class="kt">Point</span> <span class="ow">=</span> <span class="kt">Point</span> <span class="p">{</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">::</span> <span class="kt">Int</span> <span class="p">}</span>
+<div class="highlight-haskell notranslate"><div class="highlight"><pre><span></span><span class="kr">data</span> <span class="kt">Point</span> <span class="ow">=</span> <span class="kt">Point</span> <span class="p">{</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">::</span> <span class="kt">Int</span> <span class="p">}</span>
 
 <span class="nf">perimeter</span> <span class="ow">::</span> <span class="kt">Point</span> <span class="ow">-&gt;</span> <span class="kt">Point</span> <span class="ow">-&gt;</span> <span class="kt">Int</span>
 <span class="nf">perimeter</span> <span class="p">(</span><span class="kt">Point</span> <span class="n">x1</span> <span class="n">y1</span><span class="p">)</span> <span class="p">(</span><span class="kt">Point</span> <span class="n">x2</span> <span class="n">y2</span><span class="p">)</span> <span class="ow">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">abs</span><span class="p">(</span><span class="n">x1</span> <span class="o">-</span> <span class="n">x2</span><span class="p">)</span> <span class="o">+</span> <span class="n">abs</span><span class="p">(</span><span class="n">y1</span> <span class="o">-</span> <span class="n">y2</span><span class="p">))</span>
@@ -500,7 +500,7 @@ use that instead:</p>
 </div>
 <p>The C++ equivalents are <span class="docutils literal"><span class="pre">std::tuple</span></span> for anonymous product types and
 <span class="docutils literal"><span class="pre">struct</span></span> for named types:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="c1">// Anonymous</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// Anonymous</span>
 <span class="kt">int</span> <span class="nf">perimeter</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">tuple</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="o">&gt;</span> <span class="n">p1</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">tuple</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="o">&gt;</span> <span class="n">p2</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">((</span><span class="n">abs</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">get</span><span class="o">&lt;</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">(</span><span class="n">p1</span><span class="p">)</span> <span class="o">-</span> <span class="n">std</span><span class="o">::</span><span class="n">get</span><span class="o">&lt;</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">(</span><span class="n">p2</span><span class="p">))</span>
@@ -532,12 +532,12 @@ is effectively a sum type between a given type and a singleton representing
 “doesn’t hold a value”. In other words, the cardinality of an optional for a
 type <span class="docutils literal"><span class="pre">T</span></span> is <span class="docutils literal"><span class="pre">|O|</span> <span class="pre">=</span> <span class="pre">|T|</span> <span class="pre">+</span> <span class="pre">1</span></span>.</p>
 <p>In Haskell, an optional is the famous <span class="docutils literal"><span class="pre">Maybe</span></span> type:</p>
-<div class="highlight-haskell"><div class="highlight"><pre><span></span><span class="kr">data</span> <span class="kt">Maybe</span> <span class="n">a</span> <span class="ow">=</span> <span class="kt">Just</span> <span class="n">a</span> <span class="o">|</span> <span class="kt">Nothing</span>
+<div class="highlight-haskell notranslate"><div class="highlight"><pre><span></span><span class="kr">data</span> <span class="kt">Maybe</span> <span class="n">a</span> <span class="ow">=</span> <span class="kt">Just</span> <span class="n">a</span> <span class="o">|</span> <span class="kt">Nothing</span>
 </pre></div>
 </div>
 <p>A function that operates on <span class="docutils literal"><span class="pre">Maybe</span></span> could say “only apply <span class="docutils literal"><span class="pre">foo</span></span> if the
 optional contains an <span class="docutils literal"><span class="pre">a</span></span>”:</p>
-<div class="highlight-haskell"><div class="highlight"><pre><span></span><span class="c1">-- Implementation of foo not provided in this example</span>
+<div class="highlight-haskell notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Implementation of foo not provided in this example</span>
 <span class="nf">foo</span> <span class="ow">::</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span>
 
 <span class="nf">transform</span> <span class="ow">::</span> <span class="kt">Maybe</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Maybe</span> <span class="n">a</span>
@@ -546,7 +546,7 @@ optional contains an <span class="docutils literal"><span class="pre">a</span></
 </pre></div>
 </div>
 <p>The new C++17 equivalent is the <span class="docutils literal"><span class="pre">optional</span></span> type:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="c1">// Implementation of foo not provided in this example</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// Implementation of foo not provided in this example</span>
 <span class="n">A</span> <span class="nf">foo</span><span class="p">(</span><span class="n">A</span><span class="p">);</span>
 
 <span class="n">std</span><span class="o">::</span><span class="n">optional</span><span class="o">&lt;</span><span class="n">A</span><span class="o">&gt;</span> <span class="n">transform</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">optional</span><span class="o">&lt;</span><span class="n">A</span><span class="o">&gt;</span> <span class="n">a</span><span class="p">)</span>
@@ -556,7 +556,7 @@ optional contains an <span class="docutils literal"><span class="pre">a</span></
 </pre></div>
 </div>
 <p>This might read a bit like the pointer implementation:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">A</span><span class="o">*</span> <span class="nf">transform</span><span class="p">(</span><span class="n">A</span><span class="o">*</span> <span class="n">a</span><span class="p">)</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="o">*</span> <span class="nf">transform</span><span class="p">(</span><span class="n">A</span><span class="o">*</span> <span class="n">a</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">return</span> <span class="n">a</span> <span class="o">!=</span> <span class="k">nullptr</span> <span class="o">?</span> <span class="n">foo</span><span class="p">(</span><span class="o">*</span><span class="n">a</span><span class="p">)</span> <span class="o">:</span> <span class="k">nullptr</span><span class="p">;</span>
 <span class="p">}</span>

@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Clean Code - Part 2" href="../../01/07/clean-code-part-2.html" /><link rel="prev" title="(Ab)using Maps" href="../../04/24/abusing-maps.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.7.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -53,7 +53,7 @@
 <h1>Arguments and Smart Pointers</h1>
 <p>For efficiency reasons, C++ had a myriad of ways to pass data around. A
 function can take arguments in several forms:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="n">T</span><span class="p">);</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="n">T</span><span class="p">);</span>
 <span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="n">T</span><span class="o">*</span><span class="p">);</span>
 <span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="n">T</span><span class="o">&amp;</span><span class="p">);</span>
 <span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="n">T</span><span class="o">**</span><span class="p">);</span>
@@ -79,7 +79,7 @@ allocated, owned, and passed around.</p>
 <h2>Stack Objects and Passing Arguments</h2>
 <p>The simplest, clearest thing to do is allocate objects on the stack. A stack
 object doesn’t involve any pointers:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span>
 <span class="p">{</span>
     <span class="n">Bar</span> <span class="n">bar</span><span class="p">;</span>
 <span class="p">}</span>
@@ -97,7 +97,7 @@ avoid overflow.</p>
 <div class="section" id="pass-by-value">
 <h3>Pass by value</h3>
 <p>One way to get around the lifetime requirement is to pass the object by value:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">do_suff</span><span class="p">(</span><span class="n">Bar</span> <span class="n">bar</span><span class="p">);</span> <span class="c1">// hands bar off to some other object</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">do_suff</span><span class="p">(</span><span class="n">Bar</span> <span class="n">bar</span><span class="p">);</span> <span class="c1">// hands bar off to some other object</span>
 
 <span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span>
 <span class="p">{</span>
@@ -117,7 +117,7 @@ get released before we’re done with them.</p>
 <div class="section" id="move">
 <h3>Move</h3>
 <p>C++11 introduces a cheaper way of achieving this, through move semantics:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">do_suff</span><span class="p">(</span><span class="n">Bar</span><span class="o">&amp;&amp;</span> <span class="n">bar</span><span class="p">);</span> <span class="c1">// hands bar off to some other object</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">do_suff</span><span class="p">(</span><span class="n">Bar</span><span class="o">&amp;&amp;</span> <span class="n">bar</span><span class="p">);</span> <span class="c1">// hands bar off to some other object</span>
 
 <span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span>
 <span class="p">{</span>
@@ -142,7 +142,7 @@ constructor, the above becomes a simple copy <a class="footnote-reference" href=
 copy of the object, but we aren’t worried about the lifetime - meaning the
 object we pass to <span class="docutils literal"><span class="pre">do_stuff</span></span> won’t have to outlive the function call, we can
 pass by reference:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">do_suff</span><span class="p">(</span><span class="k">const</span> <span class="n">Bar</span><span class="o">&amp;</span> <span class="n">bar</span><span class="p">);</span> <span class="c1">// bar is only used within do_suff</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">do_suff</span><span class="p">(</span><span class="k">const</span> <span class="n">Bar</span><span class="o">&amp;</span> <span class="n">bar</span><span class="p">);</span> <span class="c1">// bar is only used within do_suff</span>
 
 <span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span>
 <span class="p">{</span>
@@ -163,7 +163,7 @@ the reference becomes invalid.</p>
 <div class="section" id="pass-by-pointer">
 <h3>Pass by pointer</h3>
 <p>A pointer argument would look like this:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">do_stuff</span><span class="p">(</span><span class="k">const</span> <span class="n">Bar</span><span class="o">*</span> <span class="n">bar</span><span class="p">);</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">do_stuff</span><span class="p">(</span><span class="k">const</span> <span class="n">Bar</span><span class="o">*</span> <span class="n">bar</span><span class="p">);</span>
 
 <span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span>
 <span class="p">{</span>
@@ -209,7 +209,7 @@ should be with the <em>owner</em> of the object.</p>
 <h3>Unique pointer</h3>
 <p>A unique pointer (<span class="docutils literal"><span class="pre">std::unique_ptr</span></span>) is a wrapper around a raw pointer which
 will automatically delete the heap object when it goes out of scope itself:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span>
 <span class="p">{</span>
     <span class="k">auto</span> <span class="n">ptrBar</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Bar</span><span class="o">&gt;</span><span class="p">();</span>
 <span class="p">}</span> <span class="c1">// ptrBar goes out of scope =&gt; heap object gets deleted</span>
@@ -221,14 +221,14 @@ wraps the pointer to it into the unique pointer <span class="docutils literal"><
 also deleted.</p>
 <p>Unique pointers cannot be copied, so we can never accidentally have more than
 one single <span class="docutils literal"><span class="pre">unique_ptr</span></span> pointing to the same heap object:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">auto</span> <span class="n">ptrBar</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Bar</span><span class="o">&gt;</span><span class="p">();</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span> <span class="n">ptrBar</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Bar</span><span class="o">&gt;</span><span class="p">();</span>
 <span class="p">...</span>
 <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Bar</span><span class="o">&gt;</span> <span class="n">ptrBar2</span> <span class="o">=</span> <span class="n">ptrBar</span><span class="p">;</span> <span class="c1">// Won&#39;t compile</span>
 </pre></div>
 </div>
 <p>Of course, if we <em>really</em> want to, we can get the raw pointer out of <span class="docutils literal"><span class="pre">ptrBar</span></span>
 using <span class="docutils literal"><span class="pre">get()</span></span> and we can initialize a <span class="docutils literal"><span class="pre">unique_ptr</span></span> from a raw pointer -</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="c1">// Please don&#39;t do this</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// Please don&#39;t do this</span>
 <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Bar</span><span class="o">&gt;</span> <span class="n">ptrBar2</span><span class="p">(</span><span class="n">ptrBar</span><span class="p">.</span><span class="n">get</span><span class="p">())</span>
 </pre></div>
 </div>
@@ -247,7 +247,7 @@ created for that particular heap object, the reference count is incremented.
 Whenever a shared pointer for that heap object goes out of scope, the reference
 count is decremented. Once the last shared pointer goes out of scope, the heap
 object is deleted.</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span>
 <span class="p">{</span>
     <span class="k">auto</span> <span class="n">ptrBar1</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Bar</span><span class="o">&gt;</span><span class="p">();</span>
     <span class="c1">// one pointer to a Bar object on the heap (ref count = 1)</span>
@@ -348,7 +348,7 @@ hope to explain better than him, so go read his post. I will try to summarize:</
 <p>Rather than forcing callers to use <span class="docutils literal"><span class="pre">unique_ptr</span></span> or <span class="docutils literal"><span class="pre">shared_ptr</span></span> by
 specifying the smart pointer type (which makes assumptions about ownership),
 just ask for a reference to the pointed-to-type:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">do_stuff</span><span class="p">(</span><span class="k">const</span> <span class="n">Bar</span><span class="o">&amp;</span> <span class="n">bar</span><span class="p">);</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">do_stuff</span><span class="p">(</span><span class="k">const</span> <span class="n">Bar</span><span class="o">&amp;</span> <span class="n">bar</span><span class="p">);</span>
 
 <span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span>
 <span class="p">{</span>
@@ -368,7 +368,7 @@ use of raw pointers as a general rule of thumb.</p>
 Scott Meyers has <a class="reference external" href="http://bit.ly/1WgkvEh">a post</a> on his blog where he
 disagrees with this and argues that arguments of move-only types should be
 specified as <span class="docutils literal"><span class="pre">&amp;&amp;</span></span>:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">do_stuff</span><span class="p">(</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Bar</span><span class="o">&gt;&amp;&amp;</span> <span class="n">ptrBar</span><span class="p">);</span> <span class="c1">// sink</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">do_stuff</span><span class="p">(</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Bar</span><span class="o">&gt;&amp;&amp;</span> <span class="n">ptrBar</span><span class="p">);</span> <span class="c1">// sink</span>
 
 <span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span>
 <span class="p">{</span>
@@ -381,7 +381,7 @@ specified as <span class="docutils literal"><span class="pre">&amp;&amp;</span><
 ownership - in other words, will keep somewhere a reference to the object after
 the function returns, but unlike the above <span class="docutils literal"><span class="pre">unique_ptr</span></span> example, it won’t have
 exclusive ownership of the resource:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">do_stuff</span><span class="p">(</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Bar</span><span class="o">&gt;</span> <span class="n">ptrBar</span><span class="p">);</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">do_stuff</span><span class="p">(</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Bar</span><span class="o">&gt;</span> <span class="n">ptrBar</span><span class="p">);</span>
 
 <span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span>
 <span class="p">{</span>
@@ -396,13 +396,13 @@ exclusive ownership of the resource:</p>
 <p>Only expect a smart pointer by non-const reference if the function is going to
 modify the smart pointer itself (eg. by making it point to a different object).
 In my experience, this is a rare occurrence.</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="c1">// Implies this function modifies the pointer itself.</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// Implies this function modifies the pointer itself.</span>
 <span class="kt">void</span> <span class="nf">do_stuff</span><span class="p">(</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Bar</span><span class="o">&gt;&amp;</span> <span class="n">ptrBar</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>There is no good reason to expect a <span class="docutils literal"><span class="pre">const&amp;</span></span> to a <span class="docutils literal"><span class="pre">unique_ptr</span></span>, just reference
 the underlying type:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="c1">// void do_stuff(const unique_ptr&lt;Bar&gt;&amp; ptrBar);</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// void do_stuff(const unique_ptr&lt;Bar&gt;&amp; ptrBar);</span>
 <span class="c1">// No reason to use the above as opposed to</span>
 <span class="kt">void</span> <span class="nf">do_stuff</span><span class="p">(</span><span class="k">const</span> <span class="n">Bar</span><span class="o">&amp;</span> <span class="n">bar</span><span class="p">);</span>
 </pre></div>
@@ -411,7 +411,7 @@ the underlying type:</p>
 of the smart pointer. If the function would never create a copy of the pointer,
 simply use <span class="docutils literal"><span class="pre">&amp;</span></span> to underlying type. If the function would always copy the
 pointer, expect <span class="docutils literal"><span class="pre">shared_ptr</span></span> by value.</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="c1">// Might or might not share ownership</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// Might or might not share ownership</span>
 <span class="kt">void</span> <span class="nf">do_stuff</span><span class="p">(</span><span class="k">const</span> <span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Bar</span><span class="o">&gt;&amp;</span> <span class="n">ptrBar</span><span class="p">);</span>
 
 <span class="c1">// Will never share ownership</span>

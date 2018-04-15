@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="A Heterogeneous Event Store" href="../../02/25/a-heterogeneous-event-store.html" /><link rel="prev" title="Singletons" href="../../07/10/singletons.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.7.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -156,7 +156,7 @@ implement an <span class="docutils literal"><span class="pre">O(n</span> <span c
 also implement an <span class="docutils literal"><span class="pre">O(n^2)</span></span> bubblesort that works with forward iterators.</p>
 <p><span class="docutils literal"><span class="pre">IEnumerator&lt;T&gt;</span></span> in C# models a forward iterator. The (simplified) interface
 is:</p>
-<div class="highlight-C#"><div class="highlight"><pre><span></span><span class="k">interface</span> <span class="n">IEnumerator</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span>
+<div class="highlight-C# notranslate"><div class="highlight"><pre><span></span><span class="k">interface</span> <span class="n">IEnumerator</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span>
 <span class="p">{</span>
     <span class="n">T</span> <span class="n">Current</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="p">}</span>
     <span class="kt">bool</span> <span class="nf">MoveNext</span><span class="p">();</span>

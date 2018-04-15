@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Evens before Odds" href="../../../2017/12/30/evens-before-odds.html" /><link rel="prev" title="Fibonacci" href="../../02/11/fibonacci.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.7.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -60,7 +60,7 @@ using a wider variety of concepts enables us to build simpler systems.</p>
 <blockquote>
 <div>If it walks like a duck and it quacks like a duck, then it must be a duck.</div></blockquote>
 <p>Let’s say we have a <span class="docutils literal"><span class="pre">Duck</span></span> class. A <span class="docutils literal"><span class="pre">Duck</span></span> quacks and waddles:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Duck</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Duck</span>
 <span class="p">{</span>
 <span class="k">public</span><span class="o">:</span>
     <span class="kt">void</span> <span class="n">Quack</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span>
@@ -69,7 +69,7 @@ using a wider variety of concepts enables us to build simpler systems.</p>
 </pre></div>
 </div>
 <p>We have a function that uses a duck:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="n">Duck</span><span class="o">&amp;</span> <span class="n">duck</span><span class="p">)</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="n">Duck</span><span class="o">&amp;</span> <span class="n">duck</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="n">duck</span><span class="p">.</span><span class="n">Quack</span><span class="p">();</span>
     <span class="n">duck</span><span class="p">.</span><span class="n">Waddle</span><span class="p">();</span>
@@ -78,7 +78,7 @@ using a wider variety of concepts enables us to build simpler systems.</p>
 </div>
 <p>The object-oriented way to implement subtyping is to inherit from the base
 class:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">UglyDuckling</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Duck</span> <span class="p">{</span> <span class="p">};</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">UglyDuckling</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Duck</span> <span class="p">{</span> <span class="p">};</span>
 
 <span class="c1">// ...</span>
 
@@ -96,7 +96,7 @@ and so on. This makes things slightly complicated: what if we need something
 that waddles, but we don’t care about quacking? Do we separate our duck into two
 different interfaces? In general, do we add an interface for each behavior and
 then pull groups of interfaces together to form more refined types?</p>
-<div class="highlight-C++"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">IQuack</span>
+<div class="highlight-C++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">IQuack</span>
 <span class="p">{</span>
     <span class="k">virtual</span> <span class="kt">void</span> <span class="n">Quack</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">};</span>
@@ -123,7 +123,7 @@ then pull groups of interfaces together to form more refined types?</p>
 <p>This works, but has combinatorial complexity and we end up with deep hierarchies
 which are difficult to reason about. There is another way to achieve this
 though, using generic programming:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">UglyDuckling</span> <span class="c1">// No inheritance</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">UglyDuckling</span> <span class="c1">// No inheritance</span>
 <span class="p">{</span>
 <span class="k">public</span><span class="o">:</span>
     <span class="kt">void</span> <span class="n">Quack</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span>
@@ -159,7 +159,7 @@ is a pity that we usually have to express them via inheritance. A mixin is a
 type that provides some behavior which is <em>mixed in</em> or <em>included</em> into another
 type. For example, if we use intrusive reference counting, we can isolate the
 reference-counting behavior into its own type:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">RefCounted</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">RefCounted</span>
 <span class="p">{</span>
 <span class="k">public</span><span class="o">:</span>
     <span class="kt">void</span> <span class="n">AddRef</span><span class="p">()</span> <span class="p">{</span> <span class="o">++</span><span class="n">m_refCount</span><span class="p">;</span> <span class="p">}</span>
@@ -174,7 +174,7 @@ reference-counting behavior into its own type:</p>
 </div>
 <p>Then we can have other types for which we want intrusive reference counting
 simply mixing in this behavior:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Foo</span> <span class="o">:</span> <span class="k">public</span> <span class="n">RefCounted</span> <span class="p">{</span> <span class="p">};</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Foo</span> <span class="o">:</span> <span class="k">public</span> <span class="n">RefCounted</span> <span class="p">{</span> <span class="p">};</span>
 </pre></div>
 </div>
 <p>Now <span class="docutils literal"><span class="pre">Foo</span></span> has <span class="docutils literal"><span class="pre">AddRef</span></span> and <span class="docutils literal"><span class="pre">Release</span></span> functions which can be called by a
@@ -187,7 +187,7 @@ other types.</p>
 <div class="section" id="the-case-for-free-functions">
 <h2>The Case for Free Functions</h2>
 <p>What is the difference between the following two <span class="docutils literal"><span class="pre">Print</span></span> functions?</p>
-<div class="highlight-C++"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Foo</span>
+<div class="highlight-C++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Foo</span>
 <span class="p">{</span>
 <span class="k">public</span><span class="o">:</span>
     <span class="kt">void</span> <span class="n">Print</span><span class="p">()</span> <span class="p">{</span> <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">Data</span><span class="p">();</span> <span class="p">}</span>
@@ -214,7 +214,7 @@ free-function version wouldn’t have worked. As long as we can implement a
 function that operates on a type without having to access its private member,
 that function should not belong to the type. Depending on the language, we have
 several options. We could put such functions in “helper” types:</p>
-<div class="highlight-C#"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">FooPrinter</span>
+<div class="highlight-C# notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">FooPrinter</span>
 <span class="p">{</span>
     <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">Print</span><span class="p">(</span><span class="n">Foo</span> <span class="n">foo</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
 <span class="p">}</span>
@@ -223,14 +223,14 @@ several options. We could put such functions in “helper” types:</p>
 <p>C# provides extension methods as syntax sugar for this, which allow us to call
 <span class="docutils literal"><span class="pre">foo.Print()</span></span> even though we implement the <span class="docutils literal"><span class="pre">Print</span></span> function as an extension
 method:</p>
-<div class="highlight-C#"><div class="highlight"><pre><span></span><span class="k">static</span> <span class="k">class</span> <span class="nc">FooPrinter</span>
+<div class="highlight-C# notranslate"><div class="highlight"><pre><span></span><span class="k">static</span> <span class="k">class</span> <span class="nc">FooPrinter</span>
 <span class="p">{</span>
     <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">Print</span><span class="p">(</span><span class="k">this</span> <span class="n">Foo</span> <span class="n">foo</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 <p>Still, the simplest thing to do is have a free function:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">Print</span><span class="p">(</span><span class="k">const</span> <span class="n">Foo</span><span class="o">&amp;</span> <span class="n">foo</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">Print</span><span class="p">(</span><span class="k">const</span> <span class="n">Foo</span><span class="o">&amp;</span> <span class="n">foo</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
 </pre></div>
 </div>
 <p>Being forced to group everything inside classes yields messy code. Steve Yegge’s
@@ -245,7 +245,7 @@ horrible replacements for free-standing functions.</p>
 but we need to implement a set of operations on said object model. Managers tend
 to be singletons. For example, we have a <cite>Connection</cite> type that models a
 connection to a peer:</p>
-<div class="highlight-C#"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Connection</span>
+<div class="highlight-C# notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Connection</span>
 <span class="p">{</span>
     <span class="c1">// Open, Close, Send, Receive etc.</span>
 <span class="p">}</span>
@@ -253,7 +253,7 @@ connection to a peer:</p>
 </div>
 <p>We also want someone to open new connections and close all opened connections.
 Here is a purely object oriented <span class="docutils literal"><span class="pre">ConnectionManager</span></span>:</p>
-<div class="highlight-C#"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ConnectionManager</span>
+<div class="highlight-C# notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ConnectionManager</span>
 <span class="p">{</span>
     <span class="k">private</span> <span class="k">static</span> <span class="n">ConnectionManager</span> <span class="n">_instance</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ConnectionManager</span><span class="p">();</span>
     <span class="k">private</span> <span class="nf">ConnectionManager</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span>
@@ -283,7 +283,7 @@ Here is a purely object oriented <span class="docutils literal"><span class="pre
 <span class="docutils literal"><span class="pre">CloseAll()</span></span>. Besides being verbose to use (<span class="docutils literal"><span class="pre">ConnectionManager.GetInstance().Make()</span></span>, <span class="docutils literal"><span class="pre">ConnectionManager.GetInstance().Close()</span></span>),
 this class does not make much sense. A non-OOP implementation would look like
 this:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="c1">// In .h file</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// In .h file</span>
 <span class="k">class</span> <span class="nc">Connection</span>
 <span class="p">{</span>
     <span class="c1">// Open, Close, Send, Receive etc.</span>
@@ -321,7 +321,7 @@ variable scoped to the implementation .cpp file. “Managers” rarely make sens
 the type it “manages”, “Utils” classes end up being dumping grounds of functions
 that don’t seem to belong anywhere else. The biggest problem is that each of
 these functions usually depends on some other component:</p>
-<div class="highlight-C#"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">FooUtils</span>
+<div class="highlight-C# notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">FooUtils</span>
 <span class="p">{</span>
     <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">DoBar</span><span class="p">()</span> <span class="p">{</span> <span class="cm">/* Dependency on Bar */</span> <span class="p">}</span>
     <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">DoBaz</span><span class="p">()</span> <span class="p">{</span> <span class="cm">/* Dependency on Baz */</span> <span class="p">}</span>
@@ -354,7 +354,7 @@ is derived from that. But let’s assume we have separate <em>day</em>, <em>mont
 <em>year</em> fields. This type should maintain an invariant that it represents a valid
 date, so we can’t have, for example, a June 31st. It’s hard to enforce the
 invariant with:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Date</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Date</span>
 <span class="p">{</span>
     <span class="kt">uint8_t</span> <span class="n">day</span><span class="p">;</span>
     <span class="kt">uint8_t</span> <span class="n">month</span><span class="p">;</span>
@@ -364,7 +364,7 @@ invariant with:</p>
 </div>
 <p>Alternately, we can implement a class with a constructor which ensures only
 valid dates can be created:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Date</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Date</span>
 <span class="p">{</span>
 <span class="k">public</span><span class="o">:</span>
     <span class="n">Date</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">year</span><span class="p">,</span> <span class="kt">uint8_t</span> <span class="n">month</span><span class="p">,</span> <span class="kt">uint8_t</span> <span class="n">day</span><span class="p">)</span>
@@ -390,7 +390,7 @@ days would increment the month and when incrementing the month would increment
 the year, such that the invariant of always having a valid date is enforced.</p>
 <p>On the other hand, a type which doesn’t need to maintain an invariant, say a
 point in the plane, should not be implemented as a class:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Point</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Point</span>
 <span class="p">{</span>
     <span class="kt">int64_t</span> <span class="n">x</span><span class="p">;</span>
     <span class="kt">int64_t</span> <span class="n">y</span><span class="p">;</span>

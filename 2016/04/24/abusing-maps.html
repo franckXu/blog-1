@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Arguments and Smart Pointers" href="../../03/11/arguments-and-smart-pointers.html" /><link rel="prev" title="Dependency Injection in C++" href="../../07/06/dependency-injection-in-c.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.7.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -59,7 +59,7 @@ treated as a map itself, to which attributes and methods can be added or removed
 at runtime.</p>
 <p>In practice though, maps are often used to convert a value of one type into a
 value of a different type. It is not uncommon to have very small maps like</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">unordered_map</span><span class="o">&lt;</span><span class="n">Foo</span><span class="p">,</span> <span class="n">Bar</span><span class="o">&gt;</span> <span class="n">fooBarMap</span> <span class="o">=</span> <span class="p">{</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">unordered_map</span><span class="o">&lt;</span><span class="n">Foo</span><span class="p">,</span> <span class="n">Bar</span><span class="o">&gt;</span> <span class="n">fooBarMap</span> <span class="o">=</span> <span class="p">{</span>
     <span class="p">{</span> <span class="n">foo1</span><span class="p">,</span> <span class="n">bar1</span> <span class="p">},</span>
     <span class="p">{</span> <span class="n">foo2</span><span class="p">,</span> <span class="n">bar2</span> <span class="p">},</span>
     <span class="p">{</span> <span class="n">foo3</span><span class="p">,</span> <span class="n">bar3</span> <span class="p">}</span>
@@ -74,7 +74,7 @@ value of a different type. It is not uncommon to have very small maps like</p>
 structure. The coding pattern itself is great - mapping a value from a type to
 a value of another type should definitely be declarative. Below is a
 counterexample of non-declarative mapping:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">Bar</span> <span class="nf">barFromFoo</span><span class="p">(</span><span class="k">const</span> <span class="n">Foo</span><span class="o">&amp;</span> <span class="n">foo</span><span class="p">)</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">Bar</span> <span class="nf">barFromFoo</span><span class="p">(</span><span class="k">const</span> <span class="n">Foo</span><span class="o">&amp;</span> <span class="n">foo</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">foo</span> <span class="o">==</span> <span class="n">foo1</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">bar1</span><span class="p">;</span>
@@ -124,7 +124,7 @@ might require all elements to be moved to fit a new one and <span class="docutil
 </ul>
 <p>For very small-sized lookups, the cost of hashing itself might out-weight a
 linear traversal, so for a small N</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">unordered_map</span><span class="o">&lt;</span><span class="n">Foo</span><span class="p">,</span> <span class="n">Bar</span><span class="o">&gt;</span> <span class="n">fooBarMap</span> <span class="o">=</span> <span class="p">{</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">unordered_map</span><span class="o">&lt;</span><span class="n">Foo</span><span class="p">,</span> <span class="n">Bar</span><span class="o">&gt;</span> <span class="n">fooBarMap</span> <span class="o">=</span> <span class="p">{</span>
     <span class="p">{</span> <span class="n">foo1</span><span class="p">,</span> <span class="n">bar1</span> <span class="p">},</span>
     <span class="p">{</span> <span class="n">foo2</span><span class="p">,</span> <span class="n">bar2</span> <span class="p">},</span>
     <span class="p">{</span> <span class="n">foo3</span><span class="p">,</span> <span class="n">bar3</span> <span class="p">}</span>
@@ -136,7 +136,7 @@ linear traversal, so for a small N</p>
 </pre></div>
 </div>
 <p>performs worse than</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="n">Foo</span><span class="p">,</span> <span class="n">Bar</span><span class="o">&gt;&gt;</span> <span class="n">fooBarMap</span> <span class="o">=</span> <span class="p">{{</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="n">Foo</span><span class="p">,</span> <span class="n">Bar</span><span class="o">&gt;&gt;</span> <span class="n">fooBarMap</span> <span class="o">=</span> <span class="p">{{</span>
     <span class="p">{</span> <span class="n">foo1</span><span class="p">,</span> <span class="n">bar1</span> <span class="p">},</span>
     <span class="p">{</span> <span class="n">foo2</span><span class="p">,</span> <span class="n">bar2</span> <span class="p">},</span>
     <span class="p">{</span> <span class="n">foo3</span><span class="p">,</span> <span class="n">bar3</span> <span class="p">}</span>
@@ -163,7 +163,7 @@ some associated cost in terms of heap allocations (albeit smaller than
 when the key-values are known at compile time, as <span class="docutils literal"><span class="pre">std::array</span></span> simply wraps a
 regular array which is not allocated on the heap. So a more efficient (in terms
 of initialization cost) way of declaring such a look up is</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">arrray</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="n">Foo</span><span class="p">,</span> <span class="n">Bar</span><span class="o">&gt;</span><span class="p">,</span> <span class="mi">3</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">{{</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">arrray</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="n">Foo</span><span class="p">,</span> <span class="n">Bar</span><span class="o">&gt;</span><span class="p">,</span> <span class="mi">3</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">{{</span>
     <span class="p">{</span> <span class="n">foo1</span><span class="p">,</span> <span class="n">bar1</span> <span class="p">},</span>
     <span class="p">{</span> <span class="n">foo2</span><span class="p">,</span> <span class="n">bar2</span> <span class="p">},</span>
     <span class="p">{</span> <span class="n">foo3</span><span class="p">,</span> <span class="n">bar3</span> <span class="p">}</span>
@@ -176,7 +176,7 @@ any allocations whatsoever (if both types are trivial <a class="footnote-referen
 that <span class="docutils literal"><span class="pre">std::string</span></span>, similarly to a vector, wraps a heap-allocated <span class="docutils literal"><span class="pre">char*</span></span>
 and constructing it requires heap allocations. <span class="docutils literal"><span class="pre">const</span> <span class="pre">char*</span></span> to a string
 literal on the other hand is just a pointer to the <span class="docutils literal"><span class="pre">.rodata</span></span> segment. So this</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span> <span class="n">Bar</span><span class="o">&gt;</span><span class="p">,</span> <span class="mi">3</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">{{</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span> <span class="n">Bar</span><span class="o">&gt;</span><span class="p">,</span> <span class="mi">3</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">{{</span>
     <span class="p">{</span> <span class="s">&quot;foo1&quot;</span><span class="p">,</span> <span class="n">bar1</span> <span class="p">},</span>
     <span class="p">{</span> <span class="s">&quot;foo2&quot;</span><span class="p">,</span> <span class="n">bar2</span> <span class="p">},</span>
     <span class="p">{</span> <span class="s">&quot;foo3&quot;</span><span class="p">,</span> <span class="n">bar3</span> <span class="p">}</span>
@@ -185,7 +185,7 @@ literal on the other hand is just a pointer to the <span class="docutils literal
 </div>
 <p>performs three heap allocations (for <span class="docutils literal"><span class="pre">&quot;foo1&quot;</span></span>, <span class="docutils literal"><span class="pre">&quot;foo2&quot;</span></span>, and <span class="docutils literal"><span class="pre">&quot;foo3&quot;</span></span>),
 while the (mostly) equivalent</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span><span class="p">,</span> <span class="n">Bar</span><span class="o">&gt;</span><span class="p">,</span> <span class="mi">3</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">{{</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span><span class="p">,</span> <span class="n">Bar</span><span class="o">&gt;</span><span class="p">,</span> <span class="mi">3</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">{{</span>
     <span class="p">{</span> <span class="s">&quot;foo1&quot;</span><span class="p">,</span> <span class="n">bar1</span> <span class="p">},</span>
     <span class="p">{</span> <span class="s">&quot;foo2&quot;</span><span class="p">,</span> <span class="n">bar2</span> <span class="p">},</span>
     <span class="p">{</span> <span class="s">&quot;foo3&quot;</span><span class="p">,</span> <span class="n">bar3</span> <span class="p">}</span>
@@ -201,7 +201,7 @@ of mapping a value from one type to a value of a different type for a small
 set of known values, it would be great to combine the efficiency of an array
 with the nice lookup semantics of an <span class="docutils literal"><span class="pre">unordered_map</span></span> conatiner.</p>
 <p>I propose a generic container of the following shape:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span>
     <span class="k">typename</span> <span class="n">TKey</span><span class="p">,</span>
     <span class="k">typename</span> <span class="n">T</span><span class="p">,</span>
     <span class="kt">size_t</span> <span class="n">N</span><span class="p">,</span>
@@ -216,7 +216,7 @@ with the nice lookup semantics of an <span class="docutils literal"><span class=
 <p><span class="docutils literal"><span class="pre">keq_equal</span></span> should simply resolve to <span class="docutils literal"><span class="pre">==</span></span> for most types, but be
 specialized for strings types (to use <span class="docutils literal"><span class="pre">strcmp</span></span>, <span class="docutils literal"><span class="pre">wcscmp</span></span> etc.) and allow
 clients to specialize their own <span class="docutils literal"><span class="pre">key_equal</span></span> when needed.</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span> <span class="k">struct</span> <span class="n">key_equal</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span> <span class="k">struct</span> <span class="n">key_equal</span>
 <span class="p">{</span>
     <span class="kt">bool</span> <span class="k">operator</span><span class="p">(</span><span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">lhs</span><span class="p">,</span> <span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">)</span>
     <span class="p">{</span>
@@ -238,7 +238,7 @@ clients to specialize their own <span class="docutils literal"><span class="pre"
 <p>Satisfying the container concept is fairly easy (eg. <span class="docutils literal"><span class="pre">size()</span></span> would return
 <span class="docutils literal"><span class="pre">N</span></span>, iterators over the member array are trivial to implement etc.), the only
 interesting methods are <span class="docutils literal"><span class="pre">find()</span></span>, <span class="docutils literal"><span class="pre">at()</span></span>, and <span class="docutils literal"><span class="pre">operator[]</span></span>:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="p">...</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="p">...</span>
 <span class="k">struct</span> <span class="n">associative_array</span>
 <span class="p">{</span>
     <span class="p">...</span>
@@ -273,7 +273,7 @@ above are also needed (identical except returning <span class="docutils literal"
 <p>Such a container would have similar semantics to <span class="docutils literal"><span class="pre">std::unordered_map</span></span> (minus
 the ability to add elements given a key not already present in the container)
 and the same performance profile of <span class="docutils literal"><span class="pre">std::array</span></span>:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">associative_array</span><span class="o">&lt;</span><span class="n">Foo</span><span class="p">,</span> <span class="n">Bar</span><span class="p">,</span> <span class="mi">3</span><span class="o">&gt;</span> <span class="n">fooBarMap</span> <span class="o">=</span> <span class="p">{{</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">associative_array</span><span class="o">&lt;</span><span class="n">Foo</span><span class="p">,</span> <span class="n">Bar</span><span class="p">,</span> <span class="mi">3</span><span class="o">&gt;</span> <span class="n">fooBarMap</span> <span class="o">=</span> <span class="p">{{</span>
     <span class="p">{</span> <span class="n">foo1</span><span class="p">,</span> <span class="n">bar1</span> <span class="p">},</span>
     <span class="p">{</span> <span class="n">foo2</span><span class="p">,</span> <span class="n">bar2</span> <span class="p">},</span>
     <span class="p">{</span> <span class="n">foo3</span><span class="p">,</span> <span class="n">bar3</span> <span class="p">}</span>

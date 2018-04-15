@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Dependency Injection in C++" href="../../07/06/dependency-injection-in-c.html" /><link rel="prev" title="Composable Generators" href="../../10/09/composable-generators.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.7.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -65,7 +65,7 @@ argument types must satisfy. The main difference is that interfaces/classes
 enable runtime polymorphism while concepts/templates enable polymorphism at
 compile-time.</p>
 <p>Runtime polymorphism:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="c1">// Our interface</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// Our interface</span>
 <span class="k">struct</span> <span class="n">IEngine</span>
 <span class="p">{</span>
     <span class="k">virtual</span> <span class="kt">void</span> <span class="n">Start</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
@@ -119,7 +119,7 @@ of this approach is that it works across binaries <a class="footnote-reference" 
 implementation to it), the disadvantage is the extra redirection - implementing
 classes must have a vtable and call resolution involves jumping through it.</p>
 <p>Compile-time polymorphism:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="c1">// One implementation</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// One implementation</span>
 <span class="k">class</span> <span class="nc">V6Engine</span>
 <span class="p">{</span>
     <span class="kt">void</span> <span class="n">Start</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span>
@@ -179,7 +179,7 @@ has a <span class="docutils literal"><span class="pre">Start()</span></span> fun
 declaration though. Also, compiler errors when templates cannot be instantiated
 are notoriously hard to decipher. The proposed solution to both of the above
 are concepts. Here is how an engine concept would look like:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">TEngine</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">TEngine</span><span class="o">&gt;</span>
 <span class="n">concept</span> <span class="kt">bool</span> <span class="n">Engine</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">return</span> <span class="n">requires</span><span class="p">(</span><span class="n">TEngine</span> <span class="n">engine</span><span class="p">)</span> <span class="p">{</span>
         <span class="p">{</span> <span class="n">engine</span><span class="p">.</span><span class="n">Start</span><span class="p">()</span> <span class="p">};</span>
@@ -191,7 +191,7 @@ are concepts. Here is how an engine concept would look like:</p>
 <p>This defines the <span class="docutils literal"><span class="pre">Engine</span></span> concept to require any type satisfying it to have a
 <span class="docutils literal"><span class="pre">Start()</span></span> function and a <span class="docutils literal"><span class="pre">Stop()</span></span> function. <span class="docutils literal"><span class="pre">StartEngine</span></span> would then be
 able to explicitly say what kind of types it expects:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="n">Engine</span> <span class="n">TEngine</span><span class="o">&gt;</span> <span class="n">StartEngine</span><span class="p">(</span><span class="n">TEngine</span><span class="o">&amp;</span> <span class="n">engine</span><span class="p">)</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="n">Engine</span> <span class="n">TEngine</span><span class="o">&gt;</span> <span class="n">StartEngine</span><span class="p">(</span><span class="n">TEngine</span><span class="o">&amp;</span> <span class="n">engine</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="n">engine</span><span class="p">.</span><span class="n">Start</span><span class="p">();</span>
 <span class="p">}</span>
@@ -218,7 +218,7 @@ etc.</p>
 <p>Modules aim to replace the header/source file split and provide a better way to
 group components and expose functionality. For example, here is a header/source
 file pair from my previous post:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="c1">// ICar.h</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// ICar.h</span>
 <span class="cp">#pragma once</span>
 <span class="cp">#include</span> <span class="cpf">&quot;IEngine.h&quot;</span><span class="cp"></span>
 
@@ -260,7 +260,7 @@ file pair from my previous post:</p>
 </pre></div>
 </div>
 <p>Using modules, we would have:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">module</span> <span class="n">Car</span><span class="p">;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">module</span> <span class="n">Car</span><span class="p">;</span>
 
 <span class="n">import</span> <span class="n">Engine</span><span class="p">;</span>
 
@@ -305,7 +305,7 @@ working implementation as of VS2015 Update 1.</p>
 <h2>Dependency Injection in the Future</h2>
 <p>So putting the above together, here is how dependency injection in C++ might
 look like in the not too far future:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="c1">// Engine.m</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// Engine.m</span>
 <span class="n">module</span> <span class="n">Engine</span><span class="p">;</span>
 
 <span class="k">export</span> <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">TEngine</span><span class="o">&gt;</span>
@@ -354,7 +354,7 @@ look like in the not too far future:</p>
 </pre></div>
 </div>
 <p>This can be used as follows:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">import</span> <span class="n">Car</span><span class="p">;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">import</span> <span class="n">Car</span><span class="p">;</span>
 <span class="p">...</span>
 <span class="n">Car</span><span class="o">&lt;</span><span class="n">V8Engine</span><span class="o">&gt;</span> <span class="n">car</span><span class="p">;</span>
 <span class="n">car</span><span class="p">.</span><span class="n">Drive</span><span class="p">();</span>

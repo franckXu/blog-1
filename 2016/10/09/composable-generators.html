@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Concepts and Modules" href="../../08/17/concepts-and-modules.html" /><link rel="prev" title="Notes on Types" href="../16/notes-on-types.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.7.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -70,7 +70,7 @@ languages. Linq is implemented as a set of extension methods for
 example, let’s get the first 100 natural numbers, filter out the odds, then
 square the remaining list.</p>
 <p>The wrong way of doing this would be something like:</p>
-<div class="highlight-c#"><div class="highlight"><pre><span></span><span class="k">static</span> <span class="n">IEnumerable</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;</span> <span class="n">GetNumbers</span><span class="p">()</span>
+<div class="highlight-c# notranslate"><div class="highlight"><pre><span></span><span class="k">static</span> <span class="n">IEnumerable</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;</span> <span class="n">GetNumbers</span><span class="p">()</span>
 <span class="p">{</span>
     <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="p">&lt;</span> <span class="m">100</span><span class="p">;</span> <span class="n">i</span><span class="p">++)</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="p">%</span> <span class="m">2</span> <span class="p">==</span> <span class="m">0</span><span class="p">)</span>
@@ -92,7 +92,7 @@ also want a function that squares the odd numbers? We would either duplicate the
 looping and squaring logic, or make the predicate we use to filter out things an
 input to the function. Same goes for the iterating logic and for the squaring.
 Luckily, we have Linq, which does just that:</p>
-<div class="highlight-c#"><div class="highlight"><pre><span></span><span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span>
+<div class="highlight-c# notranslate"><div class="highlight"><pre><span></span><span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="kt">var</span> <span class="n">result</span> <span class="p">=</span>
         <span class="n">Enumerable</span><span class="p">.</span><span class="n">Range</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">100</span><span class="p">).</span>
@@ -107,7 +107,7 @@ Luckily, we have Linq, which does just that:</p>
 <p>To illustrate the magic of generators, instead of relying on
 <span class="docutils literal"><span class="pre">Enumerable.Range</span></span>, let’s introduce a function that generates numbers
 forever:</p>
-<div class="highlight-c#"><div class="highlight"><pre><span></span><span class="k">static</span> <span class="n">IEnumerable</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;</span> <span class="n">Count</span><span class="p">()</span>
+<div class="highlight-c# notranslate"><div class="highlight"><pre><span></span><span class="k">static</span> <span class="n">IEnumerable</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;</span> <span class="n">Count</span><span class="p">()</span>
 <span class="p">{</span>
     <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="p">;</span> <span class="n">i</span><span class="p">++)</span>
         <span class="k">yield</span> <span class="k">return</span> <span class="n">i</span><span class="p">;</span>
@@ -115,7 +115,7 @@ forever:</p>
 </pre></div>
 </div>
 <p>Our code would then become:</p>
-<div class="highlight-c#"><div class="highlight"><pre><span></span><span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span>
+<div class="highlight-c# notranslate"><div class="highlight"><pre><span></span><span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="kt">var</span> <span class="n">result</span> <span class="p">=</span>
         <span class="n">Count</span><span class="p">().</span>
@@ -148,7 +148,7 @@ below compile with VS 2015 Update 3). The main syntax additions are the new
 for creating and awaiting tasks (which I won’t cover in this post), while
 <span class="docutils literal"><span class="pre">co_yield</span></span> is used in generators.</p>
 <p>Here is a lazy counter in C++:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">auto</span> <span class="nf">count_to</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span> <span class="nf">count_to</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span>
 <span class="p">{</span>
     <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
         <span class="n">co_yield</span> <span class="n">i</span><span class="p">;</span>
@@ -172,7 +172,7 @@ this case.</p>
 that Linq adds to <span class="docutils literal"><span class="pre">IEnumerable</span></span>. So if we wanted to do something like the
 above pipeline, we would need some algorithms. Here’s one way of implementing
 some of them:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">auto</span> <span class="nf">count</span><span class="p">()</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span> <span class="nf">count</span><span class="p">()</span>
 <span class="p">{</span>
     <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">100</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
         <span class="n">co_yield</span> <span class="n">i</span><span class="p">;</span>
@@ -208,7 +208,7 @@ some of them:</p>
 <p>Here I switched from Linq’s <span class="docutils literal"><span class="pre">Select</span></span> and <span class="docutils literal"><span class="pre">Where</span></span> to the more commonly used
 <span class="docutils literal"><span class="pre">map</span></span> and <span class="docutils literal"><span class="pre">filter</span></span>, but they effectively implement the same thing. While
 this implementation is pretty-straight forward, it doesn’t compose well at all:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
 <span class="p">{</span>
     <span class="k">auto</span> <span class="n">result</span> <span class="o">=</span>
         <span class="n">map</span><span class="p">(</span>
@@ -238,7 +238,7 @@ design to achieve better chaining.</p>
 <p>The next idea comes from pure OOP - let’s create a decorator over <span class="docutils literal"><span class="pre">generator</span></span>
 that exposes these algorithms. First, let’s declare our decorator as
 <span class="docutils literal"><span class="pre">enumerable&lt;T&gt;</span></span> and change our algorithms to work with the new type:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
 <span class="k">struct</span> <span class="n">enumerable</span><span class="p">;</span>
 
 <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
@@ -274,7 +274,7 @@ type annotation is mandatory, as by default the complier would create a
 <span class="docutils literal"><span class="pre">generator&lt;T&gt;</span></span>.</p>
 <p>We can then implement our enumerable to wrap a generator and expose member
 functions which forward to the above algorithms:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
 <span class="k">struct</span> <span class="n">enumerable</span>
 <span class="p">{</span>
     <span class="c1">// Needed by compiler to create enumerable from co_yield</span>
@@ -319,7 +319,7 @@ This is intentional, as once we iterate over the encapsulated generator, it is
 no longer valid. Since we don’t expose a copy-constructor, we move out of
 <span class="docutils literal"><span class="pre">*this</span></span> when passing the generator to an algorithm. For completeness, we can
 also provide a function which converts from a generator to an enumerable:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
 <span class="k">auto</span> <span class="n">to_enumerable</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">gen</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">enumerable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>
 <span class="p">{</span>
     <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="nl">item</span> <span class="p">:</span> <span class="n">gen</span><span class="p">)</span>
@@ -328,7 +328,7 @@ also provide a function which converts from a generator to an enumerable:</p>
 </pre></div>
 </div>
 <p>This works, and we can now compose algorithms by chaining the calls:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
 <span class="p">{</span>
     <span class="k">auto</span> <span class="n">result</span> <span class="o">=</span>
         <span class="n">to_enumerable</span><span class="p">(</span><span class="n">count</span><span class="p">()).</span>
@@ -355,7 +355,7 @@ where free functions are first class citizens.</p>
 <a class="reference external" href="http://www.boost.org/doc/libs/1_62_0/libs/range/doc/html/index.html">Boost Ranges library</a>
 takes, is to overload <span class="docutils literal"><span class="pre">|</span></span>, the “pipe” operator, so we can compose our calls
 like this:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
 <span class="p">{</span>
     <span class="k">auto</span> <span class="n">result</span> <span class="o">=</span>
         <span class="n">count</span><span class="p">()</span> <span class="o">|</span>
@@ -371,7 +371,7 @@ like this:</p>
 <p>One way we can get this working is to first create a type that wraps an
 algorithm and an <span class="docutils literal"><span class="pre">operator|</span></span> implementation between a lhs <span class="docutils literal"><span class="pre">generator</span></span> and a
 rhs of our type:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Predicate</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Predicate</span><span class="o">&gt;</span>
 <span class="k">struct</span> <span class="n">filter_t</span>
 <span class="p">{</span>
     <span class="n">filter_t</span><span class="p">(</span><span class="n">Predicate</span> <span class="n">pred</span><span class="p">)</span> <span class="o">:</span> <span class="n">_pred</span><span class="p">(</span><span class="n">pred</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
@@ -402,7 +402,7 @@ instantiate <span class="docutils literal"><span class="pre">filter_t</span></sp
 without specifying the Predicate type in the call. If we want to leverage type
 deduction, we can create a simple helper function that creates a <span class="docutils literal"><span class="pre">filter_t</span></span>
 from a given argument:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Predicate</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Predicate</span><span class="o">&gt;</span>
 <span class="k">auto</span> <span class="n">filter</span><span class="p">(</span><span class="n">Predicate</span> <span class="n">pred</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">return</span> <span class="n">filter_t</span><span class="o">&lt;</span><span class="n">Predicate</span><span class="o">&gt;</span><span class="p">(</span><span class="n">pred</span><span class="p">);</span>
@@ -412,7 +412,7 @@ from a given argument:</p>
 <p>With this we can call <span class="docutils literal"><span class="pre">|</span> <span class="pre">filter(/*</span> <span class="pre">predicate</span> <span class="pre">*/)</span></span> on a generator and get back
 a filtered generator. Full implementation for <span class="docutils literal"><span class="pre">take_n</span></span>, <span class="docutils literal"><span class="pre">filter</span></span> and <span class="docutils literal"><span class="pre">map</span></span>
 would be:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">take_n_t</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">take_n_t</span>
 <span class="p">{</span>
     <span class="n">take_n_t</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="o">:</span> <span class="n">_n</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
 
@@ -521,7 +521,7 @@ but there is a free function <span class="docutils literal"><span class="pre">f(
 <p>If it’s not obvious, unified call syntax would allow us to easily create
 extension methods. We would be able to revert our algorithm code to the first
 version:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
 <span class="k">auto</span> <span class="n">take_n</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">gen</span><span class="p">,</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
@@ -551,7 +551,7 @@ version:</p>
 <p>But now this becomes very composable as calling <span class="docutils literal"><span class="pre">take_n</span></span>, <span class="docutils literal"><span class="pre">filter</span></span> or
 <span class="docutils literal"><span class="pre">map</span></span> on a generator would resolve to the free functions if the <span class="docutils literal"><span class="pre">generator</span></span>
 itself does not have them as members:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
 <span class="p">{</span>
     <span class="k">auto</span> <span class="n">result</span> <span class="o">=</span>
         <span class="n">count</span><span class="p">().</span>

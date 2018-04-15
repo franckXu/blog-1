@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Singletons" href="../10/singletons.html" /><link rel="prev" title="24" href="../../08/13/24.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.7.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -70,13 +70,13 @@ from this point of view. It achieves this not by evaluating the function, but by
 ensuring that every recursive branch converges to a halting branch.</p>
 <p>Natural numbers are defined in Idris using Peano axioms, so it is easy to prove
 things about them. Here is a minimal definition of natural numbers <a class="footnote-reference" href="#id4" id="id2">[2]</a>:</p>
-<div class="highlight-idris"><div class="highlight"><pre><span></span><span class="kr">data</span> <span class="kt">Nat&#39;</span> <span class="ow">=</span> <span class="kt">Z</span> <span class="ow">|</span> <span class="kt">S</span> <span class="kt">Nat&#39;</span>
+<div class="highlight-idris notranslate"><div class="highlight"><pre><span></span><span class="kr">data</span> <span class="kt">Nat&#39;</span> <span class="ow">=</span> <span class="kt">Z</span> <span class="ow">|</span> <span class="kt">S</span> <span class="kt">Nat&#39;</span>
 </pre></div>
 </div>
 <p>This defines <span class="docutils literal"><span class="pre">Nat'</span></span> as a data type which can be constructed either as <span class="docutils literal"><span class="pre">Z</span></span>
 (zero) or <span class="docutils literal"><span class="pre">S</span> <span class="pre">Nat'</span></span> (successor of another natural number). With this
 definition, the compiler can easily determine the following function is total:</p>
-<div class="highlight-idris"><div class="highlight"><pre><span></span><span class="nf">f</span> <span class="ow">:</span> <span class="kt">Nat&#39;</span> <span class="ow">-&gt;</span> <span class="ow">()</span>
+<div class="highlight-idris notranslate"><div class="highlight"><pre><span></span><span class="nf">f</span> <span class="ow">:</span> <span class="kt">Nat&#39;</span> <span class="ow">-&gt;</span> <span class="ow">()</span>
 f <span class="kt">Z</span> <span class="ow">=</span> <span class="ow">()</span>
 f <span class="ow">(</span><span class="kt">S</span> k<span class="ow">)</span> <span class="ow">=</span> f k
 </pre></div>
@@ -85,7 +85,7 @@ f <span class="ow">(</span><span class="kt">S</span> k<span class="ow">)</span> 
 predecessor of the argument. This converges to the <span class="docutils literal"><span class="pre">Z</span></span> case. The following
 function, on the other hand, is correctly identified as potentially
 non-terminating:</p>
-<div class="highlight-idris"><div class="highlight"><pre><span></span><span class="nf">g</span> <span class="ow">:</span> <span class="kt">Nat&#39;</span> <span class="ow">-&gt;</span> <span class="ow">()</span>
+<div class="highlight-idris notranslate"><div class="highlight"><pre><span></span><span class="nf">g</span> <span class="ow">:</span> <span class="kt">Nat&#39;</span> <span class="ow">-&gt;</span> <span class="ow">()</span>
 g n <span class="ow">=</span> g <span class="ow">(</span><span class="kt">S</span> n<span class="ow">)</span>
 </pre></div>
 </div>
@@ -100,14 +100,14 @@ return types as their output. Functions that compute types are evaluated at
 compile time. This is similar to C++ metaprogramming, but without employing a
 different syntax.</p>
 <p>Before an example, we first need to define addition on naturals as follows:</p>
-<div class="highlight-idris"><div class="highlight"><pre><span></span><span class="ow">(+)</span> <span class="ow">:</span> <span class="kt">Nat&#39;</span> <span class="ow">-&gt;</span> <span class="kt">Nat&#39;</span> <span class="ow">-&gt;</span> <span class="kt">Nat&#39;</span>
+<div class="highlight-idris notranslate"><div class="highlight"><pre><span></span><span class="ow">(+)</span> <span class="ow">:</span> <span class="kt">Nat&#39;</span> <span class="ow">-&gt;</span> <span class="kt">Nat&#39;</span> <span class="ow">-&gt;</span> <span class="kt">Nat&#39;</span>
 <span class="ow">(+)</span> <span class="kt">Z</span> r <span class="ow">=</span> r
 <span class="ow">(+)</span> <span class="ow">(</span><span class="kt">S</span> l<span class="ow">)</span> r <span class="ow">=</span> <span class="kt">S</span> <span class="ow">(</span>l <span class="ow">+</span> r<span class="ow">)</span>
 </pre></div>
 </div>
 <p>Now we can declare a vector type consisting of a size (<span class="docutils literal"><span class="pre">Nat'</span></span>) and a type
 argument:</p>
-<div class="highlight-idris"><div class="highlight"><pre><span></span><span class="kr">data</span> <span class="kt">Vect&#39;</span> <span class="ow">:</span> <span class="kt">Nat&#39;</span> <span class="ow">-&gt;</span> <span class="kt">Type</span> <span class="ow">-&gt;</span> <span class="kt">Type</span> <span class="kr">where</span>
+<div class="highlight-idris notranslate"><div class="highlight"><pre><span></span><span class="kr">data</span> <span class="kt">Vect&#39;</span> <span class="ow">:</span> <span class="kt">Nat&#39;</span> <span class="ow">-&gt;</span> <span class="kt">Type</span> <span class="ow">-&gt;</span> <span class="kt">Type</span> <span class="kr">where</span>
      <span class="nf">Nil</span> <span class="ow">:</span> <span class="kt">Vect&#39;</span> <span class="kt">Z</span> a
      <span class="ow">(::)</span> <span class="ow">:</span> <span class="ow">(</span>x <span class="ow">:</span> a<span class="ow">)</span> <span class="ow">-&gt;</span> <span class="ow">(</span>xs <span class="ow">:</span> <span class="kt">Vect&#39;</span> k a<span class="ow">)</span> <span class="ow">-&gt;</span> <span class="kt">Vect&#39;</span> <span class="ow">(</span><span class="kt">S</span> k<span class="ow">)</span> a
 </pre></div>
@@ -118,7 +118,7 @@ elements) and <span class="docutils literal"><span class="pre">(::)</span></span
 of size <span class="docutils literal"><span class="pre">k</span></span> of <span class="docutils literal"><span class="pre">a</span></span> and produces a vector of size <span class="docutils literal"><span class="pre">S</span> <span class="pre">k</span></span> containing <span class="docutils literal"><span class="pre">a</span></span>.</p>
 <p>Now to see dependent types in action, we can define <span class="docutils literal"><span class="pre">append'</span></span>, a function that
 appends a vector to another vector:</p>
-<div class="highlight-idris"><div class="highlight"><pre><span></span><span class="nf">append&#39;</span> <span class="ow">:</span> <span class="kt">Vect&#39;</span> n a <span class="ow">-&gt;</span> <span class="kt">Vect&#39;</span> m a <span class="ow">-&gt;</span> <span class="kt">Vect&#39;</span> <span class="ow">(</span>n <span class="ow">+</span> m<span class="ow">)</span> a
+<div class="highlight-idris notranslate"><div class="highlight"><pre><span></span><span class="nf">append&#39;</span> <span class="ow">:</span> <span class="kt">Vect&#39;</span> n a <span class="ow">-&gt;</span> <span class="kt">Vect&#39;</span> m a <span class="ow">-&gt;</span> <span class="kt">Vect&#39;</span> <span class="ow">(</span>n <span class="ow">+</span> m<span class="ow">)</span> a
 append&#39; <span class="kt">Nil</span> ys <span class="ow">=</span> ys
 append&#39; <span class="ow">(</span>x <span class="ow">::</span> xs<span class="ow">)</span> ys <span class="ow">=</span> x <span class="ow">::</span> append&#39; xs ys
 </pre></div>
@@ -133,13 +133,13 @@ of arguments.</p>
 <h2>Proofs</h2>
 <p>We can also attempt to define a <span class="docutils literal"><span class="pre">reverse'</span></span> function, which recursively appends
 the head of the vector to the reversed tail:</p>
-<div class="highlight-idris"><div class="highlight"><pre><span></span><span class="nf">reverse&#39;</span> <span class="ow">:</span> <span class="kt">Vect&#39;</span> n a <span class="ow">-&gt;</span> <span class="kt">Vect&#39;</span> n a
+<div class="highlight-idris notranslate"><div class="highlight"><pre><span></span><span class="nf">reverse&#39;</span> <span class="ow">:</span> <span class="kt">Vect&#39;</span> n a <span class="ow">-&gt;</span> <span class="kt">Vect&#39;</span> n a
 reverse&#39; <span class="kt">Nil</span> <span class="ow">=</span> <span class="kt">Nil</span>
 reverse&#39; <span class="ow">(</span>x <span class="ow">::</span> xs<span class="ow">)</span> <span class="ow">=</span> append&#39; <span class="ow">(</span>reverse&#39; xs<span class="ow">)</span> <span class="ow">[</span>x<span class="ow">]</span>
 </pre></div>
 </div>
 <p>This doesn’t compile though. We get the following error message:</p>
-<div class="highlight-text"><div class="highlight"><pre><span></span>When checking right hand side of reverse&#39; with expected type
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>When checking right hand side of reverse&#39; with expected type
         Vect&#39; (S k) a
 
 Type mismatch between
@@ -160,7 +160,7 @@ numbers to convince the type checker. In this particular case, the problem is
 that the compiler expects an <span class="docutils literal"><span class="pre">S</span> <span class="pre">k</span></span> but finds an <span class="docutils literal"><span class="pre">k</span> <span class="pre">+</span> <span class="pre">S</span> <span class="pre">Z</span></span>. We need to prove
 that these are indeed equal (<span class="docutils literal"><span class="pre">successor</span> <span class="pre">of</span> <span class="pre">k</span></span> is the same as
 <span class="docutils literal"><span class="pre">k</span> <span class="pre">+</span> <span class="pre">successor</span> <span class="pre">of</span> <span class="pre">Z</span></span>). Here is the proof:</p>
-<div class="highlight-idris"><div class="highlight"><pre><span></span><span class="nf">addOneProof</span> <span class="ow">:</span> <span class="ow">(</span>n <span class="ow">:</span> <span class="kt">Nat&#39;</span><span class="ow">)</span> <span class="ow">-&gt;</span> <span class="kt">S</span> n <span class="ow">=</span> n <span class="ow">+</span> <span class="kt">S</span> <span class="kt">Z</span>
+<div class="highlight-idris notranslate"><div class="highlight"><pre><span></span><span class="nf">addOneProof</span> <span class="ow">:</span> <span class="ow">(</span>n <span class="ow">:</span> <span class="kt">Nat&#39;</span><span class="ow">)</span> <span class="ow">-&gt;</span> <span class="kt">S</span> n <span class="ow">=</span> n <span class="ow">+</span> <span class="kt">S</span> <span class="kt">Z</span>
 addOneProof <span class="kt">Z</span> <span class="ow">=</span> <span class="kt">Refl</span>
 addOneProof <span class="ow">(</span><span class="kt">S</span> k<span class="ow">)</span> <span class="ow">=</span> cong <span class="ow">(</span>addOneProof k<span class="ow">)</span>
 </pre></div>
@@ -178,7 +178,7 @@ that if <span class="docutils literal"><span class="pre">addOneProof</span> <spa
 allows us to converge on the <span class="docutils literal"><span class="pre">Z</span></span> case.</p>
 <p>We now have a proof that <span class="docutils literal"><span class="pre">S</span> <span class="pre">n</span> <span class="pre">=</span> <span class="pre">n</span> <span class="pre">+</span> <span class="pre">S</span> <span class="pre">Z</span></span>. With this, we can prove that the
 type <span class="docutils literal"><span class="pre">Vect</span> <span class="pre">(k</span> <span class="pre">+</span> <span class="pre">(S</span> <span class="pre">Z))</span> <span class="pre">a</span></span> can be rewritten as <span class="docutils literal"><span class="pre">Vect</span> <span class="pre">(S</span> <span class="pre">k)</span> <span class="pre">a</span></span>:</p>
-<div class="highlight-idris"><div class="highlight"><pre><span></span><span class="nf">reverseProof</span> <span class="ow">:</span> <span class="kt">Vect&#39;</span> <span class="ow">(</span>k <span class="ow">+</span> <span class="ow">(</span><span class="kt">S</span> <span class="kt">Z</span><span class="ow">))</span> a <span class="ow">-&gt;</span> <span class="kt">Vect&#39;</span> <span class="ow">(</span><span class="kt">S</span> k<span class="ow">)</span> a
+<div class="highlight-idris notranslate"><div class="highlight"><pre><span></span><span class="nf">reverseProof</span> <span class="ow">:</span> <span class="kt">Vect&#39;</span> <span class="ow">(</span>k <span class="ow">+</span> <span class="ow">(</span><span class="kt">S</span> <span class="kt">Z</span><span class="ow">))</span> a <span class="ow">-&gt;</span> <span class="kt">Vect&#39;</span> <span class="ow">(</span><span class="kt">S</span> k<span class="ow">)</span> a
 reverseProof <span class="ow">{</span>k<span class="ow">}</span> result <span class="ow">=</span> <span class="kr">rewrite</span> addOneProof k <span class="kr">in</span> result
 </pre></div>
 </div>
@@ -189,7 +189,7 @@ equality in the proof above to the input, in this case effectively rewriting
 <span class="docutils literal"><span class="pre">Vect</span> <span class="pre">(k</span> <span class="pre">+</span> <span class="pre">(S</span> <span class="pre">Z))</span> <span class="pre">a</span></span> to <span class="docutils literal"><span class="pre">Vect</span> <span class="pre">(S</span> <span class="pre">k)</span> <span class="pre">a</span></span>. Note these proofs are evaluated at
 compile time and simply provide information to the type checker. With this
 proof, we can implement reverse like this:</p>
-<div class="highlight-idris"><div class="highlight"><pre><span></span><span class="nf">reverse&#39;</span> <span class="ow">:</span> <span class="kt">Vect&#39;</span> n a <span class="ow">-&gt;</span> <span class="kt">Vect&#39;</span> n a
+<div class="highlight-idris notranslate"><div class="highlight"><pre><span></span><span class="nf">reverse&#39;</span> <span class="ow">:</span> <span class="kt">Vect&#39;</span> n a <span class="ow">-&gt;</span> <span class="kt">Vect&#39;</span> n a
 reverse&#39; <span class="kt">Nil</span> <span class="ow">=</span> <span class="kt">Nil</span>
 reverse&#39; <span class="ow">(</span>x <span class="ow">::</span> xs<span class="ow">)</span> <span class="ow">=</span> reverseProof <span class="ow">(</span>append&#39; <span class="ow">(</span>reverse&#39; xs<span class="ow">)</span> <span class="ow">[</span>x<span class="ow">])</span>
 </pre></div>

@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Data Structures and Algorithms" href="../../04/07/data-structures-and-algorithms.html" /><link rel="prev" title="Idris: Totality, Dependent Types, Proofs" href="../20/idris-totality-dependent-types-proofs.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.7.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -66,7 +66,7 @@ some component that exposes a service to other components.</p>
 by Arno Lepisk covers some implementation alternatives, suggesting that in most
 cases using a namespace and flat functions is the simplest and best way to
 implement a singleton:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">namespace</span> <span class="n">Foo</span> <span class="p">{</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">namespace</span> <span class="n">Foo</span> <span class="p">{</span>
 
 <span class="kt">void</span> <span class="n">DoFoo</span><span class="p">();</span>
 
@@ -74,7 +74,7 @@ implement a singleton:</p>
 </pre></div>
 </div>
 <p>instead of:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Foo</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Foo</span>
 <span class="p">{</span>
 <span class="k">public</span><span class="o">:</span>
     <span class="kt">void</span> <span class="n">DoFoo</span><span class="p">();</span>
@@ -93,7 +93,7 @@ and flat functions.</p>
 <h2>Dependency Injection</h2>
 <p>Given an interface, an implementation, and a function to retrieve the singleton
 like the following:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">IFoo</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">IFoo</span>
 <span class="p">{</span>
     <span class="k">virtual</span> <span class="kt">void</span> <span class="n">DoFoo</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
@@ -109,7 +109,7 @@ like the following:</p>
 </pre></div>
 </div>
 <p>a common mistake I see is components directly calling the function like this:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Component</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Component</span>
 <span class="p">{</span>
 <span class="k">public</span><span class="o">:</span>
     <span class="kt">void</span> <span class="n">Bar</span><span class="p">()</span>
@@ -124,7 +124,7 @@ like the following:</p>
 only way to switch implementation is to modify <span class="docutils literal"><span class="pre">UseFoo</span></span> and provide some
 internal mechanism to change its return value. A better approach is to have the
 client simply require an interface and provide that at construction time:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Component</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Component</span>
 <span class="p">{</span>
 <span class="k">public</span><span class="o">:</span>
     <span class="n">Component</span><span class="p">(</span><span class="n">IFoo</span><span class="o">&amp;</span> <span class="n">foo</span> <span class="o">=</span> <span class="n">UseFoo</span><span class="p">())</span>
@@ -165,7 +165,7 @@ the concurrent execution shall wait for completion of the initialization.</div><
 the simple way to implement a singleton (for example according to Scott Meyer’s
 <a class="reference external" href="https://www.goodreads.com/book/show/22800553-effective-modern-c">Effective Modern C++</a>)
 is:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">IFoo</span><span class="o">&amp;</span> <span class="n">UseFoo</span><span class="p">()</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">IFoo</span><span class="o">&amp;</span> <span class="n">UseFoo</span><span class="p">()</span>
 <span class="p">{</span>
     <span class="k">static</span> <span class="n">Foo</span> <span class="n">instance</span><span class="p">;</span>
     <span class="k">return</span> <span class="n">instance</span><span class="p">;</span>
@@ -173,7 +173,7 @@ is:</p>
 </pre></div>
 </div>
 <p>Or the heap-allocated version:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">IFoo</span><span class="o">&amp;</span> <span class="n">UseFoo</span><span class="p">()</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">IFoo</span><span class="o">&amp;</span> <span class="n">UseFoo</span><span class="p">()</span>
 <span class="p">{</span>
     <span class="k">static</span> <span class="k">auto</span> <span class="n">instance</span> <span class="o">=</span> <span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">();</span>
     <span class="k">return</span> <span class="o">*</span><span class="n">instance</span><span class="p">;</span>
@@ -188,7 +188,7 @@ deterministic shutdown. A local static, once created, will be live for the
 duration of the program, which might not always be desirable. Building on the
 previous implementation, here is a singleton which we can also shutdown on
 demand:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">Singleton</span>
 <span class="p">{</span>
 <span class="k">public</span><span class="o">:</span>
@@ -235,7 +235,7 @@ unloaded, which can be useful in certain cases.</p>
 <p>Magic statics provide an easy way to guarantee we end up with a single object,
 but the code generated to support this is non-trivial. Disassembly of the
 <span class="docutils literal"><span class="pre">UseFoo</span></span> above as compiled by Clang 4.0.0 with <span class="docutils literal"><span class="pre">-O3</span></span> flag:</p>
-<div class="highlight-objdump"><div class="highlight"><pre><span></span><span class="x">UseFoo():                             # @UseFoo()</span>
+<div class="highlight-objdump notranslate"><div class="highlight"><pre><span></span><span class="x">UseFoo():                             # @UseFoo()</span>
 <span class="x">        push    rbx</span>
 <span class="x">        mov     al, byte ptr [rip + guard variable for Singleton&lt;Foo&gt;::Use()::instance]</span>
 <span class="x">        test    al, al</span>
@@ -276,7 +276,7 @@ much more efficient implementation using an atomic pointer on architectures
 where atomics are lock-free and we are not worried about redundantly calling the
 constructor in the rare cases of concurrent access that requires
 initialization:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">Singleton</span>
 <span class="p">{</span>
 <span class="k">public</span><span class="o">:</span>
@@ -322,7 +322,7 @@ initialization:</p>
 </div>
 <p>The disassembly of the above <span class="docutils literal"><span class="pre">UseFoo</span></span> (built with the same compiler and
 <span class="docutils literal"><span class="pre">-O3</span></span> flag) is:</p>
-<div class="highlight-objdump"><div class="highlight"><pre><span></span><span class="x">UseFoo():                             # @UseFoo()</span>
+<div class="highlight-objdump notranslate"><div class="highlight"><pre><span></span><span class="x">UseFoo():                             # @UseFoo()</span>
 <span class="x">        push    rax</span>
 <span class="x">        mov     rcx, qword ptr [rip + Singleton&lt;Foo&gt;::m_instance]</span>
 <span class="x">        test    rcx, rcx</span>
@@ -358,7 +358,7 @@ can add is to enforce that once shutdown, a singleton should never be accessed
 again. So instead of the two-state <em>not initialized</em> and <em>live</em>, we can use
 three states: <em>not initialized</em>, <em>live</em>, <em>freed</em> and terminate if an access
 is attempted in the <em>freed</em> state:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="kt">uintptr_t</span> <span class="n">FreedSingleton</span> <span class="o">=</span> <span class="mh">0xDEADBEEF</span><span class="p">;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="kt">uintptr_t</span> <span class="n">FreedSingleton</span> <span class="o">=</span> <span class="mh">0xDEADBEEF</span><span class="p">;</span>
 
 <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">Singleton</span>

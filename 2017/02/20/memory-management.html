@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Notes on Error Handling" href="../../../2016/12/03/notes-on-error-handling.html" /><link rel="prev" title="A Heterogeneous Event Store" href="../25/a-heterogeneous-event-store.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.7.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -67,7 +67,7 @@ by an automated process.</p>
 <h2>Manual Memory Management</h2>
 <p>Manual memory management is efficient, since allocations and deallocations
 don’t incur any overhead. In C:</p>
-<div class="highlight-c"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">_Foo</span> <span class="p">{</span>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">_Foo</span> <span class="p">{</span>
     <span class="p">...</span>
 <span class="p">}</span> <span class="n">Foo</span><span class="p">;</span>
 
@@ -117,7 +117,7 @@ the whole heap and for each memory resource, if not marked as “in-use”, free
 it.</p>
 <p>Tracing garbage collectors are used by many popular runtimes, like JVM and .NET.
 In C#:</p>
-<div class="highlight-C#"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">Bar</span> <span class="p">{</span> <span class="p">}</span>
+<div class="highlight-C# notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">Bar</span> <span class="p">{</span> <span class="p">}</span>
 
 <span class="k">struct</span> <span class="nc">Foo</span>
 <span class="p">{</span>
@@ -159,7 +159,7 @@ given memory resource is automatically increased with each assignment where the
 resource is on the right-hand-side, and is automatically decreased whenever a
 reference goes out of scope.</p>
 <p>Python manages memory using reference counting:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Foo</span><span class="p">:</span> <span class="k">pass</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Foo</span><span class="p">:</span> <span class="k">pass</span>
 
 <span class="c1"># allocate Foo, its reference count is 1</span>
 <span class="n">foo1</span> <span class="o">=</span> <span class="n">Foo</span><span class="p">()</span>
@@ -173,7 +173,7 @@ reference goes out of scope.</p>
 </pre></div>
 </div>
 <p>C++ smart pointers work in a similar manner:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Foo</span> <span class="p">{</span> <span class="p">};</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Foo</span> <span class="p">{</span> <span class="p">};</span>
 
 <span class="p">...</span>
 
@@ -203,7 +203,7 @@ collector would mark the objects as being unreachable and deallocate them, but
 simple reference counting would not be able to identify this - from that point
 of view, each object is being referred to by another object thus it should not
 be collected. Example of reference cycle in Python:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Foo</span><span class="p">:</span> <span class="k">pass</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Foo</span><span class="p">:</span> <span class="k">pass</span>
 
 <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">Foo</span><span class="p">(),</span> <span class="n">Foo</span><span class="p">()</span>
 <span class="n">a</span><span class="o">.</span><span class="n">other</span><span class="p">,</span> <span class="n">b</span><span class="o">.</span><span class="n">other</span> <span class="o">=</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span>
@@ -213,7 +213,7 @@ be collected. Example of reference cycle in Python:</p>
 </pre></div>
 </div>
 <p>A similar example in C++:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Foo</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Foo</span>
 <span class="p">{</span>
     <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span> <span class="n">other</span><span class="p">;</span>
 <span class="p">};</span>
@@ -262,7 +262,7 @@ weak references go away too.</li>
 </ul>
 <p>Updating the <span class="docutils literal"><span class="pre">Foo</span></span> struct in the example above to use a <span class="docutils literal"><span class="pre">weak_ptr</span></span> instead,
 the reference cycle is avoided:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Foo</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Foo</span>
 <span class="p">{</span>
     <span class="n">std</span><span class="o">::</span><span class="n">weak_ptr</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span> <span class="n">other</span><span class="p">;</span>
 <span class="p">};</span>
@@ -287,7 +287,7 @@ the reference cycle is avoided:</p>
 <em>lifetime</em>. In this model, a heap object is uniquely owned by some other object
 and gets freed automatically when the owner is destructed. In C++, this is
 achieved through <span class="docutils literal"><span class="pre">unique_ptr</span></span>:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Foo</span> <span class="p">{</span> <span class="p">};</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Foo</span> <span class="p">{</span> <span class="p">};</span>
 
 <span class="k">struct</span> <span class="n">Bar</span>
 <span class="p">{</span>
@@ -309,7 +309,7 @@ count of references, a <span class="docutils literal"><span class="pre">unique_p
 <p>Unique pointers cannot be copied though (by definition, otherwise there would
 no longer denote unique ownership), so when other code needs to access the heap
 object, it would need to get a reference from the owning object:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">UseFoo</span><span class="p">(</span><span class="k">const</span> <span class="n">Foo</span><span class="o">&amp;</span> <span class="n">foo</span><span class="p">)</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">UseFoo</span><span class="p">(</span><span class="k">const</span> <span class="n">Foo</span><span class="o">&amp;</span> <span class="n">foo</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="p">...</span>
 <span class="p">}</span>
@@ -332,7 +332,7 @@ mostly left up to the developer. Rust on the other hand provides strong static
 analysis and lifetime annotations to ensure such issues do not occur. In fact,
 the default in Rust is to have uniquely owned objects which can be “borrowed”
 when needed and static analysis ensures no dangling references appear. In C++:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Foo</span> <span class="p">{</span> <span class="p">};</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Foo</span> <span class="p">{</span> <span class="p">};</span>
 
 <span class="k">struct</span> <span class="n">Bar</span><span class="p">{</span>
     <span class="n">Foo</span><span class="o">*</span> <span class="n">foo</span><span class="p">;</span>
@@ -353,7 +353,7 @@ when needed and static analysis ensures no dangling references appear. In C++:</
 that type of reference: once an object gets freed, &amp; references and
 non-owning pointers to it are left dangling. On the other hand, this does
 not compile in Rust:</p>
-<div class="highlight-rust"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">Foo</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">Foo</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 
 <span class="k">struct</span> <span class="nc">Bar</span><span class="o">&lt;</span><span class="na">&#39;a</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>

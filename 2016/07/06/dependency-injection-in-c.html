@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="(Ab)using Maps" href="../../04/24/abusing-maps.html" /><link rel="prev" title="Concepts and Modules" href="../../08/17/concepts-and-modules.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.7.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -57,7 +57,7 @@ talk about dependency injection.</p>
 method. Let’s say this class contains a <span class="docutils literal"><span class="pre">V8Engine</span></span> attribute with <span class="docutils literal"><span class="pre">Start()</span></span>
 and <span class="docutils literal"><span class="pre">Stop()</span></span> methods. An initial implementation might look like this:</p>
 <p><em>V8Engine.h (publicly visible)</em>:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
 
 <span class="k">class</span> <span class="nc">V8Engine</span>
 <span class="p">{</span>
@@ -68,7 +68,7 @@ and <span class="docutils literal"><span class="pre">Stop()</span></span> method
 </pre></div>
 </div>
 <p><em>V8Engine.cpp</em>:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;V8Engine.h&quot;</span><span class="cp"></span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;V8Engine.h&quot;</span><span class="cp"></span>
 
 <span class="n">V8Engine</span><span class="o">::</span><span class="n">Start</span><span class="p">()</span>
 <span class="p">{</span>
@@ -82,7 +82,7 @@ and <span class="docutils literal"><span class="pre">Stop()</span></span> method
 </pre></div>
 </div>
 <p><em>Car.h (publicly visible)</em>:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
 <span class="cp">#include</span> <span class="cpf">&quot;V8Engine.h&quot;</span><span class="cp"></span>
 
 <span class="k">class</span> <span class="nc">Car</span>
@@ -96,7 +96,7 @@ and <span class="docutils literal"><span class="pre">Stop()</span></span> method
 </pre></div>
 </div>
 <p><em>Car.cpp</em>:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;Car.h&quot;</span><span class="cp"></span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;Car.h&quot;</span><span class="cp"></span>
 
 <span class="kt">void</span> <span class="n">Car</span><span class="o">::</span><span class="n">Drive</span><span class="p">()</span>
 <span class="p">{</span>
@@ -115,7 +115,7 @@ reverse the dependency by creating an <span class="docutils literal"><span class
 <span class="docutils literal"><span class="pre">Car</span></span> from the concrete <span class="docutils literal"><span class="pre">V8Engine</span></span> implementation. This way, we only expose
 an <span class="docutils literal"><span class="pre">IEngine</span></span> interface and a factory function. <span class="docutils literal"><span class="pre">Car</span></span> can work against that:</p>
 <p><em>IEngine.h (publicly visible)</em>:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
 
 <span class="k">struct</span> <span class="n">IEngine</span>
 <span class="p">{</span>
@@ -128,7 +128,7 @@ an <span class="docutils literal"><span class="pre">IEngine</span></span> interf
 </pre></div>
 </div>
 <p><em>V8Engine.cpp</em>:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;IEngine.h&quot;</span><span class="cp"></span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;IEngine.h&quot;</span><span class="cp"></span>
 
 <span class="k">class</span> <span class="nc">V8Engine</span> <span class="o">:</span> <span class="k">public</span> <span class="n">IEngine</span>
 <span class="p">{</span>
@@ -143,7 +143,7 @@ an <span class="docutils literal"><span class="pre">IEngine</span></span> interf
 </pre></div>
 </div>
 <p><em>Car.h (publicly visible)</em>:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
 <span class="cp">#include</span> <span class="cpf">&quot;IEngine.h&quot;</span><span class="cp"></span>
 
 <span class="k">class</span> <span class="nc">Car</span>
@@ -161,7 +161,7 @@ an <span class="docutils literal"><span class="pre">IEngine</span></span> interf
 </pre></div>
 </div>
 <p><em>Car.cpp</em>:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;Car.h&quot;</span><span class="cp"></span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;Car.h&quot;</span><span class="cp"></span>
 
 <span class="kt">void</span> <span class="n">Car</span><span class="o">::</span><span class="n">Drive</span><span class="p">()</span>
 <span class="p">{</span>
@@ -199,7 +199,7 @@ to be expicitly defined - compiler might generate a default one.</p>
 <p>MSVC compiler provides a <span class="docutils literal"><span class="pre">__declspec(novtable)</span></span> <a class="footnote-reference" href="#id2" id="id1">[1]</a> custom attribute which
 tells the compiler not to generate a vtable for pure abstract classes. This
 reduces code size. Below is the <span class="docutils literal"><span class="pre">IEngine</span></span> declaration with this attribute:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nf">__declspec</span><span class="p">(</span><span class="n">novtable</span><span class="p">)</span> <span class="n">IEngine</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nf">__declspec</span><span class="p">(</span><span class="n">novtable</span><span class="p">)</span> <span class="n">IEngine</span>
 <span class="p">{</span>
     <span class="k">virtual</span> <span class="kt">void</span> <span class="n">Start</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
     <span class="k">virtual</span> <span class="kt">void</span> <span class="n">Stop</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
@@ -215,7 +215,7 @@ mind when working with MSVC.</p>
 <p>When working with interfaces as opposed to concrete types, we use factory
 functions to get object instances. Below is a possible naming convention, taking
 object ownership into account:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">IFoo</span><span class="o">&gt;</span> <span class="n">MakeFoo</span><span class="p">();</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">IFoo</span><span class="o">&gt;</span> <span class="n">MakeFoo</span><span class="p">();</span>
 <span class="n">IFoo</span><span class="o">&amp;</span> <span class="n">UseFoo</span><span class="p">();</span>
 <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">IFoo</span><span class="o">&gt;</span> <span class="n">GetFoo</span><span class="p">();</span>
 </pre></div>
@@ -229,7 +229,7 @@ owned by someone else, with the guarantee that it will outlive the caller. In
 that case, there is no need for pointers and we can simply return a reference to
 the object. This can be used, for example, for singletons. Below is an example
 of a singleton <span class="docutils literal"><span class="pre">Engine</span></span>:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">IEngine</span><span class="o">&amp;</span> <span class="n">UseEngine</span><span class="p">()</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">IEngine</span><span class="o">&amp;</span> <span class="n">UseEngine</span><span class="p">()</span>
 <span class="p">{</span>
     <span class="k">static</span> <span class="k">auto</span> <span class="n">instance</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Engine</span><span class="o">&gt;</span><span class="p">();</span>
     <span class="k">return</span> <span class="o">*</span><span class="n">instance</span><span class="p">;</span>
@@ -247,7 +247,7 @@ sure the object is kept alive long enough.</p>
 <p>Since <span class="docutils literal"><span class="pre">Car</span></span> now works with an <span class="docutils literal"><span class="pre">IEngine</span></span> interface, in test code we can mock
 the engine:</p>
 <p><em>Test.cpp</em>:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;Car.h&quot;</span><span class="cp"></span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;Car.h&quot;</span><span class="cp"></span>
 
 <span class="k">class</span> <span class="nc">MockEngine</span> <span class="o">:</span> <span class="k">public</span> <span class="n">IEngine</span>
 <span class="p">{</span>
@@ -266,7 +266,7 @@ the engine:</p>
 <p>We can also expose <span class="docutils literal"><span class="pre">Car</span></span> as a simple interface, hiding its implementation
 details, in which case we would end up with the following:</p>
 <p><em>ICar.h (publicly visible)</em>:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
 <span class="cp">#include</span> <span class="cpf">&quot;IEngine.h&quot;</span><span class="cp"></span>
 
 <span class="k">struct</span> <span class="n">ICar</span>
@@ -279,7 +279,7 @@ details, in which case we would end up with the following:</p>
 </pre></div>
 </div>
 <p><em>Car.cpp</em>:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;ICar.h&quot;</span><span class="cp"></span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;ICar.h&quot;</span><span class="cp"></span>
 
 <span class="k">class</span> <span class="nc">Car</span> <span class="o">:</span> <span class="k">public</span> <span class="n">ICar</span>
 <span class="p">{</span>
@@ -307,7 +307,7 @@ details, in which case we would end up with the following:</p>
 </pre></div>
 </div>
 <p>Test would become:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;ICar.h&quot;</span><span class="cp"></span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;ICar.h&quot;</span><span class="cp"></span>
 
 <span class="k">class</span> <span class="nc">MockEngine</span> <span class="o">:</span> <span class="k">public</span> <span class="n">IEngine</span>
 <span class="p">{</span>
@@ -332,7 +332,7 @@ tests to work against the interface. Sometimes though we might need to know more
 about the actual implementation inside our component, even if externally we only
 expose an interface. In that case, we can add an internal Car.h header:</p>
 <p><em>Car.h (internal)</em>:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
 <span class="cp">#include</span> <span class="cpf">&quot;ICar.h&quot;</span><span class="cp"></span>
 
 <span class="k">class</span> <span class="nc">Car</span> <span class="o">:</span> <span class="k">public</span> <span class="n">ICar</span>
@@ -351,7 +351,7 @@ expose an interface. In that case, we can add an internal Car.h header:</p>
 </pre></div>
 </div>
 <p><em>Car.cpp</em> becomes:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;Car.h&quot;</span><span class="cp"></span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;Car.h&quot;</span><span class="cp"></span>
 
 <span class="kt">void</span> <span class="n">Car</span><span class="o">::</span><span class="n">Drive</span><span class="p">()</span>
 <span class="p">{</span>
@@ -368,7 +368,7 @@ expose an interface. In that case, we can add an internal Car.h header:</p>
 </div>
 <p>Now we can include the internal header, and, while not necessarily recommended,
 we can cast <span class="docutils literal"><span class="pre">ICar</span></span> to <span class="docutils literal"><span class="pre">Car</span></span> inside the component:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">auto</span> <span class="n">icar</span> <span class="o">=</span> <span class="n">MakeCar</span><span class="p">(</span><span class="n">MakeV8Engine</span><span class="p">());</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span> <span class="n">icar</span> <span class="o">=</span> <span class="n">MakeCar</span><span class="p">(</span><span class="n">MakeV8Engine</span><span class="p">());</span>
 <span class="k">auto</span><span class="o">&amp;</span> <span class="n">car</span> <span class="o">=</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Car</span><span class="o">&amp;&gt;</span><span class="p">(</span><span class="o">*</span><span class="n">car</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -388,7 +388,7 @@ recommended), is to make the unit test class testing <span class="docutils liter
 provide the implementation inside the header file, as code needs to be available
 when templates get instantiated:</p>
 <p><em>V8Engine.h (publicly visible)</em>:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
 
 <span class="k">class</span> <span class="nc">V8Engine</span>
 <span class="p">{</span>
@@ -399,7 +399,7 @@ when templates get instantiated:</p>
 </pre></div>
 </div>
 <p><em>V8Engine.cpp</em>:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;V8Engine.h&quot;</span><span class="cp"></span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;V8Engine.h&quot;</span><span class="cp"></span>
 
 <span class="n">V8Engine</span><span class="o">::</span><span class="n">Start</span><span class="p">()</span>
 <span class="p">{</span>
@@ -413,7 +413,7 @@ when templates get instantiated:</p>
 </pre></div>
 </div>
 <p><em>Car.h (publicly visible)</em>:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
 
 <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">TEngine</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">Car</span>
@@ -433,7 +433,7 @@ when templates get instantiated:</p>
 </div>
 <p>Note <span class="docutils literal"><span class="pre">Car</span></span> is implemented in the header and <span class="docutils literal"><span class="pre">V8Engine</span></span> is also a publicly
 visible header. Now we can create an instance of <span class="docutils literal"><span class="pre">Car</span></span> like this:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;V8Engine.h&quot;</span><span class="cp"></span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;V8Engine.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&quot;Car.h&quot;</span><span class="cp"></span>
 
 <span class="p">...</span>
@@ -442,7 +442,7 @@ visible header. Now we can create an instance of <span class="docutils literal">
 </pre></div>
 </div>
 <p>Mocking the engine in test code would look like this:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;Car.h&quot;</span><span class="cp"></span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;Car.h&quot;</span><span class="cp"></span>
 
 <span class="k">class</span> <span class="nc">MockEngine</span>
 <span class="p">{</span>
@@ -476,7 +476,7 @@ Say our component provides a <span class="docutils literal"><span class="pre">V8
 requirements but don’t need to expose all the details to consumers. In that case
 we could have something like this:</p>
 <p><em>ICar.h (publicly visible)</em>:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
 
 <span class="k">struct</span> <span class="n">ICar</span>
 <span class="p">{</span>
@@ -489,7 +489,7 @@ we could have something like this:</p>
 </pre></div>
 </div>
 <p><em>Car.h (internal)</em>:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
 <span class="cp">#include</span> <span class="cpf">&quot;ICar.h&quot;</span><span class="cp"></span>
 
 <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">TEngine</span><span class="o">&gt;</span>
@@ -509,7 +509,7 @@ we could have something like this:</p>
 </pre></div>
 </div>
 <p><em>Car.cpp</em>:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;Car.h&quot;</span><span class="cp"></span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;Car.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&quot;V8Engine.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&quot;V6Engine.h&quot;</span><span class="cp"></span>
 
