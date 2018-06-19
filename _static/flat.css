@@ -122,7 +122,7 @@ div.postmeta { color: #93a4ad; }
 /* Archive page */
 span.title_tag, span.title_category { font-style: italic; }
 
-div.year h1 { font-size: 1.6em; margin-bottom: 0; margin-top: 20px; }
+div.year h1 { font-size: 1.6em; margin-bottom: 0; margin-top: 40px; }
 
 div.year ul { display: inline; list-style-type: none; margin: 0; }
 
