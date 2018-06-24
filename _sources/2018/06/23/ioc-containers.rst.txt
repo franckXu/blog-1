@@ -98,7 +98,7 @@ becomes a changed scoped to one of the factories. But maintaining this by hand
 can become tedious. The good news is it can be automated, which is what an IoC
 container does.
 
-A Basic IoC container
+A Basic IoC Container
 ---------------------
 
 A very basic container would be able to bind a concrete implementation against
@@ -343,11 +343,12 @@ Summary
 
 In this post we went over a few IoC container basics:
 
-* Motivation for containers
-* A primitive container supporting factory registration
-* Using reflection to support type registration
-* Approaches to implementing constructor calls (``Inove``, ``Linq.Expressions``)
-* Lifetime management and a singleton implementation
+* Motivation for containers.
+* A primitive container supporting factory registration.
+* Using reflection to support type registration.
+* Approaches to implementing constructor calls: ``Inove``, ``Linq.Expressions``,
+  others. Lazy resolution vs. generating constructor calls in a separate step.
+* Lifetime management and a singleton implementation.
 
 ----
 

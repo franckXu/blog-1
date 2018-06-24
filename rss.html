@@ -105,7 +105,7 @@ can become tedious. The good news is it can be automated, which is what an IoC
 container does.</p>
 </div>
 <div class="section" id="a-basic-ioc-container">
-<h2>A Basic IoC container</h2>
+<h2>A Basic IoC Container</h2>
 <p>A very basic container would be able to bind a concrete implementation against
 an interface and return an instance of the concrete implementation when asked
 for an interface:</p>
@@ -340,11 +340,12 @@ rather than feature richness.</p>
 <h2>Summary</h2>
 <p>In this post we went over a few IoC container basics:</p>
 <ul class="simple">
-<li>Motivation for containers</li>
-<li>A primitive container supporting factory registration</li>
-<li>Using reflection to support type registration</li>
-<li>Approaches to implementing constructor calls (<span class="docutils literal"><span class="pre">Inove</span></span>, <span class="docutils literal"><span class="pre">Linq.Expressions</span></span>)</li>
-<li>Lifetime management and a singleton implementation</li>
+<li>Motivation for containers.</li>
+<li>A primitive container supporting factory registration.</li>
+<li>Using reflection to support type registration.</li>
+<li>Approaches to implementing constructor calls: <span class="docutils literal"><span class="pre">Inove</span></span>, <span class="docutils literal"><span class="pre">Linq.Expressions</span></span>,
+others. Lazy resolution vs. generating constructor calls in a separate step.</li>
+<li>Lifetime management and a singleton implementation.</li>
 </ul>
 <hr class="docutils"/>
 <table class="docutils footnote" frame="void" id="id3" rules="none">
