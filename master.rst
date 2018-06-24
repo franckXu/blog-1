@@ -4,6 +4,7 @@ Sitemap
 .. toctree::
    :maxdepth: 1
 
+   2018/06/23/ioc-containers
    2018/04/15/kami-2
    2018/02/11/fibonacci
    2018/01/27/notes-on-oop
