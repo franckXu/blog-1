@@ -352,9 +352,9 @@ In this post we went over a few IoC container basics:
 
 ----
 
-.. [#] For a much more detailed treatment, see
-       https://www.martinfowler.com/articles/injection.html
-.. [#] An interesting benchmark:
-       https://stackoverflow.com/questions/35805609/performance-of-expression-compile-vs-lambda-direct-vs-virtual-calls
+.. [#] For a much more detailed treatment, see Martin Fowler's
+       `article <https://www.martinfowler.com/articles/injection.html>`_
+.. [#] An interesting benchmark on `Stack Overflow
+       <https://stackoverflow.com/questions/35805609/performance-of-expression-compile-vs-lambda-direct-vs-virtual-calls>`_
 
 .. comments::
