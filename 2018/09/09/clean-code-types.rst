@@ -9,8 +9,8 @@ years ago and with which I started this blog:
 and `Clean Code - Part 2 <https://vladris.com/blog/2016/01/07/clean-code-part-2.html>`_.
 I took the opportunity to completely revamp the talk and ended up with 3 parts:
 *Algorithms*, *Types*, and *State*. The *Algorithms* is mostly covered by the
-`Fibonacci <https://vladris.com/blog/2018/02/11/fibonacci.html>`_ post, so I
-will start with *Types*.
+`Fibonacci <https://vladris.com/blog/2018/02/11/fibonacci.html>`_ post, so in
+this post we will talk about *Types*.
 
 Mars Climate Orbiter
 --------------------
@@ -45,8 +45,8 @@ be just fine: 1.5 lbfs is about 6.672333 Ns, way above the 2 Ns threshold.
 
 The problem is the interpretation of the data. The NASA component ends up
 comparing lbfs to Ns without conversion, misinterpreting the lbfs input as Ns.
-1.5 is less than 2, thus the orbiter disintegrates. This is a known anti-pattern
-called "Primitive Obsession".
+Since 1.5 is less than 2, the orbiter disintegrates. This is a known
+anti-pattern called "primitive obsession".
 
 Primitive Obsession
 -------------------
@@ -68,7 +68,7 @@ A more type safe solution would have defined a simple ``Ns`` type::
         return a.value < b.value;
     }
 
-We can simlarly define a simple ``lbfs`` type::
+We can similarly define a simple ``lbfs`` type::
 
     struct lbfs
     {
