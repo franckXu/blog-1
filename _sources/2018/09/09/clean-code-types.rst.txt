@@ -305,10 +305,7 @@ three important aspects of leveraging types to write safer code:
 * Reducing state space, returning result or error instead of result and error.
 * RAII and automatic resource management.
 
-Types are great tools for implementing safer, reusable code. In fact, I started
-writing a book about practical use of types to build software. You can follow
-the development of `Practical Types <https://github.com/vladris/practical-types>`_
-on GitHub.
+Types are great tools for implementing safer, reusable code.
 
 ----
 
