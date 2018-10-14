@@ -1,0 +1,441 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="Vlad's Tech Blog">
+        <meta name="viewport" content="width=device-width">
+        <title>Arithmetic Overflow and Underflow &mdash; Blog</title>
+            <link rel="stylesheet" href="../../../_static/normalize.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/sphinx.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/main.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/flat.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+            <link rel="stylesheet" href="../../../_static/font-awesome.min.css" type="text/css">
+        <link rel="shortcut icon" href="../../../_static/tinkerer.ico" /><!-- Load modernizr and JQuery -->
+        <script src="../../../_static/vendor/modernizr-2.6.2.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="../../../_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
+        <script src="../../../_static/plugins.js"></script>
+        <script src="../../../_static/main.js"></script>
+        <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Clean Code: Types" href="../../09/09/clean-code-types.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.7.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        SOURCELINK_SUFFIX: '.txt',
+        HAS_SOURCE:  true
+      };
+    </script><script type="text/javascript" src="../../../_static/underscore.js"></script><script type="text/javascript" src="../../../_static/doctools.js"></script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script type="text/javascript" src="../../../_static/disqus.js"></script><script type="text/javascript" src="../../../_static/google_analytics.js"></script><link rel="stylesheet" href="../../../_static/extra.css" type="text/css" />
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+</script></head>
+    <body role="document">
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+      <div id="container"><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>October 13, 2018</span>
+        </div>
+    <div class="section" id="arithmetic-overflow-and-underflow">
+<h1>Arithmetic Overflow and Underflow</h1>
+<p>Arithmetic overflow happens when an arithmetic operation results in a value that
+is outside the range of values representable by the expression’s type. For
+example, the following C++ code prints <span class="docutils literal"><span class="pre">0</span></span>:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">uint16_t</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">65535</span><span class="p">;</span>
+<span class="n">x</span><span class="o">++</span><span class="p">;</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">x</span><span class="p">;</span>
+</pre></div>
+</div>
+<p><span class="docutils literal"><span class="pre">x</span></span> is an unsigned 16 bit integer, which can represent values between 0 and
+65535. If <span class="docutils literal"><span class="pre">x</span></span> is 65535 and we increment it, the value becomes 65536 but that
+value cannot be represented by a uint16_t. This is an overflow. In this case,
+C++ wraps the value around and <span class="docutils literal"><span class="pre">x</span></span> becomes 0.</p>
+<p>Similarly, an underflow occurs when an arithmetic operation generates a result
+that is below the smallest representable value of the expression’s type:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">uint16_t</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="n">x</span><span class="o">--</span><span class="p">;</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">x</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>The above prints 65535, as the result of decrementing 0 is -1, which cannot be
+represented by an <span class="docutils literal"><span class="pre">uint16_t</span></span>.</p>
+<p>Before we digging into overflow behavior, we need to understand how computers
+represent numbers.</p>
+<div class="section" id="number-representations">
+<h2>Number Representations</h2>
+<div class="section" id="arbitrarily-large-integers">
+<h3>Arbitrarily large integers</h3>
+<p>Python provides support for arbitrarily large integers: unlike C++, where the bit
+width (number of bits used to represent a number) is fixed, we can have integers
+of any size:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">print</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="mi">100</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Prints</p>
+<blockquote>
+<div>10000000000000000000000000000000000000000000000000000
+000000000000000000000000000000000000000000000000</div></blockquote>
+<p>Why don’t all languages provide such support? The answer is performance. The
+underlying hardware the code runs on uses fixed-width integers, so performing
+arithmetic on fixed-width integer types becomes a single CPU instruction. On
+the other hand, supporting arbitrarily large integers usually involves writing
+code to determine how many bits a given value or the result of an arithmetic
+operation needs and convert that into an array of fixed-width integers large
+enough to hold that value. The added overhead of this is non-trivial, so unlike
+Python, most other mainstream languages offer only fixed-width integers and
+support arbitrarily large integers only explicitly, via libraries.</p>
+</div>
+<div class="section" id="unsigned-integers">
+<h3>Unsigned integers</h3>
+<p>Unsigned integers are represented as a sequence of <span class="docutils literal"><span class="pre">N</span></span> bits, thus being able
+to represent numbers between 0 and 2 <sup>N</sup>-1. An unsigned 8-bit integer can
+store any value between 0 and 255, an unsigned 16-bit integer can store any
+value between 0 and 65535, an unsigned 32-bit integer between 0 and 4294967295,
+and an unsigned 64-bit integer between 0 and 18446744073709551615.</p>
+<p>Unsigned integer representation is trivial.</p>
+</div>
+<div class="section" id="signed-integers">
+<h3>Signed integers</h3>
+<p>Signed integers are usually represented in two’s complement.</p>
+<p>Positive numbers are encoded the same as unsigned binary numbers described
+above. Negative numbers are encoded as two’s complement of their absolute
+value. For example, an 8-bit representation of -3 is 2 <sup>8</sup> - 3.</p>
+<p>The most significant bit is always 1 for negative numbers and 0 for positive
+numbers or 0.</p>
+<p>With this representation, <span class="docutils literal"><span class="pre">N</span></span> bits can encode a signed integer between
+2 <sup>N-1</sup> - 1 and -2 <sup>N</sup>. So 8 bits can encode an integer between -128 and
+127.</p>
+</div>
+</div>
+<div class="section" id="handling-overflow">
+<h2>Handling Overflow</h2>
+<p>If the result of an arithmetic operation cannot fit the type, there are several
+approaches we can take and different programming languages employ different
+strategies. These are:</p>
+<ul class="simple">
+<li>Exceptions</li>
+<li>Wrap-around</li>
+<li>Saturation</li>
+</ul>
+<p>All of these approaches have their pros and cons.</p>
+<div class="section" id="exceptions">
+<h3>Exceptions</h3>
+<p>The safest approach is to treat an arithmetic overflow as an exception. This
+usually gets rid of security vulnerabilities and treats any overflow as an
+exceptional scenario. In this case an exception is thrown (or an error returned)
+whenever an arithmetic operation overflows or underflows.</p>
+<p>This is usually desirable from a security/safety perspective, but the trade-off
+is in performance: the downside of this approach is that all arithmetic
+operations need to be checked for overflow (underlying hardware usually does not
+do this natively) and exceptions need to be handled by callers.</p>
+</div>
+<div class="section" id="wrap-around">
+<h3>Wrap-around</h3>
+<p>The default behavior in C++, wrap-around simply continues from the smallest
+possible value in case of overflow or from the largest possible value in case
+of underflow. For unsigned integers, this is equivalent to modulo arithmetic.
+For example, for an <span class="docutils literal"><span class="pre">int8_t</span></span>, which can represent values between -128 and 127,
+wrap-around would make 127 + 1 be -128 and similarly -128 - 1 be 127.</p>
+<p>This is usually the most efficient way to perform arithmetic as no checking is
+involved. Most hardware uses wrap-around as it can simply discard overflowing
+bits to achieve the result. The two’s complement representation of 127 is
+<span class="docutils literal"><span class="pre">01111111</span></span>. The two’s complement representation of 128 is <span class="docutils literal"><span class="pre">10000000</span></span>. With
+this representation, adding 1 to 127 naturally makes it 128.</p>
+<p>This is also the most unsafe implementation as it can lead to unexpected
+behavior and exploitable security holes <a class="footnote-reference" href="#id2" id="id1">[1]</a>.</p>
+</div>
+<div class="section" id="saturation">
+<h3>Saturation</h3>
+<p>Saturation means clamping the value within the allowed range, so on overflow, we
+would simply stop at the largest representable value. On underflow, we would
+stop at the smallest representable value. In our 8-bit signed integer example,
+we would now have 127 + 1 be 127 and -128 - 1 be -128. There are several
+advantages with this approach: for one, the resulting values on overflow and
+underflow are the closest to the “real” values we would get if operating without
+constraints. A lot of physical systems naturally lend themselves to saturation.
+Imagine, for example, a thermostat which can only operate within a range of
+temperature.</p>
+<p>The downsides of this approach are results which might be surprising and the
+fact that properties of arithmetic operations like associativity no longer hold:
+(120 + 10) + (-10) is 117, but 120 + (10 + (-10)) is 120.</p>
+</div>
+</div>
+<div class="section" id="detecting-overflow-and-underflow">
+<h2>Detecting Overflow and Underflow</h2>
+<p>Let’s now see how we can tell whether an arithmetic operation overflow while
+operating only within the range of values representable by a given type.</p>
+<p>For a type which can represent any value between some <span class="docutils literal"><span class="pre">MIN</span></span> and <span class="docutils literal"><span class="pre">MAX</span></span>, we
+observe that an addition overflow means <span class="docutils literal"><span class="pre">a</span> <span class="pre">+</span> <span class="pre">b</span> <span class="pre">&gt;</span> <span class="pre">MAX</span></span>, while an underflow
+means <span class="docutils literal"><span class="pre">a</span> <span class="pre">+</span> <span class="pre">b</span> <span class="pre">&lt;</span> <span class="pre">MIN</span></span> (note <span class="docutils literal"><span class="pre">a</span></span> and <span class="docutils literal"><span class="pre">b</span></span> can be negative, so adding them
+could produce a value that would be under our minimum representable value).</p>
+<p>We can detect overflow and underflow by checking, if <span class="docutils literal"><span class="pre">b</span> <span class="pre">&gt;=</span> <span class="pre">0</span></span>, that
+<span class="docutils literal"><span class="pre">a</span> <span class="pre">&gt;</span> <span class="pre">MAX</span> <span class="pre">-</span> <span class="pre">b</span></span>, otherwise with <span class="docutils literal"><span class="pre">b</span> <span class="pre">&lt;</span> <span class="pre">0</span></span>, that <span class="docutils literal"><span class="pre">a</span> <span class="pre">&lt;</span> <span class="pre">MIN</span> <span class="pre">-</span> <span class="pre">b</span></span>.</p>
+<p>The reason this works is that, if <span class="docutils literal"><span class="pre">b</span></span> is greater than or equal to 0, we can
+safely subtract it from <span class="docutils literal"><span class="pre">MAX</span></span> (if it were negative, subtracting it would cause
+an overflow). So with this in mind, we are simply saying that <span class="docutils literal"><span class="pre">a</span> <span class="pre">+</span> <span class="pre">b</span> <span class="pre">&gt;</span> <span class="pre">MAX</span></span>
+is equivalent to <span class="docutils literal"><span class="pre">a</span> <span class="pre">&gt;</span> <span class="pre">MAX</span> <span class="pre">-</span> <span class="pre">b</span></span> (subtracting <span class="docutils literal"><span class="pre">b</span></span> on both sides). We also
+observe that <span class="docutils literal"><span class="pre">a</span> <span class="pre">+</span> <span class="pre">b</span></span> can never underflow if <span class="docutils literal"><span class="pre">b</span></span> is greater than or equal to
+0 because, regardless how small <span class="docutils literal"><span class="pre">a</span></span> is, adding a positive number to it will
+make it larger not smaller.</p>
+<p>If <span class="docutils literal"><span class="pre">b</span></span> is less than 0, then by the same logic we cannot possibly overflow -
+regardless how large <span class="docutils literal"><span class="pre">a</span></span> is, adding <span class="docutils literal"><span class="pre">b</span></span> to it would make it smaller. In this
+case we only need to check for underflow. Here we observe that subtracting a
+negative number from <span class="docutils literal"><span class="pre">MIN</span></span> is safe - it will increase <span class="docutils literal"><span class="pre">MIN</span></span>. So by
+subtracting <span class="docutils literal"><span class="pre">b</span></span> on both sides of <span class="docutils literal"><span class="pre">a</span> <span class="pre">+</span> <span class="pre">b</span> <span class="pre">&lt;</span> <span class="pre">MIN</span></span>, we get <span class="docutils literal"><span class="pre">a</span> <span class="pre">&lt;</span> <span class="pre">MIN</span> <span class="pre">-</span> <span class="pre">b</span></span>.</p>
+<p>The following code implements these two checks:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;limits&gt;</span><span class="cp"></span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="n">AdditionOverflows</span><span class="p">(</span><span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">b</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">a</span> <span class="o">&gt;</span> <span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">b</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="n">AdditionUnderflows</span><span class="p">(</span><span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">b</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">a</span> <span class="o">&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">min</span><span class="p">()</span> <span class="o">-</span> <span class="n">b</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Detecting overflow or underflow for subtraction is very similar, as subtracting
+<span class="docutils literal"><span class="pre">b</span></span> from <span class="docutils literal"><span class="pre">a</span></span> is the equivalent of adding <span class="docutils literal"><span class="pre">-b</span></span> to <span class="docutils literal"><span class="pre">a</span></span>, thus we only need
+to adjust the checks. <span class="docutils literal"><span class="pre">a</span> <span class="pre">-</span> <span class="pre">b</span> <span class="pre">&gt;</span> <span class="pre">MAX</span></span> means <span class="docutils literal"><span class="pre">a</span> <span class="pre">&gt;</span> <span class="pre">MAX</span> <span class="pre">+</span> <span class="pre">b</span></span> if <span class="docutils literal"><span class="pre">b</span></span> is negative
+(so we don’t cause an overflow during the check), while <span class="docutils literal"><span class="pre">a</span> <span class="pre">-</span> <span class="pre">b</span> <span class="pre">&lt;</span> <span class="pre">MIN</span></span> means
+<span class="docutils literal"><span class="pre">a</span> <span class="pre">&lt;</span> <span class="pre">MIN</span> <span class="pre">+</span> <span class="pre">b</span></span> if <span class="docutils literal"><span class="pre">b</span></span> is greater than or equal to 0:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="n">SubtractionOverflows</span><span class="p">(</span><span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">b</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">a</span> <span class="o">&gt;</span> <span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="n">b</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="n">SubtractionUnderflows</span><span class="p">(</span><span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">b</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">a</span> <span class="o">&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">min</span><span class="p">()</span> <span class="o">+</span> <span class="n">b</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Detecting overflow for multiplication is more interesting. <span class="docutils literal"><span class="pre">a</span> <span class="pre">*</span> <span class="pre">b</span> <span class="pre">&gt;</span> <span class="pre">MAX</span></span> can
+happen if <span class="docutils literal"><span class="pre">b</span> <span class="pre">&gt;=</span> <span class="pre">0</span></span>, <span class="docutils literal"><span class="pre">a</span> <span class="pre">&gt;=</span> <span class="pre">0</span></span>, and <span class="docutils literal"><span class="pre">a</span> <span class="pre">&gt;</span> <span class="pre">MAX</span> <span class="pre">/</span> <span class="pre">b</span></span> or when <span class="docutils literal"><span class="pre">b</span> <span class="pre">&lt;</span> <span class="pre">0</span></span>,
+<span class="docutils literal"><span class="pre">a</span> <span class="pre">&lt;</span> <span class="pre">0</span></span>, and <span class="docutils literal"><span class="pre">a</span> <span class="pre">&lt;</span> <span class="pre">MAX</span> <span class="pre">/</span> <span class="pre">b</span></span> (dividing <span class="docutils literal"><span class="pre">a</span> <span class="pre">*</span> <span class="pre">b</span> <span class="pre">&gt;</span> <span class="pre">MAX</span></span> on both sides by <span class="docutils literal"><span class="pre">b</span></span>,
+a negative number, flips the sign of the inequality).</p>
+<p>Underflow can happen only when one of the numbers is negative and the other one
+isn’t. So if <span class="docutils literal"><span class="pre">b</span> <span class="pre">&gt;=</span> <span class="pre">0</span></span>, <span class="docutils literal"><span class="pre">a</span> <span class="pre">&lt;</span> <span class="pre">0</span></span>, and <span class="docutils literal"><span class="pre">a</span> <span class="pre">&lt;</span> <span class="pre">MIN</span> <span class="pre">/</span> <span class="pre">b</span></span> or if <span class="docutils literal"><span class="pre">b</span> <span class="pre">&lt;</span> <span class="pre">0</span></span>,
+<span class="docutils literal"><span class="pre">a</span> <span class="pre">&gt;=</span> <span class="pre">0</span></span>, and <span class="docutils literal"><span class="pre">a</span> <span class="pre">&gt;</span> <span class="pre">MIN</span> <span class="pre">/</span> <span class="pre">b</span></span>.</p>
+<p>We can implement the checks as follows:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="n">MultiplicationOverflows</span><span class="p">(</span><span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">((</span><span class="n">b</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">a</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">a</span> <span class="o">&gt;</span> <span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">max</span><span class="p">()</span> <span class="o">/</span> <span class="n">b</span><span class="p">))</span>
+        <span class="o">||</span> <span class="p">((</span><span class="n">b</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">a</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">a</span> <span class="o">&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">max</span><span class="p">()</span> <span class="o">/</span> <span class="n">b</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="n">MultiplicationUnderflows</span><span class="p">(</span><span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">((</span><span class="n">b</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">a</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">a</span> <span class="o">&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">min</span><span class="p">()</span> <span class="o">/</span> <span class="n">b</span><span class="p">))</span>
+        <span class="o">||</span> <span class="p">((</span><span class="n">b</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">a</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">a</span> <span class="o">&gt;</span> <span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">min</span><span class="p">()</span> <span class="o">/</span> <span class="n">b</span><span class="p">));</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Note integer division cannot possibly underflow. The single overflow that can
+happen is due to the fact that in two’s complement representation, we can
+represent one more negative number than positives, as 0 is, in a sense, positive
+with this representation (the sign bit is not set for 0). An 8-bit signed
+integer can represent 128 positive values (0 to 127) and 128 negative values
+(-1 to -128). Overflow can only happen when we change the sign of the smallest
+possible value we can represent by dividing it with -1. -128 / -1 becomes 128,
+which is an overflow. This is the only case we need to check for:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="n">DivisionOverflows</span><span class="p">(</span><span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">a</span> <span class="o">==</span> <span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">min</span><span class="p">())</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">b</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">a</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Note that unsigned integers can never overflow, so once we confirm that <span class="docutils literal"><span class="pre">a</span></span>
+is the smallest possible value and <span class="docutils literal"><span class="pre">b</span></span> is -1, we also check to ensure <span class="docutils literal"><span class="pre">a</span></span> is
+not <span class="docutils literal"><span class="pre">0</span></span>.</p>
+<p>We are explicitly not looking at division by 0, which is part of the same safe
+arithmetic topic. This post focuses on overflow and underflow only.</p>
+</div>
+<div class="section" id="handling-overflow-and-underflow">
+<h2>Handling Overflow and Underflow</h2>
+<p>Now that we can detect overflows and underflows, we can implement a couple of
+policies to handle them. Wrap-around is the default behavior in C++, so let’s
+look at the other two possibilities. We will implement a couple of types
+templated on an integer type <span class="docutils literal"><span class="pre">T</span></span>, with overflow and underflow handlers:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="n">Policy</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="n">T</span> <span class="n">OnOverflow</span><span class="p">()</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="n">T</span> <span class="n">OnUnderflow</span><span class="p">()</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>The throwing policy looks like this:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nl">ArithmeticException</span> <span class="p">:</span> <span class="n">std</span><span class="o">::</span><span class="n">exception</span> <span class="p">{};</span>
+<span class="k">struct</span> <span class="nl">ArithmeticOverflowException</span> <span class="p">:</span> <span class="n">ArithmeticException</span> <span class="p">{};</span>
+<span class="k">struct</span> <span class="nl">ArithmeticUnderflowException</span> <span class="p">:</span> <span class="n">ArithmeticException</span> <span class="p">{};</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="n">ThrowingPolicy</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="n">T</span> <span class="n">OnOverflow</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="n">ArithmeticOverflowException</span><span class="p">{};</span>
+    <span class="p">}</span>
+
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="n">T</span> <span class="n">OnUnderflow</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="n">ArithmeticUnderflowException</span><span class="p">{};</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>The saturation policy is:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="n">SaturationPolicy</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="n">T</span> <span class="n">OnOverflow</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">max</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="n">T</span> <span class="n">OnUnderflow</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">min</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="safe-arithmetic">
+<h2>Safe Arithmetic</h2>
+<p>Now that we have all the required pieces, we can create a type that wraps an
+integer type and implements all the arithmetic operations checking for overflow
+or underflow. The type is templated on a policy for handling overflows and
+underflows:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="p">,</span> <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="o">&gt;</span> <span class="k">typename</span> <span class="n">Policy</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="n">Integer</span>
+<span class="p">{</span>
+    <span class="n">T</span> <span class="n">value</span><span class="p">;</span>
+
+    <span class="k">constexpr</span> <span class="n">Integer</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">Policy</span><span class="o">&gt;</span> <span class="k">operator</span><span class="o">+</span><span class="p">(</span>
+        <span class="k">const</span> <span class="n">Integer</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">Policy</span><span class="o">&gt;&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">AdditionOverflows</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">other</span><span class="p">.</span><span class="n">value</span><span class="p">))</span>
+            <span class="k">return</span> <span class="p">{</span> <span class="n">Policy</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">OnOverflow</span><span class="p">()</span> <span class="p">};</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">AdditionUnderflows</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">other</span><span class="p">.</span><span class="n">value</span><span class="p">))</span>
+            <span class="k">return</span> <span class="p">{</span> <span class="n">Policy</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">OnUnderflow</span><span class="p">()</span> <span class="p">};</span>
+
+        <span class="k">return</span> <span class="p">{</span> <span class="n">value</span> <span class="o">+</span> <span class="n">other</span><span class="p">.</span><span class="n">value</span> <span class="p">};</span>
+    <span class="p">}</span>
+
+    <span class="k">constexpr</span> <span class="n">Integer</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">Policy</span><span class="o">&gt;</span> <span class="k">operator</span><span class="o">-</span><span class="p">(</span>
+        <span class="k">const</span> <span class="n">Integer</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">Policy</span><span class="o">&gt;&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">SubtractionOverflows</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">other</span><span class="p">.</span><span class="n">value</span><span class="p">))</span>
+            <span class="k">return</span> <span class="p">{</span> <span class="n">Policy</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">OnOverflow</span><span class="p">()</span> <span class="p">};</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">SubtractionUnderflows</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">other</span><span class="p">.</span><span class="n">value</span><span class="p">))</span>
+            <span class="k">return</span> <span class="p">{</span> <span class="n">Policy</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">OnUnderflow</span><span class="p">()</span> <span class="p">};</span>
+
+        <span class="k">return</span> <span class="p">{</span> <span class="n">value</span> <span class="o">-</span> <span class="n">other</span><span class="p">.</span><span class="n">value</span> <span class="p">};</span>
+    <span class="p">}</span>
+
+    <span class="k">constexpr</span> <span class="n">Integer</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">Policy</span><span class="o">&gt;</span> <span class="k">operator</span><span class="o">*</span><span class="p">(</span>
+        <span class="k">const</span> <span class="n">Integer</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">Policy</span><span class="o">&gt;&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">MultiplicationOverflows</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">other</span><span class="p">.</span><span class="n">value</span><span class="p">))</span>
+            <span class="k">return</span> <span class="p">{</span> <span class="n">Policy</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">OnOverflow</span><span class="p">()</span> <span class="p">};</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">MultiplicationUnderflows</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">other</span><span class="p">.</span><span class="n">value</span><span class="p">))</span>
+            <span class="k">return</span> <span class="p">{</span> <span class="n">Policy</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">OnUnderflow</span><span class="p">()</span> <span class="p">};</span>
+
+        <span class="k">return</span> <span class="p">{</span> <span class="n">value</span> <span class="o">*</span> <span class="n">other</span><span class="p">.</span><span class="n">value</span> <span class="p">};</span>
+    <span class="p">}</span>
+
+    <span class="k">constexpr</span> <span class="n">Integer</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">Policy</span><span class="o">&gt;</span> <span class="k">operator</span><span class="o">/</span><span class="p">(</span>
+        <span class="k">const</span> <span class="n">Integer</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">Policy</span><span class="o">&gt;&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">DivisionOverflows</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">other</span><span class="p">.</span><span class="n">value</span><span class="p">))</span>
+            <span class="k">return</span> <span class="p">{</span> <span class="n">Policy</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">OnOverflow</span><span class="p">();</span> <span class="p">}</span>
+
+        <span class="k">return</span> <span class="p">{</span> <span class="n">value</span> <span class="o">/</span> <span class="n">other</span><span class="p">.</span><span class="n">value</span> <span class="p">};</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>Now we can wrap an integer type with this and perform safe arithmetic:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">Integer</span><span class="o">&lt;</span><span class="kt">int8_t</span><span class="p">,</span> <span class="n">ThrowingPolicy</span><span class="o">&gt;</span> <span class="n">a</span><span class="p">{</span> <span class="mi">64</span> <span class="p">};</span>
+<span class="n">Integer</span><span class="o">&lt;</span><span class="kt">int8_t</span><span class="p">,</span> <span class="n">ThrowingPolicy</span><span class="o">&gt;</span> <span class="n">b</span><span class="p">{</span> <span class="mi">2</span> <span class="p">};</span>
+
+<span class="c1">// Throws</span>
+<span class="n">Integer</span><span class="o">&lt;</span><span class="kt">int8_t</span><span class="p">,</span> <span class="n">ThrowingPolicy</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>This is a simple implementation for illustrative purposes. The <span class="docutils literal"><span class="pre">Integer</span></span> type
+currently only defines addition, subtraction, multiplication, and division. A
+complete implementation would handle multiple other operators, like pre and post
+increment, implicit casting from <span class="docutils literal"><span class="pre">T</span></span> etc.</p>
+<p>The generic overflow and underflow checks can be specialized for unsigned types
+so that we don’t redundantly check for <span class="docutils literal"><span class="pre">b</span> <span class="pre">&lt;</span> <span class="pre">0</span></span> for a type which cannot
+represent negative numbers. Similarly, we wouldn’t worry, for example, about
+addition underflowing for an unsigned type.</p>
+<p>We can also extend our safe arithmetic to not only rely on the standard
+<span class="docutils literal"><span class="pre">numeric_limits</span></span>, but also allow users to clamp values between user-defined
+minimum and maximum values.</p>
+<p>For a production-ready safe arithmetic library, I recommend you check out David
+LeBlanc’s <a class="reference external" href="https://github.com/dcleblanc/SafeInt">SafeInt</a>.</p>
+</div>
+<div class="section" id="summary">
+<h2>Summary</h2>
+<p>This post covered arithmetic overflow and underflow, and ways to handle it. We
+looked at:</p>
+<ul class="simple">
+<li>What arithmetic overflow and underflow are</li>
+<li>Integer representations:<ul>
+<li>Unsigned</li>
+<li>Two’s complement</li>
+</ul>
+</li>
+<li>Ways to deal with overflow/underflow:<ul>
+<li>Exceptions</li>
+<li>Wrap-around</li>
+<li>Saturation</li>
+</ul>
+</li>
+<li>How to detect overflow/underflow</li>
+<li>Implementing a simple <span class="docutils literal"><span class="pre">Integer</span></span> wrapper that performs safe arithmetic</li>
+</ul>
+<hr class="docutils" />
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>An example of how an attacker can exploit integer overflow is the
+following <a class="reference external" href="https://www.kb.cert.org/vuls/id/945216">SSH1 vulnerability</a>.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+    <div class="postmeta">
+        
+        
+        
+        </div><ul class="related clearfix">
+            <li class="left"></li>
+            <li class="right"><a href="../../09/09/clean-code-types.html">Clean Code: Types</a> &raquo; </li>
+        </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "vladris";    var disqus_identifier = "2018/10/13/arithmetic-overflow-and-underflow";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article></div> <!-- #main --></div> <!-- #main-container -->
+
+        <div class="footer-container" role="contentinfo"><div style="text-align: center; color: #93a4ad">
+    By Vlad Rișcuția | <a href="http://feeds.feedburner.com/vladris">Subscribe</a> | <a href="http://vladris.com/blog/archive">Archive</a>
+</div></div> <!-- footer-container -->
+
+      </div> <!--! end of #container --><!--[if lt IE 7 ]>
+          <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+          <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+        <![endif]-->
+    </body>
+</html>
