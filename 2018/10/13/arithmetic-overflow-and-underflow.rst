@@ -14,8 +14,8 @@ example, the following C++ code prints ``0``::
 
 ``x`` is an unsigned 16 bit integer, which can represent values between 0 and
 65535. If ``x`` is 65535 and we increment it, the value becomes 65536 but that
-value cannot be represented by a uint16_t. This is an overflow. In this case,
-C++ wraps the value around and ``x`` becomes 0.
+value cannot be represented by a ``uint16_t``. This is an overflow. In this
+case, C++ wraps the value around and ``x`` becomes 0.
 
 Similarly, an underflow occurs when an arithmetic operation generates a result
 that is below the smallest representable value of the expression's type::
@@ -37,16 +37,19 @@ Number Representations
 Arbitrarily large integers
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Python provides support for arbitrarily large integers: unlike C++, where the bit
-width (number of bits used to represent a number) is fixed, we can have integers
-of any size::
+Python provides support for arbitrarily large integers: unlike C++, where the
+bit width (number of bits used to represent a number) is fixed, we can have
+integers of any size::
 
     print(10**100)
 
 Prints
 
-    10000000000000000000000000000000000000000000000000000
-    000000000000000000000000000000000000000000000000
+.. raw:: html
+
+    <blockquote style="word-wrap:break-word">
+    10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+    </blockquote>
 
 Why don't all languages provide such support? The answer is performance. The
 underlying hardware the code runs on uses fixed-width integers, so performing
@@ -62,7 +65,7 @@ Unsigned integers
 ~~~~~~~~~~~~~~~~~
 
 Unsigned integers are represented as a sequence of ``N`` bits, thus being able
-to represent numbers between 0 and 2 :sup:`N`-1. An unsigned 8-bit integer can
+to represent numbers between 0 and 2\ :sup:`N`-1. An unsigned 8-bit integer can
 store any value between 0 and 255, an unsigned 16-bit integer can store any
 value between 0 and 65535, an unsigned 32-bit integer between 0 and 4294967295,
 and an unsigned 64-bit integer between 0 and 18446744073709551615.
@@ -76,14 +79,14 @@ Signed integers are usually represented in two's complement.
 
 Positive numbers are encoded the same as unsigned binary numbers described
 above. Negative numbers are encoded as two's complement of their absolute
-value. For example, an 8-bit representation of -3 is 2 :sup:`8` - 3.
+value. For example, an 8-bit representation of -3 is 2\ :sup:`8`-3.
 
 The most significant bit is always 1 for negative numbers and 0 for positive
 numbers or 0.
 
 With this representation, ``N`` bits can encode a signed integer between
-2 :sup:`N-1` - 1 and -2 :sup:`N`. So 8 bits can encode an integer between -128 and
-127.
+2\ :sup:`N-1`-1 and -2\ :sup:`N`. So 8 bits can encode an integer between -128
+and 127.
 
 Handling Overflow
 -----------------
@@ -127,7 +130,7 @@ bits to achieve the result. The two's complement representation of 127 is
 this representation, adding 1 to 127 naturally makes it 128.
 
 This is also the most unsafe implementation as it can lead to unexpected
-behavior and exploitable security holes [#]_.
+behavior and exploitable security holes\ [#]_.
 
 Saturation
 ~~~~~~~~~~
