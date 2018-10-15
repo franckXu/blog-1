@@ -23,8 +23,8 @@ example, the following C++ code prints <span class="docutils literal"><span clas
 </div>
 <p><span class="docutils literal"><span class="pre">x</span></span> is an unsigned 16 bit integer, which can represent values between 0 and
 65535. If <span class="docutils literal"><span class="pre">x</span></span> is 65535 and we increment it, the value becomes 65536 but that
-value cannot be represented by a uint16_t. This is an overflow. In this case,
-C++ wraps the value around and <span class="docutils literal"><span class="pre">x</span></span> becomes 0.</p>
+value cannot be represented by a <span class="docutils literal"><span class="pre">uint16_t</span></span>. This is an overflow. In this
+case, C++ wraps the value around and <span class="docutils literal"><span class="pre">x</span></span> becomes 0.</p>
 <p>Similarly, an underflow occurs when an arithmetic operation generates a result
 that is below the smallest representable value of the expression’s type:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span/><span class="kt">uint16_t</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
@@ -41,17 +41,16 @@ represent numbers.</p>
 <h2>Number Representations</h2>
 <div class="section" id="arbitrarily-large-integers">
 <h3>Arbitrarily large integers</h3>
-<p>Python provides support for arbitrarily large integers: unlike C++, where the bit
-width (number of bits used to represent a number) is fixed, we can have integers
-of any size:</p>
+<p>Python provides support for arbitrarily large integers: unlike C++, where the
+bit width (number of bits used to represent a number) is fixed, we can have
+integers of any size:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span/><span class="n">print</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="mi">100</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Prints</p>
-<blockquote>
-<div>10000000000000000000000000000000000000000000000000000
-000000000000000000000000000000000000000000000000</div></blockquote>
-<p>Why don’t all languages provide such support? The answer is performance. The
+<blockquote style="word-wrap:break-word">
+10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+</blockquote><p>Why don’t all languages provide such support? The answer is performance. The
 underlying hardware the code runs on uses fixed-width integers, so performing
 arithmetic on fixed-width integer types becomes a single CPU instruction. On
 the other hand, supporting arbitrarily large integers usually involves writing
@@ -64,7 +63,7 @@ support arbitrarily large integers only explicitly, via libraries.</p>
 <div class="section" id="unsigned-integers">
 <h3>Unsigned integers</h3>
 <p>Unsigned integers are represented as a sequence of <span class="docutils literal"><span class="pre">N</span></span> bits, thus being able
-to represent numbers between 0 and 2 <sup>N</sup>-1. An unsigned 8-bit integer can
+to represent numbers between 0 and 2<sup>N</sup>-1. An unsigned 8-bit integer can
 store any value between 0 and 255, an unsigned 16-bit integer can store any
 value between 0 and 65535, an unsigned 32-bit integer between 0 and 4294967295,
 and an unsigned 64-bit integer between 0 and 18446744073709551615.</p>
@@ -75,12 +74,12 @@ and an unsigned 64-bit integer between 0 and 18446744073709551615.</p>
 <p>Signed integers are usually represented in two’s complement.</p>
 <p>Positive numbers are encoded the same as unsigned binary numbers described
 above. Negative numbers are encoded as two’s complement of their absolute
-value. For example, an 8-bit representation of -3 is 2 <sup>8</sup> - 3.</p>
+value. For example, an 8-bit representation of -3 is 2<sup>8</sup>-3.</p>
 <p>The most significant bit is always 1 for negative numbers and 0 for positive
 numbers or 0.</p>
 <p>With this representation, <span class="docutils literal"><span class="pre">N</span></span> bits can encode a signed integer between
-2 <sup>N-1</sup> - 1 and -2 <sup>N</sup>. So 8 bits can encode an integer between -128 and
-127.</p>
+2<sup>N-1</sup>-1 and -2<sup>N</sup>. So 8 bits can encode an integer between -128
+and 127.</p>
 </div>
 </div>
 <div class="section" id="handling-overflow">
@@ -118,7 +117,7 @@ bits to achieve the result. The two’s complement representation of 127 is
 <span class="docutils literal"><span class="pre">01111111</span></span>. The two’s complement representation of 128 is <span class="docutils literal"><span class="pre">10000000</span></span>. With
 this representation, adding 1 to 127 naturally makes it 128.</p>
 <p>This is also the most unsafe implementation as it can lead to unexpected
-behavior and exploitable security holes <a class="footnote-reference" href="#id2" id="id1">[1]</a>.</p>
+behavior and exploitable security holes<a class="footnote-reference" href="#id2" id="id1">[1]</a>.</p>
 </div>
 <div class="section" id="saturation">
 <h3>Saturation</h3>
