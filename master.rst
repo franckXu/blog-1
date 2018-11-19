@@ -4,6 +4,7 @@ Sitemap
 .. toctree::
    :maxdepth: 1
 
+   2018/11/18/notes-on-encoding-text
    2018/10/13/arithmetic-overflow-and-underflow
    2018/09/09/clean-code-types
    2018/07/16/implementing-a-variant-type-in-csharp
