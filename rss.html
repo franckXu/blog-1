@@ -5,8 +5,335 @@
         <link>http://vladris.com/blog/</link>
         <description></description>
         <language>en-us</language>
-        <pubDate>Sat, 13 Oct 2018 00:00:00 -0700</pubDate>
+        <pubDate>Sun, 18 Nov 2018 00:00:00 -0800</pubDate>
         
+        <item>
+            <link>http://vladris.com/blog/2018/11/18/notes-on-encoding-text.html</link>
+            <guid>http://vladris.com/blog/2018/11/18/notes-on-encoding-text.html</guid>
+            <title><![CDATA[Notes on Encoding Text]]></title>
+            <description><![CDATA[<h1>Notes on Encoding Text</h1>
+<p>In this post we will look at text encoding, from the half-a-century old ASCII
+and its extensions to Unicode and the common UTF-16 and UTF-8 encodings. We’ll
+cover a few basic text encoding concepts like code points, graphemes, and
+surrogate pairs and see how we can stack emojis and combine them into intricate
+glyphs.</p>
+<div class="section" id="ascii">
+<h2>ASCII</h2>
+<p>The American Standard Code for Information Exchange, or ASCII, was developed in
+the 60s. The standard encodes each character in 7 bits, so it has 128
+characters. These include both the lowercase and uppercase letters of the
+English alphabet, digits, punctuation, and a set of control characters like LF
+(line feed, also known as <span class="docutils literal"><span class="pre">\n</span></span>), CR (carriage return, also known as <span class="docutils literal"><span class="pre">\r</span></span>) or
+BEL (audible beep, or <span class="docutils literal"><span class="pre">\a</span></span>). The ASCII character set contains all characters
+on a typewriter.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span/>0x00 to 0x1F - control characters
+0x20 to 0x2F - symbols - SPACE ! " # $ % &amp; ' ( ) * + , - . /
+0x30 to 0x39 - digits - 0 1 2 3 4 5 6 7 8 9
+0x3A to 0x40 - symbols - : ; &lt; = &gt; ? @
+0x41 to 0x5A - uppercase letters - A to Z
+0x5B to 0x60 - symbols – [ \ ] ^ _ `
+0x61 to 0x7A - lowercase letters - a to z
+0x7B to 0x7E - symbols - { | } ~
+0x7F - "delete" control character - DEL
+</pre></div>
+</div>
+<div class="section" id="parity-bits">
+<h3>Parity bits</h3>
+<p>A byte is 8 bits wide, so the remaining bit was used as a <em>parity bit</em>. The
+parity bit is 0 if the 7 bits encoding a character have an even number of 1s
+and 1 if the bits encoding a character have an odd number of 1s. For example,
+the letter <span class="docutils literal"><span class="pre">A</span></span> is encoded as <span class="docutils literal"><span class="pre">0x41</span></span>, or <span class="docutils literal"><span class="pre">1000001</span></span>. <span class="docutils literal"><span class="pre">1000001</span></span> has an even
+number of bits so the parity bit is 0, thus <span class="docutils literal"><span class="pre">A</span></span> ends up being encoded on 8
+bits as <span class="docutils literal"><span class="pre">01000001</span></span>. The letter <span class="docutils literal"><span class="pre">C</span></span> is encoded as <span class="docutils literal"><span class="pre">0x43</span></span>, or <span class="docutils literal"><span class="pre">1000011</span></span>,
+so the parity bit is 1. <span class="docutils literal"><span class="pre">C</span></span> ends up being encoded on 8 bits as <span class="docutils literal"><span class="pre">11000011</span></span>.</p>
+<p>The parity bit is used to check the consistency of the data: in a lossy
+environment, a parity bit is a simple way to add extra validation. If the parity
+bit does not have the expected value - for example it is 1 while the remaining 7
+bits have an even number of bits set to 1 - it means that the data is corrupted.</p>
+<p>This encoding was enough for English, but lacked other letters common in
+European languages, for example accented letters like é or ć. It also could not
+encode any other alphabets, like Arabic, Cyrillic, Hebrew and so on.</p>
+</div>
+</div>
+<div class="section" id="extended-ascii-and-code-pages">
+<h2>Extended ASCII and Code Pages</h2>
+<p>The ASCII character set had numerous extensions which started to leverage the
+8th bit to encode information instead of using it to check integrity. The
+original 128 character stayed in the <span class="docutils literal"><span class="pre">0x0</span></span> - <span class="docutils literal"><span class="pre">0x7F</span></span> range, but with the
+extra bit, an extended ASCII character set could encode 128 more characters
+from <span class="docutils literal"><span class="pre">0x80</span></span> to <span class="docutils literal"><span class="pre">0xFF</span></span>.  Since ASCII received multiple such extensions,
+these were distinguished by code pages. A code page defined what the <span class="docutils literal"><span class="pre">0x80</span></span> to
+<span class="docutils literal"><span class="pre">0xFF</span></span> characters are.</p>
+<p>IBM PC systems came with the popular <strong>code page 437</strong> which includes characters
+for box-drawing like <span class="docutils literal"><span class="pre">║</span></span>, <span class="docutils literal"><span class="pre">╗</span></span>, and <span class="docutils literal"><span class="pre">╝</span></span>. Text-based user interface could
+simulate windows, buttons and so on using these characters:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span/>╔════════════════════════════════════╗
+║ Box-drawn window with progress bar ║
+╟────────────────────────────────────╢
+║  ██████████████████▓▒░░░░░░░░░░░░  ║
+╚════════════════════════════════════╝
+</pre></div>
+</div>
+<p>Another set of extensions was the <strong>ISO/IEC 8859</strong> standard consisting of 16
+parts, each adding support for additional character and alphabets. For example,
+part 1 was named <em>Latin-1 Western European</em> and added most characters required
+by Western European languages (like accented letters), while part 5,
+<em>Latin/Cyrillic</em> used the available 128 characters to encode the Cyrillic
+alphabet.</p>
+<p>While these code pages allowed new ranges of characters, each could only add
+128 symbols, which didn’t scale well to the world’s written languages. For
+perspective, Kanji has thousands of characters.</p>
+</div>
+<div class="section" id="unicode">
+<h2>Unicode</h2>
+<p>The Unicode standard aims to cover most of the world’s writing systems and
+include additional symbols like emojis.</p>
+<div class="section" id="code-points">
+<h3>Code points</h3>
+<p>Unicode introduces the notion of code points. Most code points are characters,
+but some code points are used for formatting while some are unassigned as of
+today and will be defined in future extensions of the standard. The total code
+space of Unicode spans 1114112 code points, from <span class="docutils literal"><span class="pre">0x0</span></span> to <span class="docutils literal"><span class="pre">0x10FFFF</span></span>.</p>
+<p>The code space is divided into 17 planes, each consisting of a range of 65536
+code points (from <span class="docutils literal"><span class="pre">0x0</span></span> to <span class="docutils literal"><span class="pre">0xFFFF</span></span>, from <span class="docutils literal"><span class="pre">0x10000</span></span> to <span class="docutils literal"><span class="pre">0x1FFFF</span></span> and so
+on until <span class="docutils literal"><span class="pre">0xF0000</span></span> to <span class="docutils literal"><span class="pre">0x10FFFF</span></span>). A Unicode code point is conventionally
+referred to as <span class="docutils literal"><span class="pre">U+XXX</span></span> where <span class="docutils literal"><span class="pre">XXX</span></span> is the hexadecimal value of the code
+point. For example the code point corresponding to the letter “a” which is
+<span class="docutils literal"><span class="pre">0x61</span></span>, is referred to as <span class="docutils literal"><span class="pre">U+0061</span></span>.</p>
+<p>Most programming languages allow strings to contain a Unicode escape sequence,
+which gets interpreted as a Unicode code point. Such sequences start with <span class="docutils literal"><span class="pre">\x</span></span>
+or <span class="docutils literal"><span class="pre">\u</span></span> followed by the hexadecimal value of the code point, for example in
+JavaScript the Unicode escape for “a” is the string <span class="docutils literal"><span class="pre">"\u0061"</span></span>.</p>
+<p>Not only does Unicode support a huge range of code points, it also defines
+combining characters which, combined with other character, create new
+characters. For example,  ́ (<span class="docutils literal"><span class="pre">U+0301</span></span>) is the combining acute accent. Combining
+this with “a” (<span class="docutils literal"><span class="pre">U+0061</span></span>) by appending it after the letter (the string
+<span class="docutils literal"><span class="pre">"\u0061\u0301"</span></span>) results in the character “á” while combining it with
+“e” (<span class="docutils literal"><span class="pre">U+0065</span></span>) in the string <span class="docutils literal"><span class="pre">"\u0065\u0301"</span></span> results in the character
+“é”.</p>
+<p>Similarly, a skin tone modifier like dark skin tone, 🏿 (<span class="docutils literal"><span class="pre">U+1F3FF</span></span>) can be
+appended to an emoji like the baby emoji 👶 (<span class="docutils literal"><span class="pre">U+1F476</span></span>) to get a baby with
+a dark skin tone 👶🏿.</p>
+</div>
+<div class="section" id="graphemes">
+<h3>Graphemes</h3>
+<p>A grapheme is a graphical symbol that a user sees on the screen. Text rendering
+is done through graphemes. Some graphemes correspond to a single code point,
+like “a” corresponding to <span class="docutils literal"><span class="pre">U+0061</span></span>. Other graphemes correspond to a sequence
+of code points, like 👶🏿, which corresponds to <span class="docutils literal"><span class="pre">U+1F476</span></span> then <span class="docutils literal"><span class="pre">U+1F3FF</span></span>.
+There are also graphemes which can be obtained in multiple ways. The accented
+“e” in the example above, “é”, can be obtained by combining the letter “e” with
+the acute accent (<span class="docutils literal"><span class="pre">U+0065</span></span> then <span class="docutils literal"><span class="pre">U+0301</span></span>), but there is also an accented “e”
+character “é” represented by the code point <span class="docutils literal"><span class="pre">U+00E9</span></span>. Both <span class="docutils literal"><span class="pre">U+0065</span> <span class="pre">U+0301</span></span>
+and <span class="docutils literal"><span class="pre">U+00E9</span></span> resolve to the same grapheme.</p>
+<p>Because of such equivalences, the standard defines a normalization procedure
+which can convert equivalent texts to the same code point representation. There
+are several ways to achieve this, which we’ll not cover in this blog post.</p>
+<p>Combining and modifying characters can be stacked one after the other. For
+example, the 👨🏿‍❤️‍👨🏻 emoji showing a dark-skinned man and a
+light-skinned man with a heart above is a single grapheme but consists of the
+following sequence of code points: <span class="docutils literal"><span class="pre">U+1F468</span> <span class="pre">U+1F3FF</span> <span class="pre">U+200D</span> <span class="pre">U+2764</span> <span class="pre">U+FE0F</span> <span class="pre">U+200D</span>
+<span class="pre">U+1F468</span> <span class="pre">U+1F3FB</span></span>. This is a combination of:</p>
+<ul class="simple">
+<li>The man emoji 👨 (<span class="docutils literal"><span class="pre">U+1F468</span></span>)</li>
+<li>The dark skin tone modifier 🏿 (<span class="docutils literal"><span class="pre">U+1F3FF</span></span>)</li>
+<li>The zero-width joiner (<span class="docutils literal"><span class="pre">U+200D</span></span>) which does not have a stand-alone
+representation but combines two emojis into a single one</li>
+<li>The heavy black heart symbol ❤ (<span class="docutils literal"><span class="pre">U+2764</span></span>)</li>
+<li>The Variation Selector-16 character (<span class="docutils literal"><span class="pre">U+2764</span></span>) which also doesn’t have a
+stand-alone representation but can be applied to code points which have both
+a text and an emoji representation to select the emoji representation. This
+ensures the heavy black heart symbol gets the emoji representation ❤️.</li>
+<li>Another zero-width joiner (<span class="docutils literal"><span class="pre">U+200D</span></span>)</li>
+<li>Another man emoji 👨 (<span class="docutils literal"><span class="pre">U+1F468</span></span>)</li>
+<li>The light skin tone modifier 🏻 (<span class="docutils literal"><span class="pre">U+1F3FB</span></span>)</li>
+</ul>
+<p>The whole sequence results in a single grapheme.</p>
+<p>One interesting thing to note is that splitting a string without being aware of
+how the code points combine can change the representation of the text. This can
+happen when breaking a line of text to fit on screen. In the above example,
+even though we have 8 code points, we end up with a single grapheme, so when
+dealing with rendering, it’s usually best to operate on graphemes not code
+points/characters.</p>
+</div>
+</div>
+<div class="section" id="encodings">
+<h2>Encodings</h2>
+<p>We talked about code points and graphemes, but how are the code points actually
+encoded as bytes? With ASCII and the simple extensions, the encoding was easy,
+as each byte encoded a character. Unicode has over a million code points, so
+let’s look at how these get translated into bytes.</p>
+<div class="section" id="utf-32">
+<h3>UTF-32</h3>
+<p>The most obvious way is to find the minimum number of bytes that can encode any
+code point. Since code points range from <span class="docutils literal"><span class="pre">0x0</span></span> to <span class="docutils literal"><span class="pre">0x10FFFF</span></span>, we need 21
+bits to store all possible values (<span class="docutils literal"><span class="pre">0x10FFFF</span></span> in binary is
+<span class="docutils literal"><span class="pre">0b100001111111111111111</span></span>).</p>
+<p>Because most CPUs nowadays have a word size of at least 32-bits, the UTF-32
+encoding rounds up the number of required bits from 21 to 32, thus representing
+a code point using 4 bytes.</p>
+<p>This encoding is very straight-forward, as any 4 bytes store the value of a
+code point in a string, but it is also very space-inefficient. The leading bits
+are always 0 and not only that, the code points representing common characters
+and alphabets appear in the lower planes, so while an emoji like the woman
+emoji 👩 (<span class="docutils literal"><span class="pre">U+1F469</span></span>) in binary is <span class="docutils literal"><span class="pre">0b11111010001101001</span></span>, thus requiring at
+least 17 bits to represent, the code point for the letter “a” is <span class="docutils literal"><span class="pre">U+0061</span></span>,
+same as the old ASCII representation. That is <span class="docutils literal"><span class="pre">0b1100001</span></span> in binary, requiring
+only 7 bits.</p>
+<p>To take advantage of this, several <em>variable-length</em> encodings were developed,
+which use fewer bytes for code points representable with a smaller number of
+bits, and more bytes for higher code point values. The two most common
+encodings are UTF-16 and UTF-8.</p>
+</div>
+<div class="section" id="utf-16">
+<h3>UTF-16</h3>
+<p>UTF-16 encodes code points in either one or two 16-bit wide code units. The
+code points in the range <span class="docutils literal"><span class="pre">U+0000</span></span> to <span class="docutils literal"><span class="pre">U+FFFF</span></span> are encoded directly as a
+16-bit code unit, except the subrange <span class="docutils literal"><span class="pre">U+D800</span></span> to <span class="docutils literal"><span class="pre">U+DFFF</span></span> which we’ll talk
+about shortly. This range corresponds to Plane 0, the <em>Basic Multilingual
+Plane</em>, with code points to represent almost all modern languages.</p>
+<p>Code points from other planes are encoded in UTF-16 using two code units, so 32
+bits. Any code point in the range <span class="docutils literal"><span class="pre">U+10000</span></span> to <span class="docutils literal"><span class="pre">U+10FFFF</span></span> (or <span class="docutils literal"><span class="pre">0x10000</span></span> to
+<span class="docutils literal"><span class="pre">0x10FFFF</span></span>) is encoded by subtracting <span class="docutils literal"><span class="pre">0x10000</span></span> leaving a value between
+<span class="docutils literal"><span class="pre">0x0</span></span> and <span class="docutils literal"><span class="pre">0xFFFFF</span></span>. Values in this range can be represented in 20 bits. A
+sequence of 10 bits can represent values in the range <span class="docutils literal"><span class="pre">0x0</span></span> to <span class="docutils literal"><span class="pre">0x3FF</span></span>. The
+20 bits are split into the first (most significant) 10 bits and the last (least
+significant) 10 bits. The first 10 bits are added to <span class="docutils literal"><span class="pre">0xD800</span></span>, resulting in a
+value in the range <span class="docutils literal"><span class="pre">0xD800</span></span> to <span class="docutils literal"><span class="pre">0xDBFF</span></span>. This is represented in the first
+16-bit code point. The last 10 bits are added to <span class="docutils literal"><span class="pre">0xDC00</span></span>, resulting in a
+value in the range <span class="docutils literal"><span class="pre">0xDC00</span></span> to <span class="docutils literal"><span class="pre">0xDFFF</span></span>. This is represented in the second
+16-bit code point.</p>
+<p>Let’s take as an example the woman emoji 👩 (<span class="docutils literal"><span class="pre">U+1F469</span></span>). The UTF-16 encoding
+goes as follows:</p>
+<ul class="simple">
+<li>Subtract <span class="docutils literal"><span class="pre">0x10000</span></span> from <span class="docutils literal"><span class="pre">0x1F469</span></span>, resulting in <span class="docutils literal"><span class="pre">0xF469</span></span>, or
+<span class="docutils literal"><span class="pre">0b00001111010001101001</span></span> in 20 bits.</li>
+<li>The first 10 bits, <span class="docutils literal"><span class="pre">0b0000111101</span></span>, or <span class="docutils literal"><span class="pre">0x3D</span></span>, are added to <span class="docutils literal"><span class="pre">0xD800</span></span>
+which gives us <span class="docutils literal"><span class="pre">0xD83D</span></span>.</li>
+<li>The remaining 10 bits, <span class="docutils literal"><span class="pre">0b0001101001</span></span>, or <span class="docutils literal"><span class="pre">0x69</span></span>, are added to <span class="docutils literal"><span class="pre">0xDC00</span></span>,
+giving <span class="docutils literal"><span class="pre">0xDC69</span></span>.</li>
+</ul>
+<p>The two 16-bit code units for 👩 are <span class="docutils literal"><span class="pre">0xD83D</span></span> and <span class="docutils literal"><span class="pre">0xDC69</span></span>, or the byte
+sequence <span class="docutils literal"><span class="pre">0xD8</span> <span class="pre">0x3D</span> <span class="pre">0xDC</span> <span class="pre">0x69</span></span>.</p>
+<p><strong>Surrogate pairs</strong></p>
+<p>We said that UTF-16 encodes all code points in Plane 0 using a single 16-bit
+code unit, except the range <span class="docutils literal"><span class="pre">U+D800</span></span> to <span class="docutils literal"><span class="pre">U+DFFF</span></span>. That particular range is
+reserved in the Unicode standard for UTF-16 surrogate pairs, so code points in
+that range are unassigned and will never be assigned.</p>
+<p>If we review the way UTF-16 encodes code points in code units, a 16-bit code
+unit can be either:</p>
+<ul class="simple">
+<li>A value in the range <span class="docutils literal"><span class="pre">0x0</span></span> to <span class="docutils literal"><span class="pre">0xFFFF</span></span>, except the reserved range
+<span class="docutils literal"><span class="pre">0xD800</span></span> to <span class="docutils literal"><span class="pre">0xDFFF</span></span>. This value is a valid code point in Plane 0.</li>
+<li>A value in the range <span class="docutils literal"><span class="pre">0xD800</span></span> to <span class="docutils literal"><span class="pre">0xDBFF</span></span>, which represents the first 10
+bits of a code point in another plane after subtracting <span class="docutils literal"><span class="pre">0x10000</span></span> and adding
+<span class="docutils literal"><span class="pre">0xD800</span></span> to the first 10 bits</li>
+<li>A value in the range <span class="docutils literal"><span class="pre">0xDC00</span></span> to <span class="docutils literal"><span class="pre">0xDFFF</span></span>, which represents the remaining
+10 bits of a code point in another plane after subtracting <span class="docutils literal"><span class="pre">0x10000</span></span> and
+adding <span class="docutils literal"><span class="pre">0xDC00</span></span> to the last 10 bits.</li>
+</ul>
+<p>Note that these ranges are disjoint - a value can appear in only one of them, so
+each 16-bit code unit can unambiguously be identified, in isolation. For code
+points like 👩, encoded as two 16-bit code units, the code units are called a
+<em>surrogate pair</em>. The first code unit, in the range <span class="docutils literal"><span class="pre">0xD800</span></span> to <span class="docutils literal"><span class="pre">0xDBFF</span></span> is
+called the <em>high surrogate</em> while the second code unit, in the range <span class="docutils literal"><span class="pre">0xDC00</span></span>
+to <span class="docutils literal"><span class="pre">0xDFFF</span></span> is called the <em>low surrogate</em>.</p>
+<p>Since the Unicode standard and UTF-16 encoding evolved together, the range
+<span class="docutils literal"><span class="pre">0xD800</span></span> to <span class="docutils literal"><span class="pre">0xDFFF</span></span> needed by the surrogate pairs was reserved in Plane 0
+and the code points were kept unassigned. Without this, UTF-16 would have had
+trouble encoding a code point in that range as it would become undistinguishable
+from a surrogate.</p>
+<p>UTF-16 is the default encoding used by Windows, Java, the .NET runtime, and
+JavaScript. Another popular way to encode text is UTF-8.</p>
+</div>
+</div>
+<div class="section" id="utf-8">
+<h2>UTF-8</h2>
+<p>UTF-8 uses 8-bit code units, so it encodes code points using one to four bytes.
+To recap, Unicode code points can be represented in 21 bits, as their valid
+range is between <span class="docutils literal"><span class="pre">0x0</span></span> and <span class="docutils literal"><span class="pre">0x10FFFF</span></span>.</p>
+<p>UTF-8 encodes code points as follows:</p>
+<ul class="simple">
+<li>Code points in the range <span class="docutils literal"><span class="pre">U+0000</span></span> to <span class="docutils literal"><span class="pre">U+007F</span></span> are represented with a
+single byte with the 8th (most significant) bit being 0: <span class="docutils literal"><span class="pre">0b0xxxxxxx</span></span>.</li>
+<li>Code points in the range <span class="docutils literal"><span class="pre">U+0080</span></span> to <span class="docutils literal"><span class="pre">U+07FF</span></span> are represented with two
+bytes. The first byte starts with the bits <span class="docutils literal"><span class="pre">0b110xxxxx</span></span>, the second byte is
+<span class="docutils literal"><span class="pre">0x10xxxxxx</span></span>. Without the prefixes, there are 11 bits used to encode the
+code point (count the number of <span class="docutils literal"><span class="pre">x</span></span>s ).</li>
+<li>Code points in the range <span class="docutils literal"><span class="pre">U+0800</span></span> to <span class="docutils literal"><span class="pre">U+FFFF</span></span> are represented with three
+bytes. The first byte starts with the prefix <span class="docutils literal"><span class="pre">0b1110xxxx</span></span>, the following two
+bytes with <span class="docutils literal"><span class="pre">0b10xxxxxx</span></span>. This leaves 16 bits to encode the code point.</li>
+<li>Code points in the range <span class="docutils literal"><span class="pre">U+10000</span></span> to <span class="docutils literal"><span class="pre">U+10FFFF</span></span> are represented with four
+bytes. The first byte starts with the prefix <span class="docutils literal"><span class="pre">0b11110xxx</span></span>, the following
+three bytes with <span class="docutils literal"><span class="pre">0b10xxxxxx</span></span>. This leaves 21 bits to encode the code point.</li>
+</ul>
+<p>This encoding has several interesting properties: for code points in lower
+planes, it is more compact than UTF-16. UTF-16 requires either one or two
+16-bit code units, while UTF-8 can use 8, 16, 24, or 32 bits depending on the
+code point. Commonly used alphabets are in the lower planes, so usually fewer
+bits are needed.</p>
+<p>UTF-8 is also ASCII-compatible: the first 128 characters (<span class="docutils literal"><span class="pre">U+0000</span></span> to
+<span class="docutils literal"><span class="pre">U+007F</span></span>), represented in 7 bits, are the same as the old ASCII encoding. An
+ASCII string can be used directly as UTF-8 encoded text without any
+transformations required.</p>
+<p>Unlike UTF-16, which can uniquely distinguish each code unit as either a code
+point, a high surrogate, or a low surrogate, with UTF-8 we cannot always
+determine what a code unit is in isolation: <span class="docutils literal"><span class="pre">0b10110011</span></span> could be the second,
+third, or fourth byte in a code point. This is a consequence of the more
+compact encoding. On the other hand, with UTF-8 we can look at the bit prefix
+and determine the length of the sequence:</p>
+<ul class="simple">
+<li>If the prefix of the byte is <span class="docutils literal"><span class="pre">0b0xxxxxxx</span></span>, we have an ASCII character</li>
+<li>If the prefix is <span class="docutils literal"><span class="pre">0b110xxxxx</span></span>, we are looking at the first byte of a code
+point encoded in 2 bytes</li>
+<li>If the prefix is <span class="docutils literal"><span class="pre">0b1110xxxx</span></span>, we are expecting a sequence of 3 bytes</li>
+<li>If the prefix is <span class="docutils literal"><span class="pre">0b11110xxx</span></span>, we are expecting a sequence of 4 bytes</li>
+<li>If the prefix is <span class="docutils literal"><span class="pre">0b10xxxxxx</span></span>, we know we aren’t looking at the first byte
+in a sequence, rather at a byte inside a sequence</li>
+</ul>
+<p>Note the bit patterns do not overlap. Beyond ASCII, the number of 1 bits in the
+prefix coincides with the number of bytes used to encode the code point.</p>
+<p>As an example, let’s take the same 👩 emoji and see how its encoding looks like
+in UTF-8. 👩 is the code point <span class="docutils literal"><span class="pre">U+1F469</span></span>, so it requires 4 bytes. <span class="docutils literal"><span class="pre">0x1F469</span></span>
+represented in binary with 21 bits is <span class="docutils literal"><span class="pre">0b000011111010001101001</span></span>.</p>
+<p>We fill this into <span class="docutils literal"><span class="pre">0b11110xxx</span> <span class="pre">0b10xxxxxx</span> <span class="pre">0b10xxxxxx</span> <span class="pre">0b10xxxxxx</span></span>, which gives
+us <span class="docutils literal"><span class="pre">0b11110000</span> <span class="pre">0b10011111</span> <span class="pre">0b10010001</span> <span class="pre">0b10101001</span></span>. In hexadecimal, this is
+<span class="docutils literal"><span class="pre">0xF0</span> <span class="pre">0x9F</span> <span class="pre">0x91</span> <span class="pre">0xA9</span></span>. This is the encoding of our emoji in UTF-8.</p>
+<p>UTF-8 is the default encoding used by Linux and macOS. It is also the standard
+for the internet, with a majority of web pages using this encoding.</p>
+<p>Another important thing to keep in mind when manipulating text is how it is
+encoded. When reading a sequence of bytes from a file or a network connection,
+we need to make sure we don’t mistakenly try to interpret UTF-8 encoded text as
+UTF-16 encoded text or vice-versa. Since different systems default to different
+encodings, this is a very plausible scenario.</p>
+</div>
+<div class="section" id="summary">
+<h2>Summary</h2>
+<p>In this post we looked at some common text encoding standards and concepts:</p>
+<ul class="simple">
+<li>ASCII, which encodes 128 characters</li>
+<li>Extended ASCII, which encodes 256 characters<ul>
+<li>Code page 437, with box-drawing characters</li>
+<li>The ISO/IEC 8859 16-part standard with code pages for various alphabets</li>
+</ul>
+</li>
+<li>Unicode<ul>
+<li>Code points and planes</li>
+<li>Graphemes and combining characters</li>
+</ul>
+</li>
+<li>Encodings<ul>
+<li>The inefficient UTF-32</li>
+<li>UTF-16 and surrogate pairs</li>
+<li>Popular UTF-8</li>
+</ul>
+</li>
+</ul>
+</div>
+]]></description>
+             <pubDate>Sun, 18 Nov 2018 00:00:00 -0800</pubDate>
+        </item>
+    
         <item>
             <link>http://vladris.com/blog/2018/10/13/arithmetic-overflow-and-underflow.html</link>
             <guid>http://vladris.com/blog/2018/10/13/arithmetic-overflow-and-underflow.html</guid>
