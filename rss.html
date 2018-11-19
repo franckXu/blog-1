@@ -17,9 +17,6 @@ and its extensions to Unicode and the common UTF-16 and UTF-8 encodings. We’ll
 cover a few basic text encoding concepts like code points, graphemes, and
 surrogate pairs and see how we can stack emojis and combine them into intricate
 glyphs.</p>
-<p>Disclaimer: since this blog post deals with text and provides several visual
-examples, it might not render correctly on all operating systems. Everything
-looks fine on Window 10 but iOS seems to have trouble combining all emojis.</p>
 <div class="section" id="ascii">
 <h2>ASCII</h2>
 <p>The American Standard Code for Information Exchange, or ASCII, was developed in
@@ -133,29 +130,27 @@ and <span class="docutils literal"><span class="pre">U+00E9</span></span> resolv
 which can convert equivalent texts to the same code point representation. There
 are several ways to achieve this, which we’ll not cover in this blog post.</p>
 <p>Combining and modifying characters can be stacked one after the other. For
-example, the 👨🏿‍❤️‍👨🏻 emoji showing a dark-skinned man and a
-light-skinned man with a heart above is a single grapheme but consists of the
-following sequence of code points: <span class="docutils literal"><span class="pre">U+1F468</span> <span class="pre">U+1F3FF</span> <span class="pre">U+200D</span> <span class="pre">U+2764</span> <span class="pre">U+FE0F</span> <span class="pre">U+200D</span>
-<span class="pre">U+1F468</span> <span class="pre">U+1F3FB</span></span>. This is a combination of:</p>
+example, the 👨‍❤️‍👨 emoji showing two man with a heart above is a
+single grapheme but consists of the following sequence of code points: <span class="docutils literal"><span class="pre">U+1F468</span>
+<span class="pre">U+200D</span> <span class="pre">U+2764</span> <span class="pre">U+FE0F</span> <span class="pre">U+200D</span> <span class="pre">U+1F468</span></span>. This is a combination of:</p>
 <ul class="simple">
 <li>The man emoji 👨 (<span class="docutils literal"><span class="pre">U+1F468</span></span>)</li>
-<li>The dark skin tone modifier 🏿 (<span class="docutils literal"><span class="pre">U+1F3FF</span></span>)</li>
 <li>The zero-width joiner (<span class="docutils literal"><span class="pre">U+200D</span></span>) which does not have a stand-alone
 representation but combines two emojis into a single one</li>
-<li>The heavy black heart symbol ❤ (<span class="docutils literal"><span class="pre">U+2764</span></span>)</li>
+<li>The heavy black heart symbol ❤ (<span class="docutils literal"><span class="pre">U+2764</span></span>) - depending on which OS you are
+reading this, it might or might not render as an emoji</li>
 <li>The Variation Selector-16 character (<span class="docutils literal"><span class="pre">U+2764</span></span>) which also doesn’t have a
 stand-alone representation but can be applied to code points which have both
 a text and an emoji representation to select the emoji representation. This
 ensures the heavy black heart symbol gets the emoji representation ❤️.</li>
 <li>Another zero-width joiner (<span class="docutils literal"><span class="pre">U+200D</span></span>)</li>
 <li>Another man emoji 👨 (<span class="docutils literal"><span class="pre">U+1F468</span></span>)</li>
-<li>The light skin tone modifier 🏻 (<span class="docutils literal"><span class="pre">U+1F3FB</span></span>)</li>
 </ul>
 <p>The whole sequence results in a single grapheme.</p>
 <p>One interesting thing to note is that splitting a string without being aware of
 how the code points combine can change the representation of the text. This can
 happen when breaking a line of text to fit on screen. In the above example,
-even though we have 8 code points, we end up with a single grapheme, so when
+even though we have 6 code points, we end up with a single grapheme, so when
 dealing with rendering, it’s usually best to operate on graphemes not code
 points/characters.</p>
 </div>
