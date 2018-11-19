@@ -7,6 +7,10 @@ cover a few basic text encoding concepts like code points, graphemes, and
 surrogate pairs and see how we can stack emojis and combine them into intricate
 glyphs.
 
+Disclaimer: since this blog post deals with text and provides several visual
+examples, it might not render correctly on all operating systems. Everything
+looks fine on Window 10 but iOS seems to have trouble combining all emojis.
+
 ASCII
 -----
 
