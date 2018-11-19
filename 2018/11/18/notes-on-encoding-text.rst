@@ -7,10 +7,6 @@ cover a few basic text encoding concepts like code points, graphemes, and
 surrogate pairs and see how we can stack emojis and combine them into intricate
 glyphs.
 
-Disclaimer: since this blog post deals with text and provides several visual
-examples, it might not render correctly on all operating systems. Everything
-looks fine on Window 10 but iOS seems to have trouble combining all emojis.
-
 ASCII
 -----
 
@@ -144,30 +140,28 @@ which can convert equivalent texts to the same code point representation. There
 are several ways to achieve this, which we’ll not cover in this blog post.
 
 Combining and modifying characters can be stacked one after the other. For
-example, the 👨🏿‍❤️‍👨🏻 emoji showing a dark-skinned man and a
-light-skinned man with a heart above is a single grapheme but consists of the
-following sequence of code points: ``U+1F468 U+1F3FF U+200D U+2764 U+FE0F U+200D
-U+1F468 U+1F3FB``. This is a combination of:
+example, the 👨‍❤️‍👨 emoji showing two man with a heart above is a
+single grapheme but consists of the following sequence of code points: ``U+1F468
+U+200D U+2764 U+FE0F U+200D U+1F468``. This is a combination of:
 
 - The man emoji 👨 (``U+1F468``)
-- The dark skin tone modifier 🏿 (``U+1F3FF``)
 - The zero-width joiner (``U+200D``) which does not have a stand-alone
   representation but combines two emojis into a single one
-- The heavy black heart symbol ❤ (``U+2764``)
+- The heavy black heart symbol ❤ (``U+2764``) - depending on which OS you are
+  reading this, it might or might not render as an emoji
 - The Variation Selector-16 character (``U+2764``) which also doesn’t have a
   stand-alone representation but can be applied to code points which have both
   a text and an emoji representation to select the emoji representation. This
   ensures the heavy black heart symbol gets the emoji representation ❤️.
 - Another zero-width joiner (``U+200D``)
 - Another man emoji 👨 (``U+1F468``)
-- The light skin tone modifier 🏻 (``U+1F3FB``)
 
 The whole sequence results in a single grapheme.
 
 One interesting thing to note is that splitting a string without being aware of
 how the code points combine can change the representation of the text. This can
 happen when breaking a line of text to fit on screen. In the above example,
-even though we have 8 code points, we end up with a single grapheme, so when
+even though we have 6 code points, we end up with a single grapheme, so when
 dealing with rendering, it’s usually best to operate on graphemes not code
 points/characters.
 
