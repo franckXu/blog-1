@@ -97,7 +97,7 @@ We can sketch out a function that, given a set of objects of any type ``T`` and
 an operation closed over ``T``, produces a final value of type ``T``::
 
     template <typename It, typename Op,
-        typename T = typename std::iterator_traits<It>::value_type>
+        typename T=typename std::iterator_traits<It>::value_type>
     T fold(It begin, It end, T init, Op op)
     {
         T result = init;
@@ -125,7 +125,7 @@ to left, and fold ``1 - (2 - (3 - 1))``, or ``1``. Let's call this verison
 ``foldRight`` and look at a possible implementation::
 
     template <typename It, typename Op
-        typename T = typename std::iterator_traits<It>::value_type>
+        typename T=typename std::iterator_traits<It>::value_type>
     T fold_right(It begin, It end, T init, Op op)
     {
         T result = init;
@@ -161,11 +161,15 @@ our right fold redundant::
     std::vector<std::string> elems = { "foo"s, "bar"s, "baz"s };
 
     std::cout << fold(elems.begin(), elems.end(), "!"s,
-        [](const std::string& x, const std::string& y) { return x + y; });
+        [](const std::string& x, const std::string& y) { 
+            return x + y; 
+        });
     // Prints !foobarbaz
 
     std::cout << fold_right(elems.begin(), elems.end(), "!"s,
-        [](const std::string& x, const std::string& y) { return x + y; });
+        [](const std::string& x, const std::string& y) { 
+            return x + y;
+        });
     // Prints foobarbaz!
 
 It still matters whether our initial value is a left or right argument to our
@@ -199,7 +203,7 @@ If the default constructor of our type ``T`` creates an identiy, then we can
 reimplement ``fold`` like this::
 
     template <typename It, typename Op, 
-        typename T = typename std::iterator_traits<It>::value_type>
+        typename T=typename std::iterator_traits<It>::value_type>
     T fold(It begin, It end, Op op)
     {
         T result{ };
@@ -252,19 +256,19 @@ If we default to ``0`` and multiply all numbers with it, our product becomes
 associative, without necessarily being commutative. That's because, if our
 initial value is an identity, it doesn't matter whether it is a left or right
 argument to our operation. By definition, ``a ⊙ id == id ⊙ a == a`` so for a
-set of values like ``a``, ``b``, and ``c``, we get::
+set of values like ``a``, ``b``, and ``c``, we get:
 
 .. code-block:: text
 
     ((id ⊙ a) ⊙ b) ⊙ c == (a ⊙ b) ⊙ c
 
-From associativity, we get::
+From associativity, we get:
 
 .. code-block:: text
 
     (a ⊙ b) ⊙ c == a ⊙ (b ⊙ c)
 
-We can add another identity in there, since ``c == c ⊙ id``::
+We can add another identity in there, since ``c == c ⊙ id``:
 
 .. code-block:: text
 
@@ -309,7 +313,7 @@ alternative implementations. We could say that if the set is empty, we don't
 return anything, otherwise we take the first element as our initial value::
 
     template <typename It, typename Op,
-        typename T = typename std::iterator_traits<It>::value_type>
+        typename T=typename std::iterator_traits<It>::value_type>
     std::optional<T> fold(It begin, It end, Op op)
     {
         if (begin == end) return std::nullopt;
@@ -333,7 +337,7 @@ we have no elements to combine, but if we do, simply ignore that value instead
 of combining it with the input elements::
 
     template <typename It, typename Op,
-        typename T = typename std::iterator_traits<It>::value_type>
+        typename T=typename std::iterator_traits<It>::value_type>
     T fold(It begin, It end, T def, Op op)
     {
         if (begin == end) return def;

@@ -133,7 +133,7 @@ single <span class="docutils literal"><span class="pre">Point</span></span> usin
 <p>We can sketch out a function that, given a set of objects of any type <span class="docutils literal"><span class="pre">T</span></span> and
 an operation closed over <span class="docutils literal"><span class="pre">T</span></span>, produces a final value of type <span class="docutils literal"><span class="pre">T</span></span>:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">It</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Op</span><span class="p">,</span>
-    <span class="k">typename</span> <span class="n">T</span> <span class="o">=</span> <span class="k">typename</span> <span class="n">std</span><span class="o">::</span><span class="n">iterator_traits</span><span class="o">&lt;</span><span class="n">It</span><span class="o">&gt;::</span><span class="n">value_type</span><span class="o">&gt;</span>
+    <span class="k">typename</span> <span class="n">T</span><span class="o">=</span><span class="k">typename</span> <span class="n">std</span><span class="o">::</span><span class="n">iterator_traits</span><span class="o">&lt;</span><span class="n">It</span><span class="o">&gt;::</span><span class="n">value_type</span><span class="o">&gt;</span>
 <span class="n">T</span> <span class="n">fold</span><span class="p">(</span><span class="n">It</span> <span class="n">begin</span><span class="p">,</span> <span class="n">It</span> <span class="n">end</span><span class="p">,</span> <span class="n">T</span> <span class="n">init</span><span class="p">,</span> <span class="n">Op</span> <span class="n">op</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="n">T</span> <span class="n">result</span> <span class="o">=</span> <span class="n">init</span><span class="p">;</span>
@@ -160,7 +160,7 @@ the subtraction operation, if we start with the set of number <span class="docut
 to left, and fold <span class="docutils literal"><span class="pre">1</span> <span class="pre">-</span> <span class="pre">(2</span> <span class="pre">-</span> <span class="pre">(3</span> <span class="pre">-</span> <span class="pre">1))</span></span>, or <span class="docutils literal"><span class="pre">1</span></span>. Let’s call this verison
 <span class="docutils literal"><span class="pre">foldRight</span></span> and look at a possible implementation:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">It</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Op</span>
-    <span class="k">typename</span> <span class="n">T</span> <span class="o">=</span> <span class="k">typename</span> <span class="n">std</span><span class="o">::</span><span class="n">iterator_traits</span><span class="o">&lt;</span><span class="n">It</span><span class="o">&gt;::</span><span class="n">value_type</span><span class="o">&gt;</span>
+    <span class="k">typename</span> <span class="n">T</span><span class="o">=</span><span class="k">typename</span> <span class="n">std</span><span class="o">::</span><span class="n">iterator_traits</span><span class="o">&lt;</span><span class="n">It</span><span class="o">&gt;::</span><span class="n">value_type</span><span class="o">&gt;</span>
 <span class="n">T</span> <span class="n">fold_right</span><span class="p">(</span><span class="n">It</span> <span class="n">begin</span><span class="p">,</span> <span class="n">It</span> <span class="n">end</span><span class="p">,</span> <span class="n">T</span> <span class="n">init</span><span class="p">,</span> <span class="n">Op</span> <span class="n">op</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="n">T</span> <span class="n">result</span> <span class="o">=</span> <span class="n">init</span><span class="p">;</span>
@@ -195,11 +195,15 @@ our right fold redundant:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">elems</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;foo&quot;</span><span class="n">s</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="n">s</span><span class="p">,</span> <span class="s">&quot;baz&quot;</span><span class="n">s</span> <span class="p">};</span>
 
 <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">fold</span><span class="p">(</span><span class="n">elems</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">elems</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="s">&quot;!&quot;</span><span class="n">s</span><span class="p">,</span>
-    <span class="p">[](</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">x</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">y</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">;</span> <span class="p">});</span>
+    <span class="p">[](</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">x</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">y</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">;</span>
+    <span class="p">});</span>
 <span class="c1">// Prints !foobarbaz</span>
 
 <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">fold_right</span><span class="p">(</span><span class="n">elems</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">elems</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="s">&quot;!&quot;</span><span class="n">s</span><span class="p">,</span>
-    <span class="p">[](</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">x</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">y</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">;</span> <span class="p">});</span>
+    <span class="p">[](</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">x</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">y</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">;</span>
+    <span class="p">});</span>
 <span class="c1">// Prints foobarbaz!</span>
 </pre></div>
 </div>
@@ -229,7 +233,7 @@ operation is also commutative, then we have a <em>commutative monoid</em>.</p>
 <p>If the default constructor of our type <span class="docutils literal"><span class="pre">T</span></span> creates an identiy, then we can
 reimplement <span class="docutils literal"><span class="pre">fold</span></span> like this:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">It</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Op</span><span class="p">,</span>
-    <span class="k">typename</span> <span class="n">T</span> <span class="o">=</span> <span class="k">typename</span> <span class="n">std</span><span class="o">::</span><span class="n">iterator_traits</span><span class="o">&lt;</span><span class="n">It</span><span class="o">&gt;::</span><span class="n">value_type</span><span class="o">&gt;</span>
+    <span class="k">typename</span> <span class="n">T</span><span class="o">=</span><span class="k">typename</span> <span class="n">std</span><span class="o">::</span><span class="n">iterator_traits</span><span class="o">&lt;</span><span class="n">It</span><span class="o">&gt;::</span><span class="n">value_type</span><span class="o">&gt;</span>
 <span class="n">T</span> <span class="n">fold</span><span class="p">(</span><span class="n">It</span> <span class="n">begin</span><span class="p">,</span> <span class="n">It</span> <span class="n">end</span><span class="p">,</span> <span class="n">Op</span> <span class="n">op</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="n">T</span> <span class="n">result</span><span class="p">{</span> <span class="p">};</span>
@@ -284,23 +288,17 @@ associative, without necessarily being commutative. That’s because, if our
 initial value is an identity, it doesn’t matter whether it is a left or right
 argument to our operation. By definition, <span class="docutils literal"><span class="pre">a</span> <span class="pre">⊙</span> <span class="pre">id</span> <span class="pre">==</span> <span class="pre">id</span> <span class="pre">⊙</span> <span class="pre">a</span> <span class="pre">==</span> <span class="pre">a</span></span> so for a
 set of values like <span class="docutils literal"><span class="pre">a</span></span>, <span class="docutils literal"><span class="pre">b</span></span>, and <span class="docutils literal"><span class="pre">c</span></span>, we get:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="p">..</span> <span class="n">code</span><span class="o">-</span><span class="n">block</span><span class="o">::</span> <span class="n">text</span>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>((id ⊙ a) ⊙ b) ⊙ c == (a ⊙ b) ⊙ c
 </pre></div>
 </div>
-<blockquote>
-<div>((id ⊙ a) ⊙ b) ⊙ c == (a ⊙ b) ⊙ c</div></blockquote>
 <p>From associativity, we get:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="p">..</span> <span class="n">code</span><span class="o">-</span><span class="n">block</span><span class="o">::</span> <span class="n">text</span>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>(a ⊙ b) ⊙ c == a ⊙ (b ⊙ c)
 </pre></div>
 </div>
-<blockquote>
-<div>(a ⊙ b) ⊙ c == a ⊙ (b ⊙ c)</div></blockquote>
 <p>We can add another identity in there, since <span class="docutils literal"><span class="pre">c</span> <span class="pre">==</span> <span class="pre">c</span> <span class="pre">⊙</span> <span class="pre">id</span></span>:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="p">..</span> <span class="n">code</span><span class="o">-</span><span class="n">block</span><span class="o">::</span> <span class="n">text</span>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>a ⊙ (b ⊙ c) == (a ⊙ (b ⊙ (c ⊙ id)))
 </pre></div>
 </div>
-<blockquote>
-<div>a ⊙ (b ⊙ c) == (a ⊙ (b ⊙ (c ⊙ id)))</div></blockquote>
 <p>We started with how <span class="docutils literal"><span class="pre">fold</span></span> evaluates and ended up with how <span class="docutils literal"><span class="pre">fold_right</span></span>
 evaluates. That means we don’t distinguish between a left to right or right to
 left fold is either:</p>
@@ -335,7 +333,7 @@ right can be left to the top function which combines the partial results.</p>
 alternative implementations. We could say that if the set is empty, we don’t
 return anything, otherwise we take the first element as our initial value:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">It</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Op</span><span class="p">,</span>
-    <span class="k">typename</span> <span class="n">T</span> <span class="o">=</span> <span class="k">typename</span> <span class="n">std</span><span class="o">::</span><span class="n">iterator_traits</span><span class="o">&lt;</span><span class="n">It</span><span class="o">&gt;::</span><span class="n">value_type</span><span class="o">&gt;</span>
+    <span class="k">typename</span> <span class="n">T</span><span class="o">=</span><span class="k">typename</span> <span class="n">std</span><span class="o">::</span><span class="n">iterator_traits</span><span class="o">&lt;</span><span class="n">It</span><span class="o">&gt;::</span><span class="n">value_type</span><span class="o">&gt;</span>
 <span class="n">std</span><span class="o">::</span><span class="n">optional</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">fold</span><span class="p">(</span><span class="n">It</span> <span class="n">begin</span><span class="p">,</span> <span class="n">It</span> <span class="n">end</span><span class="p">,</span> <span class="n">Op</span> <span class="n">op</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">begin</span> <span class="o">==</span> <span class="n">end</span><span class="p">)</span> <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">nullopt</span><span class="p">;</span>
@@ -358,7 +356,7 @@ of a value.</p>
 we have no elements to combine, but if we do, simply ignore that value instead
 of combining it with the input elements:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">It</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Op</span><span class="p">,</span>
-    <span class="k">typename</span> <span class="n">T</span> <span class="o">=</span> <span class="k">typename</span> <span class="n">std</span><span class="o">::</span><span class="n">iterator_traits</span><span class="o">&lt;</span><span class="n">It</span><span class="o">&gt;::</span><span class="n">value_type</span><span class="o">&gt;</span>
+    <span class="k">typename</span> <span class="n">T</span><span class="o">=</span><span class="k">typename</span> <span class="n">std</span><span class="o">::</span><span class="n">iterator_traits</span><span class="o">&lt;</span><span class="n">It</span><span class="o">&gt;::</span><span class="n">value_type</span><span class="o">&gt;</span>
 <span class="n">T</span> <span class="n">fold</span><span class="p">(</span><span class="n">It</span> <span class="n">begin</span><span class="p">,</span> <span class="n">It</span> <span class="n">end</span><span class="p">,</span> <span class="n">T</span> <span class="n">def</span><span class="p">,</span> <span class="n">Op</span> <span class="n">op</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">begin</span> <span class="o">==</span> <span class="n">end</span><span class="p">)</span> <span class="k">return</span> <span class="n">def</span><span class="p">;</span>
