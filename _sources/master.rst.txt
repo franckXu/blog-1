@@ -4,6 +4,7 @@ Sitemap
 .. toctree::
    :maxdepth: 1
 
+   2018/12/31/fold
    2018/11/18/notes-on-encoding-text
    2018/10/13/arithmetic-overflow-and-underflow
    2018/09/09/clean-code-types

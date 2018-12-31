@@ -5,8 +5,373 @@
         <link>http://vladris.com/blog/</link>
         <description></description>
         <language>en-us</language>
-        <pubDate>Sun, 18 Nov 2018 00:00:00 -0800</pubDate>
+        <pubDate>Mon, 31 Dec 2018 00:00:00 -0800</pubDate>
         
+        <item>
+            <link>http://vladris.com/blog/2018/12/31/fold.html</link>
+            <guid>http://vladris.com/blog/2018/12/31/fold.html</guid>
+            <title><![CDATA[Fold]]></title>
+            <description><![CDATA[<h1>Fold</h1>
+<p>Most object-oriented programming languages represent object instances in memory
+in two separate chunks. One of them contains the instance-specific state - the
+class attributes. The other one contains the methods, which are actually shared
+across instances. Let’s take as an example a simple type with a couple of
+properties and a method:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span/><span class="k">class</span> <span class="nc">Point</span> <span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="kt">double</span> <span class="n">X</span><span class="p">;</span>
+    <span class="kt">double</span> <span class="n">Y</span><span class="p">;</span>
+
+    <span class="kt">double</span> <span class="nf">distanceToOrigin</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>If we take two distinct instances of <span class="docutils literal"><span class="pre">Point</span></span>, like <span class="docutils literal"><span class="pre">new</span> <span class="pre">Point(10,</span> <span class="pre">5)</span></span> and
+<span class="docutils literal"><span class="pre">new</span> <span class="pre">Point(20,</span> <span class="pre">20)</span></span>, they have different <span class="docutils literal"><span class="pre">X</span></span> and <span class="docutils literal"><span class="pre">Y</span></span> coordinates, so those
+need to be stored individually. On the other hand, the logic of
+<span class="docutils literal"><span class="pre">distanceToOrigin</span></span> is the same for both objects. The method evaluates to
+different results, because <span class="docutils literal"><span class="pre">this-&gt;X</span></span> and <span class="docutils literal"><span class="pre">this-&gt;Y</span></span> are different for the two
+objects, but the code is the same.</p>
+<p>Instead of storing separate copies of the code for each instance, the method
+implementations are shared across objects. <span class="docutils literal"><span class="pre">distanceToOrigin</span></span> can return
+different results for different objects because each invocation gets a different
+<span class="docutils literal"><span class="pre">this</span></span> pointer to the state of each object. In fact, under the hood, every
+class method gets an implicit <span class="docutils literal"><span class="pre">this</span></span> argument which represents the object on
+which the method is invoked. Python makes that explicit, requiring all class
+methods to implement a <span class="docutils literal"><span class="pre">self</span></span> argument in order to reference instance-specific
+state.</p>
+<p>There isn’t much difference between a method like <span class="docutils literal"><span class="pre">Point::distanceToOrigin</span></span>
+and a free function which takes a <span class="docutils literal"><span class="pre">Point</span></span> as an argument:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span/><span class="kt">double</span> <span class="nf">distanceToOrigin</span><span class="p">(</span><span class="n">Point</span> <span class="n">p</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="cm">/* ... */</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The only difference is that a class member gets access to privates, while an
+outside function doesn’t. Visibility aside, methods of a class are an
+independent “chunk” shared across object instances and the state of each object
+is another, separate “chunk”.</p>
+<p>An interpretation of this is that, even though classes contain methods, object
+instances of a given type can still be thought of as pure state. Our
+<span class="docutils literal"><span class="pre">new</span> <span class="pre">Point(10,</span> <span class="pre">5)</span></span> is represented by a combination of the <span class="docutils literal"><span class="pre">Point</span></span> class,
+which includes the method implementations and their memory layout etc. and
+instance-specific state. The <span class="docutils literal"><span class="pre">Point</span></span> class includes the method
+<span class="docutils literal"><span class="pre">distanceToOrigin</span></span> with an implicit <span class="docutils literal"><span class="pre">this</span></span> argument (and some additional
+metadata).</p>
+<p>With this view, a <span class="docutils literal"><span class="pre">Point</span></span> instance is a pair of values <span class="docutils literal"><span class="pre">X</span></span> and <span class="docutils literal"><span class="pre">Y</span></span>. Any
+particular instance of <span class="docutils literal"><span class="pre">Point</span></span> is a member of the set
+<span class="docutils literal"><span class="pre">{</span> <span class="pre">(X,</span> <span class="pre">Y)</span> <span class="pre">:</span> <span class="pre">X</span> <span class="pre">∈</span> <span class="pre">double,</span> <span class="pre">Y</span> <span class="pre">∈</span> <span class="pre">double</span> <span class="pre">}</span></span>. The function <span class="docutils literal"><span class="pre">distanceToOrigin</span></span> can
+be viewed as a function from this set (from the implicit <span class="docutils literal"><span class="pre">this</span></span> argument) to a
+<span class="docutils literal"><span class="pre">double</span></span> value.</p>
+<p><span class="docutils literal"><span class="pre">disntaceToOrigin</span> <span class="pre">:</span> <span class="pre">{</span> <span class="pre">(X,</span> <span class="pre">Y)</span> <span class="pre">:</span> <span class="pre">X</span> <span class="pre">∈</span> <span class="pre">double,</span> <span class="pre">Y</span> <span class="pre">∈</span> <span class="pre">double</span> <span class="pre">}</span> <span class="pre">→</span> <span class="pre">double.</span></span></p>
+<div class="section" id="operations-and-closures">
+<h2>Operations and Closures</h2>
+<p>A function that takes two arguments of type <span class="docutils literal"><span class="pre">Point</span></span> is called a binary
+operation on the set. We can represent it as a function <span class="docutils literal"><span class="pre">f(Point,</span> <span class="pre">Point)</span></span> or,
+equivalently, as an operation <span class="docutils literal"><span class="pre">Point</span> <span class="pre">⊙</span> <span class="pre">Point</span></span>. If the codomain of the
+function is also a <span class="docutils literal"><span class="pre">Point</span></span>, for example let’s take a function like
+<span class="docutils literal"><span class="pre">Point</span> <span class="pre">midPoint(Point</span> <span class="pre">x,</span> <span class="pre">Point</span> <span class="pre">y)</span></span>, which computes the middle point between
+two given points, we call the operation <em>closed</em> over the set.</p>
+<p>The notion of closure in algebra is different from the notion closure in
+computer science, which deals with context captured in lambdas. In this case it
+simply means an operation that combines a number of elements of a set into
+another element of the set.</p>
+<p>Since we can view any type as a set, and any function taking two arguments of a
+type and returning another instance of that type as a closed binary operation on
+the set, we can start talking about algebraic structures.</p>
+</div>
+<div class="section" id="magmas">
+<h2>Magmas</h2>
+<p>A magma is just a set with a closed operation, without any other constraints
+imposed. If we have a magma, we can implement an algorithm like <span class="docutils literal"><span class="pre">fold</span></span> which,
+given a set of values in the magma, combines them into a single value.</p>
+<p>For example we can fold three <span class="docutils literal"><span class="pre">Point</span></span> instances <span class="docutils literal"><span class="pre">a</span></span>, <span class="docutils literal"><span class="pre">b</span></span>, and <span class="docutils literal"><span class="pre">c</span></span> into a
+single <span class="docutils literal"><span class="pre">Point</span></span> using the <span class="docutils literal"><span class="pre">midPoint</span></span> function like this:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span/><span class="n">Point</span> <span class="n">result</span> <span class="o">=</span> <span class="n">midPoint</span><span class="p">(</span><span class="n">midPoint</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">),</span> <span class="n">c</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>We can sketch out a function that, given a set of objects of any type <span class="docutils literal"><span class="pre">T</span></span> and
+an operation closed over <span class="docutils literal"><span class="pre">T</span></span>, produces a final value of type <span class="docutils literal"><span class="pre">T</span></span>:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span/><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">It</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Op</span><span class="p">,</span>
+    <span class="k">typename</span> <span class="n">T</span> <span class="o">=</span> <span class="k">typename</span> <span class="n">std</span><span class="o">::</span><span class="n">iterator_traits</span><span class="o">&lt;</span><span class="n">It</span><span class="o">&gt;::</span><span class="n">value_type</span><span class="o">&gt;</span>
+<span class="n">T</span> <span class="n">fold</span><span class="p">(</span><span class="n">It</span> <span class="n">begin</span><span class="p">,</span> <span class="n">It</span> <span class="n">end</span><span class="p">,</span> <span class="n">T</span> <span class="n">init</span><span class="p">,</span> <span class="n">Op</span> <span class="n">op</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">T</span> <span class="n">result</span> <span class="o">=</span> <span class="n">init</span><span class="p">;</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">it</span> <span class="o">=</span> <span class="n">begin</span><span class="p">;</span> <span class="n">it</span> <span class="o">!=</span> <span class="n">end</span><span class="p">;</span> <span class="o">++</span><span class="n">it</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">op</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="o">*</span><span class="n">it</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This function takes a pair of iterators which we use to traverse the set of
+values of type <span class="docutils literal"><span class="pre">T</span></span>, an initial value of type <span class="docutils literal"><span class="pre">T</span></span>, and a binary operation
+<span class="docutils literal"><span class="pre">Op</span></span>. We need an initial value of type <span class="docutils literal"><span class="pre">T</span></span> because if the set is empty,
+we still need to return something from the function. That is, if the <span class="docutils literal"><span class="pre">for</span></span>
+loop never executes, and we never apply <span class="docutils literal"><span class="pre">op</span></span>, we still need a <span class="docutils literal"><span class="pre">T</span></span> to return.
+In this case we will simply return <span class="docutils literal"><span class="pre">init</span></span>.</p>
+<p>Since a magma doesn’t impose any constraints on the operation, the order in
+which we combine elements might be important. For example, for integers and
+the subtraction operation, if we start with the set of number <span class="docutils literal"><span class="pre">1</span></span>, <span class="docutils literal"><span class="pre">2</span></span>, and
+<span class="docutils literal"><span class="pre">3</span></span>, and an initial value of <span class="docutils literal"><span class="pre">1</span></span>, we can fold from left to right and get
+<span class="docutils literal"><span class="pre">((1</span> <span class="pre">-</span> <span class="pre">1)</span> <span class="pre">-</span> <span class="pre">2)</span> <span class="pre">-</span> <span class="pre">3</span></span>, or <span class="docutils literal"><span class="pre">-5</span></span>. On the other hand, we can start from right
+to left, and fold <span class="docutils literal"><span class="pre">1</span> <span class="pre">-</span> <span class="pre">(2</span> <span class="pre">-</span> <span class="pre">(3</span> <span class="pre">-</span> <span class="pre">1))</span></span>, or <span class="docutils literal"><span class="pre">1</span></span>. Let’s call this verison
+<span class="docutils literal"><span class="pre">foldRight</span></span> and look at a possible implementation:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span/><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">It</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Op</span>
+    <span class="k">typename</span> <span class="n">T</span> <span class="o">=</span> <span class="k">typename</span> <span class="n">std</span><span class="o">::</span><span class="n">iterator_traits</span><span class="o">&lt;</span><span class="n">It</span><span class="o">&gt;::</span><span class="n">value_type</span><span class="o">&gt;</span>
+<span class="n">T</span> <span class="n">fold_right</span><span class="p">(</span><span class="n">It</span> <span class="n">begin</span><span class="p">,</span> <span class="n">It</span> <span class="n">end</span><span class="p">,</span> <span class="n">T</span> <span class="n">init</span><span class="p">,</span> <span class="n">Op</span> <span class="n">op</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">T</span> <span class="n">result</span> <span class="o">=</span> <span class="n">init</span><span class="p">;</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">it</span> <span class="o">=</span> <span class="n">end</span><span class="p">;</span> <span class="n">it</span> <span class="o">!=</span> <span class="n">begin</span><span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">op</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="o">--</span><span class="n">it</span><span class="p">),</span> <span class="n">result</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Note that for an operation like addition, this is not the case: if we fold
+<span class="docutils literal"><span class="pre">1</span></span>, <span class="docutils literal"><span class="pre">2</span></span>, and <span class="docutils literal"><span class="pre">3</span></span>, with an initial value of <span class="docutils literal"><span class="pre">1</span></span>, we get <span class="docutils literal"><span class="pre">7</span></span> regardless
+of the direction and whether we make the initial value a left or a right
+operand. Let’s zoom in on this.</p>
+</div>
+<div class="section" id="semigroups">
+<h2>Semigroups</h2>
+<p>If we have a set with a closed operation that is also associative, we have a
+<em>semigroup</em>. For an <em>associative</em> operation, it doesn’t really matter what order
+we apply multiple operations on. For example, for the set of strings and the
+string concatenation operation, it doesn’t metter whether we append <span class="docutils literal"><span class="pre">foo</span></span> to
+<span class="docutils literal"><span class="pre">bar</span></span>, then the result to <span class="docutils literal"><span class="pre">baz</span></span> or whether we concatenate <span class="docutils literal"><span class="pre">bar</span></span> with
+<span class="docutils literal"><span class="pre">baz</span></span> first, then prepend <span class="docutils literal"><span class="pre">foo</span></span> to it:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span/><span class="p">(</span><span class="s">"foo"</span><span class="n">s</span> <span class="o">+</span> <span class="s">"bar"</span><span class="n">s</span><span class="p">)</span> <span class="o">+</span> <span class="s">"baz"</span><span class="n">s</span> <span class="o">==</span> <span class="s">"foo"</span><span class="n">s</span> <span class="o">+</span> <span class="p">(</span><span class="s">"bar"</span><span class="n">s</span> <span class="o">+</span> <span class="s">"baz"</span><span class="n">s</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>More formally, an opeartion is associative if, for any <span class="docutils literal"><span class="pre">a</span></span>, <span class="docutils literal"><span class="pre">b</span></span>, and <span class="docutils literal"><span class="pre">c</span></span>,
+<span class="docutils literal"><span class="pre">(a</span> <span class="pre">⊙</span> <span class="pre">b)</span> <span class="pre">⊙</span> <span class="pre">c</span> <span class="pre">==</span> <span class="pre">a</span> <span class="pre">⊙</span> <span class="pre">(b</span> <span class="pre">⊙</span> <span class="pre">c)</span></span>. That being said, that’s not enough to make
+our right fold redundant:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span/><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">elems</span> <span class="o">=</span> <span class="p">{</span> <span class="s">"foo"</span><span class="n">s</span><span class="p">,</span> <span class="s">"bar"</span><span class="n">s</span><span class="p">,</span> <span class="s">"baz"</span><span class="n">s</span> <span class="p">};</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">fold</span><span class="p">(</span><span class="n">elems</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">elems</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="s">"!"</span><span class="n">s</span><span class="p">,</span>
+    <span class="p">[](</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">x</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">y</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">;</span> <span class="p">});</span>
+<span class="c1">// Prints !foobarbaz</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">fold_right</span><span class="p">(</span><span class="n">elems</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">elems</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="s">"!"</span><span class="n">s</span><span class="p">,</span>
+    <span class="p">[](</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">x</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">y</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">;</span> <span class="p">});</span>
+<span class="c1">// Prints foobarbaz!</span>
+</pre></div>
+</div>
+<p>It still matters whether our initial value is a left or right argument to our
+operation. If for an operation we get the same result regardless of how we
+arrange the operands, then we have a <em>commutative</em> operation. Integer addition
+is an example of a commutative operation, where <span class="docutils literal"><span class="pre">1</span> <span class="pre">+</span> <span class="pre">2</span></span> is the same as
+<span class="docutils literal"><span class="pre">2</span> <span class="pre">+</span> <span class="pre">1</span></span>. Note this is different than string concatenation, where
+<span class="docutils literal"><span class="pre">"foo"s</span> <span class="pre">+</span> <span class="pre">"bar"s</span> <span class="pre">!=</span> <span class="pre">"bar"s</span> <span class="pre">+</span> <span class="pre">"foo"s</span></span>. A semigroup with a commutative operation
+is called an <em>abelian semigroup</em>. Here we finally no longer need to distinguish
+between <span class="docutils literal"><span class="pre">fold</span></span> and <span class="docutils literal"><span class="pre">fold_right</span></span> as they both produce the same result.</p>
+<p>Let’s also look at that mandatory initial value.</p>
+</div>
+<div class="section" id="monoids">
+<h2>Monoids</h2>
+<p>The reason we require an initial value is that we need to return something in
+case our set is empty, and we don’t always have a good default. That’s not
+always the case. There are operations for which we have such a default, called
+the <em>identity</em> of the opeartion. This value, combined with any other value using
+the operation, leaves the other value unchanged. For string concatenation, the
+identity is the empty string. For addition, the identity is <span class="docutils literal"><span class="pre">0</span></span>. In general,
+we have <span class="docutils literal"><span class="pre">a</span> <span class="pre">⊙</span> <span class="pre">id</span> <span class="pre">==</span> <span class="pre">id</span> <span class="pre">⊙</span> <span class="pre">a</span> <span class="pre">==</span> <span class="pre">a</span></span> for any <span class="docutils literal"><span class="pre">a</span></span>. This is what makes <span class="docutils literal"><span class="pre">id</span></span> an
+identity.</p>
+<p>A semigroup with an identity is a <em>monoid</em>. That’s a set with an associative
+operation and an identity element. Note commutativity is not required. If the
+operation is also commutative, then we have a <em>commutative monoid</em>.</p>
+<p>If the default constructor of our type <span class="docutils literal"><span class="pre">T</span></span> creates an identiy, then we can
+reimplement <span class="docutils literal"><span class="pre">fold</span></span> like this:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span/><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">It</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Op</span><span class="p">,</span>
+    <span class="k">typename</span> <span class="n">T</span> <span class="o">=</span> <span class="k">typename</span> <span class="n">std</span><span class="o">::</span><span class="n">iterator_traits</span><span class="o">&lt;</span><span class="n">It</span><span class="o">&gt;::</span><span class="n">value_type</span><span class="o">&gt;</span>
+<span class="n">T</span> <span class="n">fold</span><span class="p">(</span><span class="n">It</span> <span class="n">begin</span><span class="p">,</span> <span class="n">It</span> <span class="n">end</span><span class="p">,</span> <span class="n">Op</span> <span class="n">op</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">T</span> <span class="n">result</span><span class="p">{</span> <span class="p">};</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">it</span> <span class="o">=</span> <span class="n">begin</span><span class="p">;</span> <span class="n">it</span> <span class="o">!=</span> <span class="n">end</span><span class="p">;</span> <span class="o">++</span><span class="n">it</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">op</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="o">*</span><span class="n">it</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>We no longer require an initial value to be passed in. That’s because, if we
+really want to combine all elements with a certain value, we can do it after
+calling <span class="docutils literal"><span class="pre">fold</span></span>. For example we can concatenate our strings and then append or
+prepend our “!”s:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span/><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">elems</span> <span class="o">=</span> <span class="p">{</span> <span class="s">"foo"</span><span class="n">s</span><span class="p">,</span> <span class="s">"bar"</span><span class="n">s</span><span class="p">,</span> <span class="s">"baz"</span><span class="n">s</span> <span class="p">};</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">folded</span> <span class="o">=</span> <span class="n">fold</span><span class="p">(</span><span class="n">elems</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">elems</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span>
+    <span class="p">[](</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">x</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">y</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">;</span> <span class="p">});</span>
+<span class="c1">// folded is "foobarbaz"s</span>
+</pre></div>
+</div>
+<p>Unlike the first implementation, this works for empty sets too:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span/><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">elems</span> <span class="o">=</span> <span class="p">{</span> <span class="p">};</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">folded</span> <span class="o">=</span> <span class="n">fold</span><span class="p">(</span><span class="n">elems</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">elems</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span>
+    <span class="p">[](</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">x</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">y</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">;</span> <span class="p">});</span>
+<span class="c1">// folded is the empty string</span>
+</pre></div>
+</div>
+<p>This version only works if we have an identity and if the default constructor
+actually creates that identity. Note identity is a property related to the
+operation, so we need to be careful. The default integer value is <span class="docutils literal"><span class="pre">0</span></span>, which
+is the identity for addition, so we can very well sum numbers using the second
+version of <span class="docutils literal"><span class="pre">fold</span></span>. On the other hand, we can’t use it for product:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span/><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">elems</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span> <span class="p">};</span>
+
+<span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="n">fold</span><span class="p">(</span><span class="n">elems</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">elems</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span>
+    <span class="p">[](</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">;</span> <span class="p">});</span>
+<span class="c1">// sum is 6</span>
+
+<span class="kt">int</span> <span class="n">product</span> <span class="o">=</span> <span class="n">fold</span><span class="p">(</span><span class="n">elems</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">elems</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span>
+    <span class="p">[](</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">;</span> <span class="p">});</span>
+<span class="c1">// product is 0</span>
+</pre></div>
+</div>
+<p>If we default to <span class="docutils literal"><span class="pre">0</span></span> and multiply all numbers with it, our product becomes
+<span class="docutils literal"><span class="pre">0</span></span>. On the other hand, if we do have a default identity, then <span class="docutils literal"><span class="pre">fold</span></span> and
+<span class="docutils literal"><span class="pre">fold_right</span></span> give us the same result even if the operation is only
+associative, without necessarily being commutative. That’s because, if our
+initial value is an identity, it doesn’t matter whether it is a left or right
+argument to our operation. By definition, <span class="docutils literal"><span class="pre">a</span> <span class="pre">⊙</span> <span class="pre">id</span> <span class="pre">==</span> <span class="pre">id</span> <span class="pre">⊙</span> <span class="pre">a</span> <span class="pre">==</span> <span class="pre">a</span></span> so for a
+set of values like <span class="docutils literal"><span class="pre">a</span></span>, <span class="docutils literal"><span class="pre">b</span></span>, and <span class="docutils literal"><span class="pre">c</span></span>, we get:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span/><span class="p">..</span> <span class="n">code</span><span class="o">-</span><span class="n">block</span><span class="o">::</span> <span class="n">text</span>
+</pre></div>
+</div>
+<blockquote>
+<div>((id ⊙ a) ⊙ b) ⊙ c == (a ⊙ b) ⊙ c</div></blockquote>
+<p>From associativity, we get:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span/><span class="p">..</span> <span class="n">code</span><span class="o">-</span><span class="n">block</span><span class="o">::</span> <span class="n">text</span>
+</pre></div>
+</div>
+<blockquote>
+<div>(a ⊙ b) ⊙ c == a ⊙ (b ⊙ c)</div></blockquote>
+<p>We can add another identity in there, since <span class="docutils literal"><span class="pre">c</span> <span class="pre">==</span> <span class="pre">c</span> <span class="pre">⊙</span> <span class="pre">id</span></span>:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span/><span class="p">..</span> <span class="n">code</span><span class="o">-</span><span class="n">block</span><span class="o">::</span> <span class="n">text</span>
+</pre></div>
+</div>
+<blockquote>
+<div>a ⊙ (b ⊙ c) == (a ⊙ (b ⊙ (c ⊙ id)))</div></blockquote>
+<p>We started with how <span class="docutils literal"><span class="pre">fold</span></span> evaluates and ended up with how <span class="docutils literal"><span class="pre">fold_right</span></span>
+evaluates. That means we don’t distinguish between a left to right or right to
+left fold is either:</p>
+<ul class="simple">
+<li>The operation is associative and commutative (abelian semigroup)</li>
+<li>The operation is associative and the initial value is the identity (monoid
+with identity as initial value)</li>
+</ul>
+<p>If neither of these holds, it matters which way the fold happens as we get
+different results.</p>
+</div>
+<div class="section" id="parallelized-fold">
+<h2>Parallelized Fold</h2>
+<p>Wihout going into too many details, we can also divide &amp; conquer a fold
+operation, fold subsets in parallel, then merge the results. Associativity
+allows us to do so, as we can split the set of values <span class="docutils literal"><span class="pre">a</span></span>, <span class="docutils literal"><span class="pre">b</span></span>, <span class="docutils literal"><span class="pre">c</span></span>, and
+<span class="docutils literal"><span class="pre">d</span></span> into <span class="docutils literal"><span class="pre">left_half</span> <span class="pre">=</span> <span class="pre">a</span> <span class="pre">⊙</span> <span class="pre">b</span></span> and <span class="docutils literal"><span class="pre">right_half</span> <span class="pre">=</span> <span class="pre">c</span> <span class="pre">⊙</span> <span class="pre">d</span></span>, then combine the
+two halves for the final result <span class="docutils literal"><span class="pre">left_half</span> <span class="pre">⊙</span> <span class="pre">right_half</span></span>. This is the same
+thing as <span class="docutils literal"><span class="pre">(a</span> <span class="pre">⊙</span> <span class="pre">b)</span> <span class="pre">⊙</span> <span class="pre">(c</span> <span class="pre">⊙</span> <span class="pre">d)</span></span>. As long as the operation is associative, this
+is the same as <span class="docutils literal"><span class="pre">((a</span> <span class="pre">⊙</span> <span class="pre">b)</span> <span class="pre">⊙</span> <span class="pre">c)</span> <span class="pre">⊙</span> <span class="pre">d</span></span> or <span class="docutils literal"><span class="pre">a</span> <span class="pre">⊙</span> <span class="pre">(b</span> <span class="pre">⊙</span> <span class="pre">(c</span> <span class="pre">⊙</span> <span class="pre">d))</span></span>.</p>
+<p>Not all operations are associative though, as we saw before. Subtraction isn’t
+for example. <span class="docutils literal"><span class="pre">(1</span> <span class="pre">-</span> <span class="pre">2)</span> <span class="pre">-</span> <span class="pre">(3</span> <span class="pre">-</span> <span class="pre">4)</span></span> is <span class="docutils literal"><span class="pre">0</span></span>. <span class="docutils literal"><span class="pre">((1</span> <span class="pre">-</span> <span class="pre">2)</span> <span class="pre">-</span> <span class="pre">3)</span> <span class="pre">-</span> <span class="pre">4</span></span> is <span class="docutils literal"><span class="pre">-8</span></span>.
+We can only parallelize folding a semigroup, not any magma.</p>
+<p>Here, since we are talking about dividing the input set, we can assume we have
+more than zero elements in a subset (otherwise we wouldn’t divide it), so
+whether we have an identity or not or whether we apply it to the left or the
+right can be left to the top function which combines the partial results.</p>
+</div>
+<div class="section" id="alternatives">
+<h2>Alternatives</h2>
+<p>We covered traditional implementations of <span class="docutils literal"><span class="pre">fold</span></span> but let’s go over a couple of
+alternative implementations. We could say that if the set is empty, we don’t
+return anything, otherwise we take the first element as our initial value:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span/><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">It</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Op</span><span class="p">,</span>
+    <span class="k">typename</span> <span class="n">T</span> <span class="o">=</span> <span class="k">typename</span> <span class="n">std</span><span class="o">::</span><span class="n">iterator_traits</span><span class="o">&lt;</span><span class="n">It</span><span class="o">&gt;::</span><span class="n">value_type</span><span class="o">&gt;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">optional</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">fold</span><span class="p">(</span><span class="n">It</span> <span class="n">begin</span><span class="p">,</span> <span class="n">It</span> <span class="n">end</span><span class="p">,</span> <span class="n">Op</span> <span class="n">op</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">begin</span> <span class="o">==</span> <span class="n">end</span><span class="p">)</span> <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">nullopt</span><span class="p">;</span>
+
+    <span class="n">It</span> <span class="n">it</span> <span class="o">=</span> <span class="n">begin</span><span class="p">;</span>
+    <span class="n">T</span> <span class="n">result</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="n">it</span><span class="o">++</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="p">(;</span> <span class="n">it</span> <span class="o">!=</span> <span class="n">end</span><span class="p">;</span> <span class="o">++</span><span class="n">it</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">op</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="o">*</span><span class="n">it</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>As long as the operation is associative, the fold direction doesn’t matter. In
+case we don’t have any value at all, we return <span class="docutils literal"><span class="pre">nullopt</span></span> to signal the absence
+of a value.</p>
+<p>Another option is to take a default value as an argument and return that in case
+we have no elements to combine, but if we do, simply ignore that value instead
+of combining it with the input elements:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span/><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">It</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Op</span><span class="p">,</span>
+    <span class="k">typename</span> <span class="n">T</span> <span class="o">=</span> <span class="k">typename</span> <span class="n">std</span><span class="o">::</span><span class="n">iterator_traits</span><span class="o">&lt;</span><span class="n">It</span><span class="o">&gt;::</span><span class="n">value_type</span><span class="o">&gt;</span>
+<span class="n">T</span> <span class="n">fold</span><span class="p">(</span><span class="n">It</span> <span class="n">begin</span><span class="p">,</span> <span class="n">It</span> <span class="n">end</span><span class="p">,</span> <span class="n">T</span> <span class="n">def</span><span class="p">,</span> <span class="n">Op</span> <span class="n">op</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">begin</span> <span class="o">==</span> <span class="n">end</span><span class="p">)</span> <span class="k">return</span> <span class="n">def</span><span class="p">;</span>
+
+    <span class="n">It</span> <span class="n">it</span> <span class="o">=</span> <span class="n">begin</span><span class="p">;</span>
+    <span class="n">T</span> <span class="n">result</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="n">it</span><span class="o">++</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="p">(;</span> <span class="n">it</span> <span class="o">!=</span> <span class="n">end</span><span class="p">;</span> <span class="o">++</span><span class="n">it</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">op</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="o">*</span><span class="n">it</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This is similar to the previous implementation, but instead of an empty optional
+we return a supplied value in case we don’t have anything to fold. This would
+be interpreted as <em>fold or return def</em>, as opposed to our original
+implementation, which was <em>fold with init</em>.</p>
+</div>
+<div class="section" id="summary">
+<h2>Summary</h2>
+<p>This post started with a discussion of how types can be viewed as sets and
+functions as functions over those sets. We then covered a few abstract algebra
+concepts as applied to the <span class="docutils literal"><span class="pre">fold</span></span> higher order function, looking in which
+situations do <span class="docutils literal"><span class="pre">fold</span></span> and <span class="docutils literal"><span class="pre">fold_right</span></span> return the same result.</p>
+<ul class="simple">
+<li>A function <span class="docutils literal"><span class="pre">T</span> <span class="pre">f(T,</span> <span class="pre">T)</span></span> is a closed binary operation on the set <span class="docutils literal"><span class="pre">T</span></span></li>
+<li>A set with a binary operation is called a magma. We can implement a <span class="docutils literal"><span class="pre">fold</span></span>
+and a <span class="docutils literal"><span class="pre">fold_right</span></span> if we have a magma. Both functions need an initial value.</li>
+<li>If the operation is also associative, we have a semigroup. Here it still
+matters whether the initial value is applied on the left or the right, as the
+results might be different.</li>
+<li>If the operation is also commutative, we have an abelian semigroup. There is
+no distinction between a left-to-right and a right-to-left fold for an abelian
+semigroup.</li>
+<li>If the operation has an identity, then we have a monoid. If we use the
+identity as an initial value, then we again have no distinctino between a
+left-to-right and a right-to-left fold.</li>
+<li>We can paralllize fold to take subsets of the input set, combine them in
+parallel, then combine the results. Associativity is the only requirement for
+this, so we can parallelize folding a semigroup.</li>
+<li>We also looked at a couple of alternative implementations which only require
+a semigroup for the fold direction not to matter. The first one returns an
+empty optional if there are no values to combine; the second returns a value
+supplied as argument, without otherwise combining it.</li>
+</ul>
+</div>
+]]></description>
+             <pubDate>Mon, 31 Dec 2018 00:00:00 -0800</pubDate>
+        </item>
+    
         <item>
             <link>http://vladris.com/blog/2018/11/18/notes-on-encoding-text.html</link>
             <guid>http://vladris.com/blog/2018/11/18/notes-on-encoding-text.html</guid>
