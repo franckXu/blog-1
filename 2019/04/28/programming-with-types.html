@@ -1,0 +1,160 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="Vlad's Tech Blog">
+        <meta name="viewport" content="width=device-width">
+        <title>Programming with Types &mdash; Blog</title>
+            <link rel="stylesheet" href="../../../_static/normalize.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/sphinx.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/main.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/flat.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+            <link rel="stylesheet" href="../../../_static/font-awesome.min.css" type="text/css">
+        <link rel="shortcut icon" href="../../../_static/tinkerer.ico" /><!-- Load modernizr and JQuery -->
+        <script src="../../../_static/vendor/modernizr-2.6.2.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="../../../_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
+        <script src="../../../_static/plugins.js"></script>
+        <script src="../../../_static/main.js"></script>
+        <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Fold" href="../../../2018/12/31/fold.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.7.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        SOURCELINK_SUFFIX: '.txt',
+        HAS_SOURCE:  true
+      };
+    </script><script type="text/javascript" src="../../../_static/underscore.js"></script><script type="text/javascript" src="../../../_static/doctools.js"></script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script type="text/javascript" src="../../../_static/disqus.js"></script><script type="text/javascript" src="../../../_static/google_analytics.js"></script><link rel="stylesheet" href="../../../_static/extra.css" type="text/css" />
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+</script></head>
+    <body role="document">
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+      <div id="container"><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>April 28, 2019</span>
+        </div>
+    <div class="section" id="programming-with-types">
+<h1>Programming with Types</h1>
+<p>I’m happy to announce the early access launch of my book,
+<a class="reference external" href="https://www.manning.com/books/programming-with-types">Programming with Types</a>.</p>
+<p>This is the culmination of several years of geeking out on type systems and
+software correctness. I’ve always liked to learn how to write better code, but
+if I were to point out exactly when I started down this particular rabbit hole,
+I’d say it was 2015.</p>
+<p>I was switching teams at that point and decided to get up to speed on modern
+C++. I started by watching C++ conference videos and was mind-blown by the
+<a class="reference external" href="https://channel9.msdn.com/Events/GoingNative/2013/Cpp-Seasoning">C++ Seasoning</a>
+talk Sean Parent gave at Going Native a couple of years before. That gave me a
+completely different perspective on generic programming.</p>
+<p>On a parallel thread, I was playing with Haskell and learning about the
+advanced features of its type system. Programming in a functional language
+makes it obvious how some of the features taken from granted in such
+languages get adopted by more mainstream languages as time goes by. Closures,
+sum types, and monads are slowly making their way to the mainstream.</p>
+<div class="section" id="bibliography">
+<h2>Bibliography</h2>
+<p>In awe of the elegance of generics and trying to learn more about them, I
+picked up Stepanov’s <a class="reference external" href="https://www.goodreads.com/book/show/23498372-from-mathematics-to-generic-programming">From Mathematics to Generic Programming</a>
+and <a class="reference external" href="https://www.goodreads.com/book/show/6142482-elements-of-programming">Elements of Programming</a>.
+I realized I need a refresher on abstract algebra, so I took a detour and
+went through Pinter’s <a class="reference external" href="https://www.goodreads.com/book/show/8295305-a-book-of-abstract-algebra">A Book of Abstract Algebra</a>.</p>
+<p>Getting a sense of the mathematical underpinnings of generics made things
+much clearer for me. I wanted to get a similar understanding of the math
+underlying the Haskell type system, namely category theory. A great
+resource on category theory is Bartosz Milewski’s <a class="reference external" href="https://www.goodreads.com/book/show/33618151-category-theory-for-programmers">Category Theory for Programmers</a>.</p>
+<p>Deeper still down the rabbit hole, I picked up Benjamin Pierce’s famous
+<a class="reference external" href="https://www.goodreads.com/book/show/112252.Types_and_Programming_Languages">Types and Programming Languages</a>.
+The book covers many aspects of type systems, from basic types and function
+types, to subtyping, generics, and higher-kinded types. In fact, this is
+exactly the progression my own book follows.</p>
+</div>
+<div class="section" id="from-theory-to-practice">
+<h2>From Theory to Practice</h2>
+<p>While learning more and more about type systems, I could tell the code I was
+writing at work became better. There is a direct link between the more
+theoretical realm of type system design and the day-to-day production software.
+This isn’t a revolutionary discovery - all fancy type system features exist to
+solve some real-world problems.</p>
+<p>I had new insights which I could use and did my best to share them. I started
+this blog and posted about various practical applications. I did hundreds of
+code reviews and applied what I learned there. And here is where I found my
+niche.</p>
+<p>Not every practicing programmer has the time and patience to read
+highly-theoretical books, with mathematical proofs. On the other hand, I could
+tell that my time wasn’t wasted reading such books - they made me a better
+software engineer. I figured there is room for a book which covers type
+systems and the safety features they provide, with practical applications
+anyone can use in their day jobs.</p>
+</div>
+<div class="section" id="id2">
+<h2>Programming with Types</h2>
+<p>The book starts with basic types and some of their common pitfalls: numerical
+types tend to overflow or are subject to rounding errors, strings have several
+encodings, and manipulating them naively causes all sorts of issues. There are
+lesser known basic types, like the empty type and the unit type, which are not
+as popular for some reason, even though they have great applications: as return
+types for functions which never return, or don’t return anything meaningful.</p>
+<p>After basic types, the book covers composition. Why record types are generally
+better than tuples, what algebraic data types are about, and countless
+applications of sum types. Functions should return either a valid value or an
+error, never both. The variant design pattern, enabling double-dispatch, looks
+different today than it did a few years ago.</p>
+<p>Function types are discussed at length, from lambdas and the functional
+staples <span class="docutils literal"><span class="pre">map</span></span>, <span class="docutils literal"><span class="pre">filter</span></span>, and <span class="docutils literal"><span class="pre">reduce</span></span>, to modern features of programming
+languages like <span class="docutils literal"><span class="pre">yield</span></span> and <span class="docutils literal"><span class="pre">async</span></span>/<span class="docutils literal"><span class="pre">await</span></span>. The book shows modern takes
+on the strategy and decorator design patterns, implemented more succinctly
+using function types.</p>
+<p>Subtyping is another major topic, covering not only the elements of object
+oriented programming and how to use them effectively, but also variance, top
+types, and bottom types. For example, we can use a bottom type to produce a
+value out of nowhere. Mixins are controversial, as they are usually implemented
+as multiple inheritance, but I believe they are extremely useful when designed
+correctly.</p>
+<p>The next major topic is generic programming. Generic data structures are
+responsible for shaping the data, while algorithms are responsible for
+processing data. Iterators are a bridge between data structures and algorithms,
+allowing us to mix-and-match them. As an example, we can find an item in a tree
+using the same code we use to find an item in a list.</p>
+<p>Finally, the book covers higher-kinded types. These are higher-level
+abstractions, generic types with generic arguments, which underpin concepts
+like functors and monads. The joke goes that as soon as you understand monads,
+you lose the ability to explain them. I’m taking it as a challenge.</p>
+<p>Check out my book <a class="reference external" href="https://www.manning.com/books/programming-with-types">here</a>.</p>
+</div>
+</div>
+
+    <div class="postmeta">
+        
+        
+        
+        </div><ul class="related clearfix">
+            <li class="left"></li>
+            <li class="right"><a href="../../../2018/12/31/fold.html">Fold</a> &raquo; </li>
+        </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "vladris";    var disqus_identifier = "2019/04/28/programming-with-types";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article></div> <!-- #main --></div> <!-- #main-container -->
+
+        <div class="footer-container" role="contentinfo"><div style="text-align: center; color: #93a4ad">
+    By Vlad Rișcuția | <a href="http://feeds.feedburner.com/vladris">Subscribe</a> | <a href="http://vladris.com/blog/archive">Archive</a>
+</div></div> <!-- footer-container -->
+
+      </div> <!--! end of #container --><!--[if lt IE 7 ]>
+          <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+          <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+        <![endif]-->
+    </body>
+</html>
