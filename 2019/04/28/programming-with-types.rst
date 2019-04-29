@@ -39,7 +39,9 @@ Deeper still down the rabbit hole, I picked up Benjamin Pierce's famous
 `Types and Programming Languages <https://www.goodreads.com/book/show/112252.Types_and_Programming_Languages>`_. 
 The book covers many aspects of type systems, from basic types and function
 types, to subtyping, generics, and higher-kinded types. In fact, this is
-exactly the progression my own book follows.
+exactly the progression my own book follows. Types and Programming Languages
+is geared towards compiler writers. I wanted to write something that can
+benefit any developer.
 
 From Theory to Practice
 -----------------------
