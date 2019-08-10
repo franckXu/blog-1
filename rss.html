@@ -5,8 +5,292 @@
         <link>http://vladris.com/blog/</link>
         <description></description>
         <language>en-us</language>
-        <pubDate>Tue, 16 Jul 2019 00:00:00 -0700</pubDate>
+        <pubDate>Sat, 10 Aug 2019 00:00:00 -0700</pubDate>
         
+        <item>
+            <link>http://vladris.com/blog/2019/08/10/common-algorithms.html</link>
+            <guid>http://vladris.com/blog/2019/08/10/common-algorithms.html</guid>
+            <title><![CDATA[Common Algorithms]]></title>
+            <description><![CDATA[<h1>Common Algorithms</h1>
+<p>This blog post is an excerpt from my book, <a class="reference external" href="https://www.manning.com/books/programming-with-types">Programming with Types</a>. The code samples
+are in TypeScript. If you enjoy the article, you can use the discount code
+<strong>vlri40</strong> for a 40% discount on the book.</p>
+<div class="section" id="a-few-common-algorithms">
+<h2>A Few Common Algorithms</h2>
+<p>There are many algorithms commonly used to process a sequence of data. Let’s
+list a few of them. We will not look at the implementation, just describe what
+arguments besides the iterable they expect and how they process the data. We’ll
+also mention some synonyms under which the algorithm might appear.</p>
+<ul class="simple">
+<li><span class="docutils literal"><span class="pre">map()</span></span> takes a sequence of <span class="docutils literal"><span class="pre">T</span></span> values, a function <span class="docutils literal"><span class="pre">(value:</span> <span class="pre">T)</span> <span class="pre">=&gt;</span> <span class="pre">U</span></span>
+and returns a sequence of <span class="docutils literal"><span class="pre">U</span></span> values applying the function to all the
+elements in the sequence. It is also known as <span class="docutils literal"><span class="pre">fmap()</span></span>, <span class="docutils literal"><span class="pre">select()</span></span>.</li>
+<li><span class="docutils literal"><span class="pre">filter()</span></span> takes a sequence of <span class="docutils literal"><span class="pre">T</span></span> values, a predicate
+<span class="docutils literal"><span class="pre">(value:</span> <span class="pre">T)</span> <span class="pre">=&gt;</span> <span class="pre">boolean</span></span> and returns a sequence of <span class="docutils literal"><span class="pre">T</span></span> values containing
+all the items for which the predicate returns true. It is also known as
+<span class="docutils literal"><span class="pre">where()</span></span>.</li>
+<li><span class="docutils literal"><span class="pre">reduce()</span></span> takes a sequence of <span class="docutils literal"><span class="pre">T</span></span> values, an initial value of type
+<span class="docutils literal"><span class="pre">T</span></span>, and an operation which combines two <span class="docutils literal"><span class="pre">T</span></span> values into one
+<span class="docutils literal"><span class="pre">(x:</span> <span class="pre">T,</span> <span class="pre">y:</span> <span class="pre">T)</span> <span class="pre">=&gt;</span> <span class="pre">T</span></span>. It returns a single value <span class="docutils literal"><span class="pre">T</span></span> after combining all the
+elements in the sequence using the operation. It is also known as <span class="docutils literal"><span class="pre">fold()</span></span>,
+<span class="docutils literal"><span class="pre">collect()</span></span>, <span class="docutils literal"><span class="pre">accumulate()</span></span>, <span class="docutils literal"><span class="pre">aggregate()</span></span>.</li>
+<li><span class="docutils literal"><span class="pre">any()</span></span> takes a sequence of <span class="docutils literal"><span class="pre">T</span></span> values and a predicate
+<span class="docutils literal"><span class="pre">(value:</span> <span class="pre">T)</span> <span class="pre">=&gt;</span> <span class="pre">boolean</span></span>. It returns true if any one of the elements of the
+sequence satisfies the predicate.</li>
+<li><span class="docutils literal"><span class="pre">all()</span></span> takes a sequence of <span class="docutils literal"><span class="pre">T</span></span> values and a predicate
+<span class="docutils literal"><span class="pre">(value:</span> <span class="pre">T)</span> <span class="pre">=&gt;</span> <span class="pre">boolean</span></span>. It returns true if all of the elements of the
+sequence satisfy the predicate.</li>
+<li><span class="docutils literal"><span class="pre">none()</span></span> takes a sequence of <span class="docutils literal"><span class="pre">T</span></span> values and a predicate
+<span class="docutils literal"><span class="pre">(value:</span> <span class="pre">T)</span> <span class="pre">=&gt;</span> <span class="pre">boolean</span></span>. It returns true if none of the elements of the
+sequence satisfy the predicate.</li>
+<li><span class="docutils literal"><span class="pre">take()</span></span> takes a sequence of <span class="docutils literal"><span class="pre">T</span></span> values and a number <span class="docutils literal"><span class="pre">n</span></span>. It returns a
+sequence consisting of the first <span class="docutils literal"><span class="pre">n</span></span> elements of the original sequence. It
+is also known as <span class="docutils literal"><span class="pre">limit()</span></span>.</li>
+<li><span class="docutils literal"><span class="pre">drop()</span></span> takes a sequence of <span class="docutils literal"><span class="pre">T</span></span> values and a number <span class="docutils literal"><span class="pre">n</span></span>. It returns a
+sequence consisting of all the elements of the original sequence except the
+first <span class="docutils literal"><span class="pre">n</span></span>. The first <span class="docutils literal"><span class="pre">n</span></span> elements are dropped. It is also known as
+<span class="docutils literal"><span class="pre">skip()</span></span>.</li>
+<li><span class="docutils literal"><span class="pre">zip()</span></span> takes a sequence of <span class="docutils literal"><span class="pre">T</span></span> values and a sequence of <span class="docutils literal"><span class="pre">U</span></span> values. It
+returns a sequence containing pairs of <span class="docutils literal"><span class="pre">T</span></span> and <span class="docutils literal"><span class="pre">U</span></span> values, effectively
+“zipping” together the two sequences.</li>
+</ul>
+<p>There are many more algorithms for sorting, reversing, splitting and
+concatenating sequences. The good news is that, because these algorithms are
+so useful and generally applicable, we don’t need to implement them. Most
+languages have libraries which provide these algorithms and more. For
+JavaScript, there is the <span class="docutils literal"><span class="pre">underscore.js</span></span> package and the <span class="docutils literal"><span class="pre">lodash</span></span>
+package, both providing a plethora of such algorithms (at the time of
+writing, these libraries don’t support iterators, only the JavaScript
+built-in array and object types). In Java, they are found in the
+<span class="docutils literal"><span class="pre">java.util.stream</span> <span class="pre">package</span></span>. In C# they are in the <span class="docutils literal"><span class="pre">System.Linq</span></span>
+namespace. In C++ they are found in the <span class="docutils literal"><span class="pre">&lt;algorithm&gt;</span></span> standard library
+header.</p>
+</div>
+<div class="section" id="algorithms-instead-of-loops">
+<h2>Algorithms Instead of Loops</h2>
+<p>While you might be surprised, a good rule of thumb is to check, whenever you
+find yourself writing a loop, whether there is a library algorithm or a
+pipeline that can do the job. Usually we write loops to process a sequence –
+exactly what the algorithms we talked about do.</p>
+<p>The reason to prefer library algorithms to custom code in loops is that there
+is less opportunity for mistakes: library algorithms are tried and tested,
+implemented efficiently, and the code we end up with is easier to understand
+as the operations are spelled out.</p>
+</div>
+<div class="section" id="implementing-a-fluent-pipeline">
+<h2>Implementing a Fluent Pipeline</h2>
+<p>Most libraries also provide a fluent API to chain algorithms together into a
+pipeline. Fluent APIs are APIs based on method chaining, making the code much
+easier to read. To see the difference between a fluent and a non-fluent API,
+let’s take a look at a simple filter/reduce pipeline.</p>
+<p>Let’s start with a simple implementation of the two algorithms. To implement
+<span class="docutils literal"><span class="pre">filter()</span></span> we can use a generator. We take an <span class="docutils literal"><span class="pre">Itreable&lt;T&gt;</span></span> as the input
+sequence and a predicate from <span class="docutils literal"><span class="pre">T</span></span> to <span class="docutils literal"><span class="pre">boolean</span></span>, and return another
+sequence as an <span class="docutils literal"><span class="pre">IterableIterator&lt;T&gt;</span></span>. <span class="docutils literal"><span class="pre">ItreableIterator</span></span> is the return
+type of all generators in TypeScript. The function will simply traverse the
+sequence and for each element, if the predicate returns true, yield the
+element to the caller:</p>
+<div class="highlight-ts notranslate"><div class="highlight"><pre><span/><span class="kd">function</span> <span class="o">*</span><span class="nx">filter</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">(</span>
+    <span class="nx">items</span>: <span class="kt">Iterable</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="nx">pred</span><span class="o">:</span> <span class="p">(</span><span class="nx">x</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="kr">boolean</span><span class="p">)</span>
+    <span class="o">:</span><span class="nx">IterableIterator</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">item</span> <span class="nx">of</span> <span class="nx">items</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">pred</span><span class="p">(</span><span class="nx">item</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">yield</span> <span class="nx">item</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><span class="docutils literal"><span class="pre">reduce()</span></span> takes an <span class="docutils literal"><span class="pre">Iterable&lt;T&gt;</span></span> as the input sequence and an initial
+value of type <span class="docutils literal"><span class="pre">T</span></span>. It also takes a function <span class="docutils literal"><span class="pre">(T,</span> <span class="pre">T)</span> <span class="pre">=&gt;</span> <span class="pre">T</span></span> which combines
+(reduces) two values of type <span class="docutils literal"><span class="pre">T</span></span> into one. This function iterates over the
+sequence and reduces all the elements to a single value, which it returns:</p>
+<div class="highlight-ts notranslate"><div class="highlight"><pre><span/><span class="kd">function</span> <span class="nx">reduce</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">(</span>
+    <span class="nx">items</span>: <span class="kt">Iterable</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="nx">init</span>: <span class="kt">T</span><span class="p">,</span>
+    <span class="nx">op</span><span class="o">:</span> <span class="p">(</span><span class="nx">x</span>: <span class="kt">T</span><span class="p">,</span> <span class="nx">y</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">T</span><span class="p">)</span>
+    <span class="o">:</span> <span class="nx">T</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">result</span>: <span class="kt">T</span> <span class="o">=</span> <span class="nx">init</span><span class="p">;</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">item</span> <span class="nx">of</span> <span class="nx">items</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">result</span> <span class="o">=</span> <span class="nx">op</span><span class="p">(</span><span class="nx">result</span><span class="p">,</span> <span class="nx">item</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Now let’s look at how we could combine these algorithms into a pipeline which
+sums up all even values of an array. We will pass the array to <span class="docutils literal"><span class="pre">filter()</span></span>
+first, with a predicate which returns true for even numbers. Next, we will
+reduce the resulting sequence using an initial value of 0 and the function
+<span class="docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span> <span class="pre">=&gt;</span> <span class="pre">x</span> <span class="pre">+</span> <span class="pre">y</span></span>:</p>
+<div class="highlight-ts notranslate"><div class="highlight"><pre><span/><span class="kr">const</span> <span class="nx">sequence</span>: <span class="kt">number</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">];</span>
+
+<span class="kr">const</span> <span class="nx">result</span>: <span class="kt">number</span> <span class="o">=</span>
+    <span class="nx">reduce</span><span class="p">(</span>
+        <span class="nx">filter</span><span class="p">(</span>
+            <span class="nx">sequence</span><span class="p">,</span>
+            <span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">value</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="mi">0</span><span class="p">,</span>
+        <span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">x</span> <span class="o">+</span> <span class="nx">y</span><span class="p">);</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">result</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Even though we apply <span class="docutils literal"><span class="pre">filter()</span></span> first, then pass the result to <span class="docutils literal"><span class="pre">reduce()</span></span>,
+if we read the code from left to right, we see <span class="docutils literal"><span class="pre">reduce()</span></span> before
+<span class="docutils literal"><span class="pre">filter()</span></span>. It’s also a bit hard to make sense of which arguments go with
+which function in the pipeline. Fluent APIs make the code much easier to read.
+Currently, all our algorithms take an iterable as the first argument and
+return an iterable. We can use object-oriented programming to improve our API.
+We can put all our algorithms into a class which wraps an iterable. Then we
+can call any of them without explicitly providing an iterable as the first
+argument – the iterable is a member of the class. Let’s do this for
+<span class="docutils literal"><span class="pre">map()</span></span>, <span class="docutils literal"><span class="pre">filter()</span></span>, and <span class="docutils literal"><span class="pre">reduce()</span></span>, by grouping them into a new
+<span class="docutils literal"><span class="pre">FluentIterable&lt;T&gt;</span></span> class wrapping an iterable:</p>
+<div class="highlight-ts notranslate"><div class="highlight"><pre><span/><span class="kr">class</span> <span class="nx">FluentIterable</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="nx">iter</span>: <span class="kt">Iterable</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">;</span>
+
+    <span class="kr">constructor</span><span class="p">(</span><span class="nx">iter</span>: <span class="kt">Iterable</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">iter</span> <span class="o">=</span> <span class="nx">iter</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="o">*</span><span class="nx">map</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">item</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">U</span><span class="p">)</span>
+        <span class="o">:</span> <span class="nx">IterableIterator</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">value</span> <span class="nx">of</span> <span class="k">this</span><span class="p">.</span><span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">yield</span> <span class="nx">func</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="o">*</span><span class="nx">filter</span><span class="p">(</span><span class="nx">pred</span><span class="o">:</span> <span class="p">(</span><span class="nx">item</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="kr">boolean</span><span class="p">)</span>
+        <span class="o">:</span> <span class="nx">IterableIterator</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">value</span> <span class="nx">of</span> <span class="k">this</span><span class="p">.</span><span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">pred</span><span class="p">(</span><span class="nx">value</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">yield</span> <span class="nx">value</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="nx">reduce</span><span class="p">(</span><span class="nx">init</span>: <span class="kt">T</span><span class="p">,</span> <span class="nx">op</span><span class="o">:</span> <span class="p">(</span><span class="nx">x</span>: <span class="kt">T</span><span class="p">,</span> <span class="nx">y</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">T</span><span class="p">)</span>
+        <span class="o">:</span> <span class="nx">T</span> <span class="p">{</span>
+        <span class="kd">let</span> <span class="nx">result</span>: <span class="kt">T</span> <span class="o">=</span> <span class="nx">init</span><span class="p">;</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">value</span> <span class="nx">of</span> <span class="k">this</span><span class="p">.</span><span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">result</span> <span class="o">=</span> <span class="nx">op</span><span class="p">(</span><span class="nx">result</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>We can create a <span class="docutils literal"><span class="pre">FluentIterable&lt;T&gt;</span></span> out of an <span class="docutils literal"><span class="pre">Iterable&lt;T&gt;</span></span>, so we can
+rewrite our filter/reduce pipeline into a more fluent form. We create a
+<span class="docutils literal"><span class="pre">FluentIterable&lt;T&gt;</span></span>, call <span class="docutils literal"><span class="pre">filter()</span></span> on it, then we create a new
+<span class="docutils literal"><span class="pre">FluentIterable&lt;T&gt;</span></span> out of its result, and call <span class="docutils literal"><span class="pre">reduce()</span></span> on it:</p>
+<div class="highlight-ts notranslate"><div class="highlight"><pre><span/><span class="kr">const</span> <span class="nx">sequence</span>: <span class="kt">number</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">];</span>
+
+<span class="kr">const</span> <span class="nx">result</span>: <span class="kt">number</span> <span class="o">=</span>
+    <span class="k">new</span> <span class="nx">FluentIterable</span><span class="p">(</span>
+        <span class="k">new</span> <span class="nx">FluentIterable</span><span class="p">(</span>
+            <span class="nx">sequence</span>
+        <span class="p">).</span><span class="nx">filter</span><span class="p">((</span><span class="nx">value</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">value</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="p">).</span><span class="nx">reduce</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">x</span> <span class="o">+</span> <span class="nx">y</span><span class="p">);</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">result</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Now <span class="docutils literal"><span class="pre">filter()</span></span> appears before <span class="docutils literal"><span class="pre">reduce()</span></span>, and it’s very clear which
+arguments go to which function. The only problem is we need to create a new
+<span class="docutils literal"><span class="pre">FluentIterable&lt;T&gt;</span></span> after each function call. We can improve our API by
+having our <span class="docutils literal"><span class="pre">map()</span></span> and <span class="docutils literal"><span class="pre">filter()</span></span> functions return a <span class="docutils literal"><span class="pre">FluentIterable&lt;T&gt;</span></span>
+instead of the default <span class="docutils literal"><span class="pre">IterableIterator&lt;T&gt;</span></span>. Note we don’t need to change
+<span class="docutils literal"><span class="pre">reduce()</span></span>, because <span class="docutils literal"><span class="pre">reduce()</span></span> returns a single value of type <span class="docutils literal"><span class="pre">T</span></span>, not
+an iterable.</p>
+<p>Since we’re using generators, we can’t simply change the return type. Generators
+exist to provide convenient syntax for functions, but they always return an
+<span class="docutils literal"><span class="pre">IterableIterator&lt;T&gt;</span></span>. What we can do instead is to move the implementations
+to a couple of private methods, <span class="docutils literal"><span class="pre">mapImpl()</span></span> and <span class="docutils literal"><span class="pre">filterImpl()</span></span>, and handle
+the conversion from <span class="docutils literal"><span class="pre">IterableIterator&lt;T&gt;</span></span> to <span class="docutils literal"><span class="pre">FluentIterable&lt;T&gt;</span></span> in the
+public <span class="docutils literal"><span class="pre">map()</span></span> and <span class="docutils literal"><span class="pre">reduce()</span></span> methods:</p>
+<div class="highlight-ts notranslate"><div class="highlight"><pre><span/><span class="kr">class</span> <span class="nx">FluentIterable</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="nx">iter</span>: <span class="kt">Iterable</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">;</span>
+
+    <span class="kr">constructor</span><span class="p">(</span><span class="nx">iter</span>: <span class="kt">Iterable</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">iter</span> <span class="o">=</span> <span class="nx">iter</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nx">map</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">item</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">U</span><span class="p">)</span>
+        <span class="o">:</span> <span class="nx">FluentIterable</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">FluentIterable</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">mapImpl</span><span class="p">(</span><span class="nx">func</span><span class="p">));</span>
+    <span class="p">}</span>
+
+    <span class="kr">private</span> <span class="o">*</span><span class="nx">mapImpl</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">item</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">U</span><span class="p">)</span>
+        <span class="o">:</span> <span class="nx">IterableIterator</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">value</span> <span class="nx">of</span> <span class="k">this</span><span class="p">.</span><span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">yield</span> <span class="nx">func</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="nx">filter</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">pred</span><span class="o">:</span> <span class="p">(</span><span class="nx">item</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="kr">boolean</span><span class="p">)</span>
+        <span class="o">:</span> <span class="nx">FluentIterable</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">FluentIterable</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">filterImpl</span><span class="p">(</span><span class="nx">pred</span><span class="p">));</span>
+    <span class="p">}</span>
+
+    <span class="kr">private</span> <span class="o">*</span><span class="nx">filterImpl</span><span class="p">(</span><span class="nx">pred</span><span class="o">:</span> <span class="p">(</span><span class="nx">item</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="kr">boolean</span><span class="p">)</span>
+        <span class="o">:</span> <span class="nx">IterableIterator</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">value</span> <span class="nx">of</span> <span class="k">this</span><span class="p">.</span><span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">pred</span><span class="p">(</span><span class="nx">value</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">yield</span> <span class="nx">value</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="nx">reduce</span><span class="p">(</span><span class="nx">init</span>: <span class="kt">T</span><span class="p">,</span> <span class="nx">op</span><span class="o">:</span> <span class="p">(</span><span class="nx">x</span>: <span class="kt">T</span><span class="p">,</span> <span class="nx">y</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">T</span><span class="p">)</span>
+        <span class="o">:</span> <span class="nx">T</span> <span class="p">{</span>
+        <span class="kd">let</span> <span class="nx">result</span>: <span class="kt">T</span> <span class="o">=</span> <span class="nx">init</span><span class="p">;</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">value</span> <span class="nx">of</span> <span class="k">this</span><span class="p">.</span><span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">result</span> <span class="o">=</span> <span class="nx">op</span><span class="p">(</span><span class="nx">result</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>With this updated implementation, we can more easily chain the algorithms, as
+each returns a <span class="docutils literal"><span class="pre">FluentIterable</span></span>, which contains all the algorithms as
+methods:</p>
+<div class="highlight-ts notranslate"><div class="highlight"><pre><span/><span class="kr">const</span> <span class="nx">sequence</span>: <span class="kt">number</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">];</span>
+
+<span class="kr">const</span> <span class="nx">result</span>: <span class="kt">number</span> <span class="o">=</span>
+    <span class="k">new</span> <span class="nx">FluentIterable</span><span class="p">(</span><span class="nx">sequence</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">filter</span><span class="p">((</span><span class="nx">value</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">value</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">reduce</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">x</span> <span class="o">+</span> <span class="nx">y</span><span class="p">);</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">result</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Now, in true fluent fashion, the code reads easily from left to right and we
+can chain any number of algorithms that make up our pipeline with a very
+natural syntax. Most algorithm libraries take a similar approach, making it
+as easy as possible to chain multiple algorithms together.</p>
+<p>Depending on the programming language, one downside of a fluent API approach
+is that our <span class="docutils literal"><span class="pre">FluentIterable</span></span> ends up containing all the algorithms, so it is
+difficult to extend - if it is part of a library, calling code can’t easily
+add a new algorithm without modifying the class. C# provides extension
+methods, which enable us to add methods to a class or interface without
+modifying its code. Not all languages have such features though. That being
+said, in most situations you should be using an existing algorithm library,
+not implementing a new one from scratch.</p>
+</div>
+]]></description>
+             <pubDate>Sat, 10 Aug 2019 00:00:00 -0700</pubDate>
+        </item>
+    
         <item>
             <link>http://vladris.com/blog/2019/07/16/a-switchless-state-machine.html</link>
             <guid>http://vladris.com/blog/2019/07/16/a-switchless-state-machine.html</guid>

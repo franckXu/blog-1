@@ -4,6 +4,7 @@ Sitemap
 .. toctree::
    :maxdepth: 1
 
+   2019/08/10/common-algorithms
    2019/07/16/a-switchless-state-machine
    2019/04/28/programming-with-types
    2018/12/31/fold
