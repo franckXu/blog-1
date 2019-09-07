@@ -28,7 +28,7 @@
         <script>window.jQuery || document.write('<script src="../../../_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
         <script src="../../../_static/plugins.js"></script>
         <script src="../../../_static/main.js"></script>
-        <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Common Algorithms" href="../../08/10/common-algorithms.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
+        <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Common Algorithms" href="../../08/10/common-algorithms.html" /><link rel="prev" title="Higher Kinded Types: Monads" href="../07/higher-kinded-types-monads.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
         VERSION:     '1.7.1',
@@ -332,7 +332,7 @@ provide the abstraction to remove the duplicate code. We can pass either
 </div>
 <div class="section" id="functors-and-higher-kinded-types">
 <h2>Functors and Higher Kinded Types</h2>
-<p>What we just talked about in this section are <strong>functors</strong>.</p>
+<p>What we just talked about in this section are <em>functors</em>.</p>
 <p>A functor is a generalization of functions that perform mapping operations. For
 any generic type like <span class="docutils literal"><span class="pre">Box&lt;T&gt;</span></span>, a <span class="docutils literal"><span class="pre">map()</span></span> operation which takes a
 <span class="docutils literal"><span class="pre">Box&lt;T&gt;</span></span> and a function from <span class="docutils literal"><span class="pre">T</span></span> to <span class="docutils literal"><span class="pre">U</span></span> and produces a <span class="docutils literal"><span class="pre">Box&lt;U&gt;</span></span> is a
@@ -345,7 +345,7 @@ an empty circle and <span class="docutils literal"><span class="pre">U</span></s
 the result back into an <span class="docutils literal"><span class="pre">H&lt;U&gt;</span></span>.</p>
 <p>Functors are extremely powerful concepts, but most mainstream languages do not
 have a good way to express them. That’s because the general definition of a
-functor relies on <strong>higher kinded types</strong>.</p>
+functor relies on <em>higher kinded types</em>.</p>
 <p>A generic type is a type which has a type parameter, for example a generic type
 <span class="docutils literal"><span class="pre">T</span></span>, or a type like <span class="docutils literal"><span class="pre">Box&lt;T&gt;</span></span>, have a type parameter <span class="docutils literal"><span class="pre">T</span></span>. A higher kinded
 type, just like a higher-order function, represents a type parameter with
@@ -474,7 +474,7 @@ generics which themselves have type parameters</li>
         
         
         </div><ul class="related clearfix">
-            <li class="left"></li>
+            <li class="left"> &laquo; <a href="../07/higher-kinded-types-monads.html">Higher Kinded Types: Monads</a></li>
             <li class="right"><a href="../../08/10/common-algorithms.html">Common Algorithms</a> &raquo; </li>
         </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "vladris";    var disqus_identifier = "2019/09/06/higher-kinded-types-functors";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article></div> <!-- #main --></div> <!-- #main-container -->
 

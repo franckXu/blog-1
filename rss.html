@@ -5,8 +5,514 @@
         <link>http://vladris.com/blog/</link>
         <description></description>
         <language>en-us</language>
-        <pubDate>Fri, 06 Sep 2019 00:00:00 -0700</pubDate>
+        <pubDate>Sat, 07 Sep 2019 00:00:00 -0700</pubDate>
         
+        <item>
+            <link>http://vladris.com/blog/2019/09/07/higher-kinded-types-monads.html</link>
+            <guid>http://vladris.com/blog/2019/09/07/higher-kinded-types-monads.html</guid>
+            <title><![CDATA[Higher Kinded Types: Monads]]></title>
+            <description><![CDATA[<h1>Higher Kinded Types: Monads</h1>
+<p>This blog post is an excerpt from my book, <a class="reference external" href="https://www.manning.com/books/programming-with-types">Programming with Types</a>. The code samples
+are in TypeScript. If you enjoy the article, you can use the discount code
+<strong>vlri40</strong> for a 40% discount on the book.</p>
+<p>Make sure to read the previous post first,
+<a class="reference external" href="https://vladris.com/blog/2019/09/06/higher-kinded-types-functors.html">Higher Kinded Types: Functors</a>.</p>
+<div class="section" id="monads">
+<h2>Monads</h2>
+<p>You have probably heard the term <em>monad</em>, as it’s been getting a lot of
+attention lately. Monads are making their way into mainstream programming, so
+you should know one when you see it. Building on the previous blog post, in this
+post we will explain what a monad is and how it is useful. We’ll start
+with a few examples and then look at the general definition.</p>
+</div>
+<div class="section" id="result-or-error">
+<h2>Result or Error</h2>
+<p>In the previous post, we had a <span class="docutils literal"><span class="pre">readNumber()</span></span> function that returned
+<span class="docutils literal"><span class="pre">number</span> <span class="pre">|</span> <span class="pre">undefined</span></span>. We used functors to sequence processing with
+<span class="docutils literal"><span class="pre">square()</span></span> and <span class="docutils literal"><span class="pre">stringify()</span></span>, so that if <span class="docutils literal"><span class="pre">readNumber()</span></span> returns
+<span class="docutils literal"><span class="pre">undefined</span></span>, no processing happens, and the <span class="docutils literal"><span class="pre">undefined</span></span> is propagated
+through the pipeline.</p>
+<p>This type of sequencing works with functors as long as only the first
+function - in this case, <span class="docutils literal"><span class="pre">readNumber()</span></span> - can return an error. But what
+happens if any of the functions we want to chain can error out? Let’s say
+that we want to open a file, read its content as a <span class="docutils literal"><span class="pre">string</span></span>, and  then
+deserialize that string into a <span class="docutils literal"><span class="pre">Cat</span></span> object.</p>
+<p>We have an <span class="docutils literal"><span class="pre">openFile()</span></span> function that returns an <span class="docutils literal"><span class="pre">Error</span></span> or a
+<span class="docutils literal"><span class="pre">FileHandle</span></span>. Errors can occur if the file doesn’t exist, if it is locked by
+another process, or if the user doesn’t have permission to open it. If the
+operation succeeds, we get back a handle to the file.</p>
+<p>We have a <span class="docutils literal"><span class="pre">readFile()</span></span> function that takes a <span class="docutils literal"><span class="pre">FileHandle</span></span> and returns ether
+an <span class="docutils literal"><span class="pre">Error</span></span> or a <span class="docutils literal"><span class="pre">string</span></span>. Errors can occur if the file can’t be read,
+perhaps due to being too large to fit in memory. If the file can be read, we get
+back a <span class="docutils literal"><span class="pre">string</span></span>.</p>
+<p>Finally, <span class="docutils literal"><span class="pre">deserializeCat()</span></span> function takes a <span class="docutils literal"><span class="pre">string</span></span> and returns an
+<span class="docutils literal"><span class="pre">Error</span></span> or a <span class="docutils literal"><span class="pre">Cat</span></span> instance. Errors can occur if the string can’t be
+deserialized into a <span class="docutils literal"><span class="pre">Cat</span></span> object, perhaps due to missing properties.</p>
+<p>All these functions follow the “return result or error” pattern, which suggests
+returning either a valid result or an error from a function, but not both. The
+return type will be an <span class="docutils literal"><span class="pre">Either&lt;Error,</span> <span class="pre">...&gt;</span></span>:</p>
+<div class="highlight-ts notranslate"><div class="highlight"><pre><span/><span class="kr">declare</span> <span class="kd">function</span> <span class="nx">openFile</span><span class="p">(</span>
+    <span class="nx">path</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="nx">Either</span><span class="o">&lt;</span><span class="nb">Error</span><span class="p">,</span> <span class="nx">FileHandle</span><span class="o">&gt;</span><span class="p">;</span>
+
+<span class="kr">declare</span> <span class="kd">function</span> <span class="nx">readFile</span><span class="p">(</span>
+    <span class="nx">handle</span>: <span class="kt">FileHandle</span><span class="p">)</span><span class="o">:</span> <span class="nx">Either</span><span class="o">&lt;</span><span class="nb">Error</span><span class="p">,</span> <span class="kt">string</span><span class="o">&gt;</span><span class="p">;</span>
+
+<span class="kr">declare</span> <span class="kd">function</span> <span class="nx">deserializeCat</span><span class="p">(</span>
+    <span class="nx">serializedCat</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="nx">Either</span><span class="o">&lt;</span><span class="nb">Error</span><span class="p">,</span> <span class="nx">Cat</span><span class="o">&gt;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>We are omitting the implementations, as they are not important. Let’s also
+quickly see the implementation of <span class="docutils literal"><span class="pre">Either</span></span>:</p>
+<div class="highlight-ts notranslate"><div class="highlight"><pre><span/><span class="kr">class</span> <span class="nx">Either</span><span class="o">&lt;</span><span class="nx">TLeft</span><span class="p">,</span> <span class="nx">TRight</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="kr">private</span> <span class="nx">readonly</span> <span class="nx">value</span>: <span class="kt">TLeft</span> <span class="o">|</span> <span class="nx">TRight</span><span class="p">;</span>
+    <span class="kr">private</span> <span class="nx">readonly</span> <span class="nx">left</span>: <span class="kt">boolean</span><span class="p">;</span>
+
+    <span class="kr">private</span> <span class="kr">constructor</span><span class="p">(</span><span class="nx">value</span>: <span class="kt">TLeft</span> <span class="o">|</span> <span class="nx">TRight</span><span class="p">,</span> <span class="nx">left</span>: <span class="kt">boolean</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">left</span> <span class="o">=</span> <span class="nx">left</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nx">isLeft</span><span class="p">()</span><span class="o">:</span> <span class="kr">boolean</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">left</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nx">getLeft</span><span class="p">()</span><span class="o">:</span> <span class="nx">TLeft</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">isLeft</span><span class="p">())</span> <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">();</span>
+
+        <span class="k">return</span> <span class="o">&lt;</span><span class="nx">TLeft</span><span class="o">&gt;</span><span class="k">this</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nx">isRight</span><span class="p">()</span><span class="o">:</span> <span class="kr">boolean</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">left</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nx">getRight</span><span class="p">()</span><span class="o">:</span> <span class="nx">TRight</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">isRight</span><span class="p">())</span> <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">();</span>
+
+        <span class="k">return</span> <span class="o">&lt;</span><span class="nx">TRight</span><span class="o">&gt;</span><span class="k">this</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kr">static</span> <span class="nx">makeLeft</span><span class="o">&lt;</span><span class="nx">TLeft</span><span class="p">,</span> <span class="nx">TRight</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">value</span>: <span class="kt">TLeft</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">Either</span><span class="o">&lt;</span><span class="nx">TLeft</span><span class="p">,</span> <span class="nx">TRight</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="kr">static</span> <span class="nx">makeRight</span><span class="o">&lt;</span><span class="nx">TLeft</span><span class="p">,</span> <span class="nx">TRight</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">value</span>: <span class="kt">TRight</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">Either</span><span class="o">&lt;</span><span class="nx">TLeft</span><span class="p">,</span> <span class="nx">TRight</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The type wraps a value of either <span class="docutils literal"><span class="pre">TLeft</span></span> or <span class="docutils literal"><span class="pre">TRight</span></span> and a flag to keep
+track of that type is used. It has a private constructor, as we need to make
+sure that the value and boolean flag are in sync. Attempting to get a <span class="docutils literal"><span class="pre">TLeft</span></span>
+when we have a <span class="docutils literal"><span class="pre">TRight</span></span>, or vice versa, throws an error. The factory
+functions call the constructor and ensure that the boolean flag is consistent
+with the value.</p>
+<p>Now let’s see how we could chain these functions together into a
+<span class="docutils literal"><span class="pre">readCatFromFile()</span></span> function that takes a file path as an argument and returns
+an <span class="docutils literal"><span class="pre">Error</span></span> if anything went wrong along the way, or a <span class="docutils literal"><span class="pre">Cat</span></span> instance:</p>
+<div class="highlight-ts notranslate"><div class="highlight"><pre><span/><span class="kd">function</span> <span class="nx">readCatFromFile</span><span class="p">(</span><span class="nx">path</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="nx">Either</span><span class="o">&lt;</span><span class="nb">Error</span><span class="p">,</span> <span class="nx">Cat</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">handle</span>: <span class="kt">Either</span><span class="o">&lt;</span><span class="nb">Error</span><span class="p">,</span> <span class="nx">FileHandle</span><span class="o">&gt;</span> <span class="o">=</span> <span class="nx">openFile</span><span class="p">(</span><span class="nx">path</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">handle</span><span class="p">.</span><span class="nx">isLeft</span><span class="p">())</span> <span class="k">return</span> <span class="nx">Either</span><span class="p">.</span><span class="nx">makeLeft</span><span class="p">(</span><span class="nx">handle</span><span class="p">.</span><span class="nx">getLeft</span><span class="p">());</span>
+
+    <span class="kd">let</span> <span class="nx">content</span>: <span class="kt">Either</span><span class="o">&lt;</span><span class="nb">Error</span><span class="p">,</span> <span class="kt">string</span><span class="o">&gt;</span> <span class="o">=</span> <span class="nx">readFile</span><span class="p">(</span><span class="nx">handle</span><span class="p">.</span><span class="nx">getRight</span><span class="p">());</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">isLeft</span><span class="p">())</span> <span class="k">return</span> <span class="nx">Either</span><span class="p">.</span><span class="nx">makeLeft</span><span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">getLeft</span><span class="p">());</span>
+
+    <span class="k">return</span> <span class="nx">deserializeCat</span><span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">getRight</span><span class="p">());</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This function is very similar to the first implementation of <span class="docutils literal"><span class="pre">process()</span></span> in
+the previous blog post. There, we provided an updated implementation that
+removed all the branching and error checking from the function and delegated
+those tasks to <span class="docutils literal"><span class="pre">map()</span></span>. Let’s see what a <span class="docutils literal"><span class="pre">map()</span></span> for
+<span class="docutils literal"><span class="pre">Either&lt;TLeft,</span> <span class="pre">TRight&gt;</span></span> would look like. We will follow the convention
+“Right is right; left is error”, which means that <span class="docutils literal"><span class="pre">TLeft</span></span> contains an error,
+so <span class="docutils literal"><span class="pre">map()</span></span> will just propagate it. <span class="docutils literal"><span class="pre">map()</span></span> will apply a given function only
+if the <span class="docutils literal"><span class="pre">Either</span></span> contains a <span class="docutils literal"><span class="pre">TRight</span></span>:</p>
+<div class="highlight-ts notranslate"><div class="highlight"><pre><span/><span class="nx">namespace</span> <span class="nx">Either</span> <span class="p">{</span>
+    <span class="kr">export</span> <span class="kd">function</span> <span class="nx">map</span><span class="o">&lt;</span><span class="nx">TLeft</span><span class="p">,</span> <span class="nx">TRight</span><span class="p">,</span> <span class="nx">URight</span><span class="o">&gt;</span><span class="p">(</span>
+        <span class="nx">value</span>: <span class="kt">Either</span><span class="o">&lt;</span><span class="nx">TLeft</span><span class="p">,</span> <span class="nx">TRight</span><span class="o">&gt;</span><span class="p">,</span>
+        <span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">TRight</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">URight</span><span class="p">)</span><span class="o">:</span> <span class="nx">Either</span><span class="o">&lt;</span><span class="nx">TLeft</span><span class="p">,</span> <span class="nx">URight</span><span class="o">&gt;</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">value</span><span class="p">.</span><span class="nx">isLeft</span><span class="p">())</span> <span class="k">return</span> <span class="nx">Either</span><span class="p">.</span><span class="nx">makeLeft</span><span class="p">(</span><span class="nx">value</span><span class="p">.</span><span class="nx">getLeft</span><span class="p">());</span>
+
+        <span class="k">return</span> <span class="nx">Either</span><span class="p">.</span><span class="nx">makeRight</span><span class="p">(</span><span class="nx">func</span><span class="p">(</span><span class="nx">value</span><span class="p">.</span><span class="nx">getRight</span><span class="p">()));</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>There is a problem with using <span class="docutils literal"><span class="pre">map()</span></span>, though: the types of the functions it
+expects as argument is incompatible with the functions we are using. With
+<span class="docutils literal"><span class="pre">map()</span></span>, after we call <span class="docutils literal"><span class="pre">openFile()</span></span> and get back an
+<span class="docutils literal"><span class="pre">Either&lt;Error,</span> <span class="pre">FileHandle&gt;</span></span>, we would need a function
+<span class="docutils literal"><span class="pre">(value:</span> <span class="pre">FileHandle)</span> <span class="pre">=&gt;</span> <span class="pre">string</span></span> to read its content. That function can’t
+itself return an <span class="docutils literal"><span class="pre">Error</span></span>, like <span class="docutils literal"><span class="pre">square()</span></span> or <span class="docutils literal"><span class="pre">stringify()</span></span>. But in our
+case, <span class="docutils literal"><span class="pre">readFile()</span></span> itself can fail, so it doesn’t return <span class="docutils literal"><span class="pre">string</span></span>, it
+returns <span class="docutils literal"><span class="pre">Either&lt;Error,</span> <span class="pre">string&gt;</span></span>. If we attempt to use it in our
+<span class="docutils literal"><span class="pre">readCatFromFile()</span></span>, we get a compilation error:</p>
+<div class="highlight-ts notranslate"><div class="highlight"><pre><span/><span class="kd">function</span> <span class="nx">readCatFromFile</span><span class="p">(</span><span class="nx">path</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="nx">Either</span><span class="o">&lt;</span><span class="nb">Error</span><span class="p">,</span> <span class="nx">Cat</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">handle</span>: <span class="kt">Either</span><span class="o">&lt;</span><span class="nb">Error</span><span class="p">,</span> <span class="nx">FileHandle</span><span class="o">&gt;</span> <span class="o">=</span> <span class="nx">openFile</span><span class="p">(</span><span class="nx">path</span><span class="p">);</span>
+
+    <span class="kd">let</span> <span class="nx">content</span>: <span class="kt">Either</span><span class="o">&lt;</span><span class="nb">Error</span><span class="p">,</span> <span class="kt">string</span><span class="o">&gt;</span> <span class="o">=</span> <span class="nx">Either</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">handle</span><span class="p">,</span> <span class="nx">readFile</span><span class="p">);</span>
+
+    <span class="cm">/* ... */</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This fails to compile due to a type mismatch. The error message we get is</p>
+<blockquote>
+<div><span class="docutils literal"><span class="pre">Type</span> <span class="pre">'Either&lt;Error,</span> <span class="pre">Either&lt;Error,</span> <span class="pre">string&gt;&gt;'</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">assignable</span> <span class="pre">to</span> <span class="pre">type</span>
+<span class="pre">'Either&lt;Error,</span> <span class="pre">string&gt;'.</span></span></div></blockquote>
+<p>Our functor falls short here. Functors can propagate an initial error through
+the processing pipeline, but if every step in the pipeline can fail, functors
+no longer work. In the following figure, the black square represents an
+<span class="docutils literal"><span class="pre">Error</span></span>, and the white and black circles represent two types, such as
+<span class="docutils literal"><span class="pre">FileHandle</span></span> and <span class="docutils literal"><span class="pre">string</span></span>.</p>
+<img alt="../../../_images/bind1.png" class="align-center" src="http://vladris.com/blog/_images/bind1.png"/>
+<p>We can’t use a functor in this case because the functor is defined to map a
+function from a white circle to a black circle. Unfortunately, our function
+returns a type already wrapped in an <span class="docutils literal"><span class="pre">Either</span></span> (an
+<span class="docutils literal"><span class="pre">Either&lt;black</span> <span class="pre">square,</span> <span class="pre">black</span> <span class="pre">circle&gt;</span></span>). We need an alternative to <span class="docutils literal"><span class="pre">map()</span></span>
+that can deal with this type of function.</p>
+<p><span class="docutils literal"><span class="pre">map()</span></span> from <span class="docutils literal"><span class="pre">Either&lt;Error,</span> <span class="pre">FileHandle&gt;</span></span> would need a function from
+<span class="docutils literal"><span class="pre">FileHandle</span></span> to <span class="docutils literal"><span class="pre">string</span></span> to produce an <span class="docutils literal"><span class="pre">Either&lt;Error,</span> <span class="pre">string&gt;</span></span>. Our
+<span class="docutils literal"><span class="pre">readFile()</span></span> function, on the other hand, is from <span class="docutils literal"><span class="pre">FileHandle</span></span> to
+<span class="docutils literal"><span class="pre">Either&lt;Error,</span> <span class="pre">string&gt;</span></span>.</p>
+<p>This problem is easy to fix. We need a function similar to <span class="docutils literal"><span class="pre">map()</span></span> that goes
+from <span class="docutils literal"><span class="pre">T</span></span> to <span class="docutils literal"><span class="pre">Either&lt;Error,</span> <span class="pre">U&gt;</span></span>. The standard name for such a function is
+<span class="docutils literal"><span class="pre">bind()</span></span>:</p>
+<div class="highlight-ts notranslate"><div class="highlight"><pre><span/><span class="nx">namespace</span> <span class="nx">Either</span> <span class="p">{</span>
+    <span class="kr">export</span> <span class="kd">function</span> <span class="nx">bind</span><span class="o">&lt;</span><span class="nx">TLeft</span><span class="p">,</span> <span class="nx">TRight</span><span class="p">,</span> <span class="nx">URight</span><span class="o">&gt;</span><span class="p">(</span>
+        <span class="nx">value</span>: <span class="kt">Either</span><span class="o">&lt;</span><span class="nx">TLeft</span><span class="p">,</span> <span class="nx">TRight</span><span class="o">&gt;</span><span class="p">,</span>
+        <span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">TRight</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">Either</span><span class="o">&lt;</span><span class="nx">TLeft</span><span class="p">,</span> <span class="nx">URight</span><span class="o">&gt;</span>
+        <span class="p">)</span><span class="o">:</span> <span class="nx">Either</span><span class="o">&lt;</span><span class="nx">TLeft</span><span class="p">,</span> <span class="nx">URight</span><span class="o">&gt;</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">value</span><span class="p">.</span><span class="nx">isLeft</span><span class="p">())</span> <span class="k">return</span> <span class="nx">Either</span><span class="p">.</span><span class="nx">makeLeft</span><span class="p">(</span><span class="nx">value</span><span class="p">.</span><span class="nx">getLeft</span><span class="p">());</span>
+
+        <span class="k">return</span> <span class="nx">func</span><span class="p">(</span><span class="nx">value</span><span class="p">.</span><span class="nx">getRight</span><span class="p">());</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><span class="docutils literal"><span class="pre">func()</span></span> has a different type from the <span class="docutils literal"><span class="pre">func()</span></span> in <span class="docutils literal"><span class="pre">map()</span></span>. We can simply
+return the result of <span class="docutils literal"><span class="pre">func()</span></span>, as it has the same type as the result of
+<span class="docutils literal"><span class="pre">bind()</span></span>.</p>
+<p>As we can see, the implementation is even simpler than the one for <span class="docutils literal"><span class="pre">map()</span></span>:
+after we unpack the value, we simply return the result of applying <span class="docutils literal"><span class="pre">func()</span></span> to
+it. Let’s use <span class="docutils literal"><span class="pre">bind()</span></span> to implement our <span class="docutils literal"><span class="pre">readCatFromFile()</span></span> function and get
+the desired branchless error propagation behavior:</p>
+<div class="highlight-ts notranslate"><div class="highlight"><pre><span/><span class="kd">function</span> <span class="nx">readCatFromFile</span><span class="p">(</span><span class="nx">path</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="nx">Either</span><span class="o">&lt;</span><span class="nb">Error</span><span class="p">,</span> <span class="nx">Cat</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">handle</span>: <span class="kt">Either</span><span class="o">&lt;</span><span class="nb">Error</span><span class="p">,</span> <span class="nx">FileHandle</span><span class="o">&gt;</span> <span class="o">=</span> <span class="nx">openFile</span><span class="p">(</span><span class="nx">path</span><span class="p">)</span>
+
+    <span class="kd">let</span> <span class="nx">content</span>: <span class="kt">Either</span><span class="o">&lt;</span><span class="nb">Error</span><span class="p">,</span> <span class="kt">string</span><span class="o">&gt;</span> <span class="o">=</span>
+        <span class="nx">Either</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">handle</span><span class="p">,</span> <span class="nx">readFile</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nx">Either</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">content</span><span class="p">,</span> <span class="nx">deserializeCat</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Unlike the <span class="docutils literal"><span class="pre">map()</span></span> version, this code works. Applying <span class="docutils literal"><span class="pre">readFile()</span></span> to
+<span class="docutils literal"><span class="pre">handle</span></span> gives us back an <span class="docutils literal"><span class="pre">Either&lt;Error,</span> <span class="pre">string&gt;</span></span>. <span class="docutils literal"><span class="pre">deserializeCat()</span></span> has
+the same return type as <span class="docutils literal"><span class="pre">readCatFromFile()</span></span>, so we simply return the result
+of <span class="docutils literal"><span class="pre">bind()</span></span>.</p>
+<p>This version seamlessly chains together <span class="docutils literal"><span class="pre">openFile()</span></span>, <span class="docutils literal"><span class="pre">readFile()</span></span>, and
+<span class="docutils literal"><span class="pre">deserializeCat()</span></span> so that if any of the functions fails, the error gets
+propagated as the result of <span class="docutils literal"><span class="pre">readCatFromFile()</span></span>. Again, branching is
+encapsulated in the <span class="docutils literal"><span class="pre">bind()</span></span> implementation, so our processing function is
+linear.</p>
+</div>
+<div class="section" id="difference-between-map-and-bind">
+<h2>Difference between map() and bind()</h2>
+<p>Before moving on to define monads, let’s take another simplified example and
+contrast <span class="docutils literal"><span class="pre">map()</span></span> and <span class="docutils literal"><span class="pre">bind()</span></span>. We’ll again use <span class="docutils literal"><span class="pre">Box&lt;T&gt;</span></span>, a generic type
+that simply wraps a value of type <span class="docutils literal"><span class="pre">T</span></span>. Although this type is not particularly
+useful, it is the simplest generic type we can have. We want to focus on how
+<span class="docutils literal"><span class="pre">map()</span></span> and <span class="docutils literal"><span class="pre">bind()</span></span> work with values of types <span class="docutils literal"><span class="pre">T</span></span> and <span class="docutils literal"><span class="pre">U</span></span> in some
+generic context, such as <span class="docutils literal"><span class="pre">Box&lt;T&gt;</span></span>, <span class="docutils literal"><span class="pre">Box&lt;U&gt;</span></span> (or <span class="docutils literal"><span class="pre">T[]</span></span>, <span class="docutils literal"><span class="pre">U[]</span></span>; or
+<span class="docutils literal"><span class="pre">Optional&lt;T&gt;</span></span>, <span class="docutils literal"><span class="pre">Optional&lt;U&gt;</span></span>; or <span class="docutils literal"><span class="pre">Either&lt;Error,</span> <span class="pre">T&gt;</span></span>, <span class="docutils literal"><span class="pre">Either&lt;Error,</span> <span class="pre">U&gt;</span></span>
+etc.).</p>
+<p>For a <span class="docutils literal"><span class="pre">Box&lt;T&gt;</span></span>, a functor (<span class="docutils literal"><span class="pre">map()</span></span>) takes a <span class="docutils literal"><span class="pre">Box&lt;T&gt;</span></span> and a function from
+<span class="docutils literal"><span class="pre">T</span></span> to <span class="docutils literal"><span class="pre">U</span></span> and returns a <span class="docutils literal"><span class="pre">Box&lt;U&gt;</span></span>. The problem is that we have scenarios
+in which our functions are directly from <span class="docutils literal"><span class="pre">T</span></span> to <span class="docutils literal"><span class="pre">Box&lt;U&gt;</span></span>. This is what
+<span class="docutils literal"><span class="pre">bind()</span></span> is for. <span class="docutils literal"><span class="pre">bind()</span></span> takes a <span class="docutils literal"><span class="pre">Box&lt;T&gt;</span></span> and a function from <span class="docutils literal"><span class="pre">T</span></span> to
+<span class="docutils literal"><span class="pre">Box&lt;U&gt;</span></span> and returns the result of applying the function to the <span class="docutils literal"><span class="pre">T</span></span> inside
+<span class="docutils literal"><span class="pre">Box&lt;T&gt;</span></span>.</p>
+<img alt="../../../_images/bind2.png" class="align-center" src="http://vladris.com/blog/_images/bind2.png"/>
+<p>If we have a function <span class="docutils literal"><span class="pre">stringify()</span></span> that takes a <span class="docutils literal"><span class="pre">number</span></span> and returns its
+<span class="docutils literal"><span class="pre">string</span></span> representation, we can <span class="docutils literal"><span class="pre">map()</span></span> it on a <span class="docutils literal"><span class="pre">Box&lt;number&gt;</span></span> and get back
+a <span class="docutils literal"><span class="pre">Box&lt;string&gt;</span></span>:</p>
+<div class="highlight-ts notranslate"><div class="highlight"><pre><span/><span class="nx">namespace</span> <span class="nx">Box</span> <span class="p">{</span>
+    <span class="kr">export</span> <span class="kd">function</span> <span class="nx">map</span><span class="o">&lt;</span><span class="nx">T</span><span class="p">,</span> <span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span>
+        <span class="nx">box</span>: <span class="kt">Box</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">,</span>
+        <span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">U</span><span class="p">)</span><span class="o">:</span> <span class="nx">Box</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">Box</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">func</span><span class="p">(</span><span class="nx">box</span><span class="p">.</span><span class="nx">value</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">stringify</span><span class="p">(</span><span class="nx">value</span>: <span class="kt">number</span><span class="p">)</span><span class="o">:</span> <span class="kt">string</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">value</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kr">const</span> <span class="nx">s</span>: <span class="kt">Box</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">&gt;</span>
+    <span class="o">=</span> <span class="nx">Box</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="k">new</span> <span class="nx">Box</span><span class="p">(</span><span class="mi">42</span><span class="p">),</span> <span class="nx">stringify</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>If instead of <span class="docutils literal"><span class="pre">stringify()</span></span>, which goes from <span class="docutils literal"><span class="pre">number</span></span> to <span class="docutils literal"><span class="pre">string</span></span>, we have
+a <span class="docutils literal"><span class="pre">boxify()</span></span> function that goes from <span class="docutils literal"><span class="pre">number</span></span> directly to <span class="docutils literal"><span class="pre">Box&lt;string&gt;`</span></span>,
+<span class="docutils literal"><span class="pre">map()</span></span> won’t work. We’ll need <span class="docutils literal"><span class="pre">bind()</span></span> instead:</p>
+<div class="highlight-ts notranslate"><div class="highlight"><pre><span/><span class="nx">namespace</span> <span class="nx">Box</span> <span class="p">{</span>
+    <span class="kr">export</span> <span class="kd">function</span> <span class="nx">bind</span><span class="o">&lt;</span><span class="nx">T</span><span class="p">,</span> <span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span>
+        <span class="nx">box</span>: <span class="kt">Box</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">,</span>
+        <span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">Box</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span><span class="p">)</span><span class="o">:</span> <span class="nx">Box</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">func</span><span class="p">(</span><span class="nx">box</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">boxify</span><span class="p">(</span><span class="nx">value</span>: <span class="kt">number</span><span class="p">)</span><span class="o">:</span> <span class="nx">Box</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">Box</span><span class="p">(</span><span class="nx">value</span><span class="p">.</span><span class="nx">toString</span><span class="p">());</span>
+<span class="p">}</span>
+
+<span class="kr">const</span> <span class="nx">b</span>: <span class="kt">Box</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">&gt;</span> <span class="o">=</span>
+    <span class="nx">Box</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">new</span> <span class="nx">Box</span><span class="p">(</span><span class="mi">42</span><span class="p">),</span> <span class="nx">boxify</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The result of both <span class="docutils literal"><span class="pre">map()</span></span> and <span class="docutils literal"><span class="pre">bind()</span></span> is still a <span class="docutils literal"><span class="pre">Box&lt;string&gt;</span></span>. We still
+go from <span class="docutils literal"><span class="pre">Box&lt;T&gt;</span></span> to <span class="docutils literal"><span class="pre">Box&lt;U&gt;</span></span>; the difference is how we get there. In the
+<span class="docutils literal"><span class="pre">map()</span></span> case, we need a function from <span class="docutils literal"><span class="pre">T</span></span> to <span class="docutils literal"><span class="pre">U</span></span>. In the <span class="docutils literal"><span class="pre">bind()</span></span> case,
+we need a function from <span class="docutils literal"><span class="pre">T</span></span> to <span class="docutils literal"><span class="pre">Box&lt;U&gt;</span></span>.</p>
+</div>
+<div class="section" id="the-monad-pattern">
+<h2>The Monad Pattern</h2>
+<p>A monad consists of <span class="docutils literal"><span class="pre">bind()</span></span> and one more, simpler function. This other
+function takes a type <span class="docutils literal"><span class="pre">T</span></span> and wraps it into the generic type, such as
+<span class="docutils literal"><span class="pre">Box&lt;T&gt;</span></span>, <span class="docutils literal"><span class="pre">T[]</span></span>, <span class="docutils literal"><span class="pre">Optional&lt;T&gt;</span></span>, or <span class="docutils literal"><span class="pre">Either&lt;Error,</span> <span class="pre">T&gt;</span></span>.  This function
+is usually called <span class="docutils literal"><span class="pre">return()</span></span> or <span class="docutils literal"><span class="pre">unit()</span></span>.</p>
+<p>A monad allows structuring programs generically while encapsulating away
+boilerplate code needed by the program logic. With monads, a sequence of
+function calls can be expressed as a pipeline that abstracts away data
+management, control flow, or side effects.</p>
+<p>Let’s look at a few examples of monads. We can start with our simple <span class="docutils literal"><span class="pre">Box&lt;T&gt;</span></span>
+type and add <span class="docutils literal"><span class="pre">unit()</span></span> to it to complete the monad:</p>
+<div class="highlight-ts notranslate"><div class="highlight"><pre><span/><span class="nx">namespace</span> <span class="nx">Box</span> <span class="p">{</span>
+    <span class="kr">export</span> <span class="kd">function</span> <span class="nx">unit</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span><span class="o">:</span> <span class="nx">Box</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">Box</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="kr">export</span> <span class="kd">function</span> <span class="nx">bind</span><span class="o">&lt;</span><span class="nx">T</span><span class="p">,</span> <span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span>
+        <span class="nx">box</span>: <span class="kt">Box</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">,</span>
+        <span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">Box</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span><span class="p">)</span><span class="o">:</span> <span class="nx">Box</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">func</span><span class="p">(</span><span class="nx">box</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><span class="docutils literal"><span class="pre">unit()</span></span> simply calls <span class="docutils literal"><span class="pre">Box</span></span>’s constructor to wrap the given value into an
+instance of <span class="docutils literal"><span class="pre">Box&lt;T&gt;</span></span>. <span class="docutils literal"><span class="pre">bind()</span></span> unpacks the value from <span class="docutils literal"><span class="pre">Box</span></span> and calls
+<span class="docutils literal"><span class="pre">func()</span></span> on it.</p>
+<p>The implementation is very straightforward. Let’s look at the <span class="docutils literal"><span class="pre">Optional&lt;T&gt;</span></span>
+monad functions:</p>
+<div class="highlight-ts notranslate"><div class="highlight"><pre><span/><span class="nx">namespace</span> <span class="nx">Optional</span> <span class="p">{</span>
+    <span class="kr">export</span> <span class="kd">function</span> <span class="nx">unit</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span><span class="o">:</span> <span class="nx">Optional</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">Optional</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="kr">export</span> <span class="kd">function</span> <span class="nx">bind</span><span class="o">&lt;</span><span class="nx">T</span><span class="p">,</span> <span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span>
+        <span class="nx">optional</span>: <span class="kt">Optional</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">,</span>
+        <span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">Optional</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span><span class="p">)</span><span class="o">:</span> <span class="nx">Optional</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">optional</span><span class="p">.</span><span class="nx">hasValue</span><span class="p">())</span> <span class="k">return</span> <span class="k">new</span> <span class="nx">Optional</span><span class="p">();</span>
+
+        <span class="k">return</span> <span class="nx">func</span><span class="p">(</span><span class="nx">optional</span><span class="p">.</span><span class="nx">getValue</span><span class="p">());</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><span class="docutils literal"><span class="pre">unit()</span></span> takes a value of type <span class="docutils literal"><span class="pre">T</span></span> and wraps it into an <span class="docutils literal"><span class="pre">Optional&lt;T&gt;</span></span>.
+If the optional is empty, <span class="docutils literal"><span class="pre">bind()</span></span> returns an empty optional of type
+<span class="docutils literal"><span class="pre">Optional&lt;U&gt;</span></span>. If the optional contains a value, <span class="docutils literal"><span class="pre">bind()</span></span> return the
+result of calling <span class="docutils literal"><span class="pre">func()</span></span> on it.</p>
+<p>Very much as with functors, if a programming language can’t express higher
+kinded types, we don’t have a good way to specify a <span class="docutils literal"><span class="pre">Monad</span></span> interface.
+Instead, let’s think of monads as a pattern:</p>
+<blockquote>
+<div>A monad is a generic type <span class="docutils literal"><span class="pre">H&lt;T&gt;</span></span> for which we have a function like
+<span class="docutils literal"><span class="pre">unit()</span></span>, that takes a value of type <span class="docutils literal"><span class="pre">T</span></span> and returns a value of
+type <span class="docutils literal"><span class="pre">H&lt;T&gt;</span></span>, and a function like <span class="docutils literal"><span class="pre">bind()</span></span> that takes a value of
+type <span class="docutils literal"><span class="pre">H&lt;T&gt;</span></span> and a function from <span class="docutils literal"><span class="pre">T</span></span> to <span class="docutils literal"><span class="pre">H&lt;U&gt;</span></span>, and returns a
+value of type <span class="docutils literal"><span class="pre">H&lt;U&gt;</span></span>.</div></blockquote>
+<p>Bear in mind that because most languages use this pattern, without a way to
+specify an interface for the compiler to check, in many instances the two
+functions, <span class="docutils literal"><span class="pre">unit()</span></span> and <span class="docutils literal"><span class="pre">bind()</span></span>, may show up under different names.
+You may hear the term <em>monadic</em>, as in <strong>monadic error handling</strong>, which means
+that error handling follows the monad pattern.</p>
+<p>Next, we’ll look at a few other examples.</p>
+</div>
+<div class="section" id="the-continuation-monad">
+<h2>The Continuation Monad</h2>
+<p>A promise represents the result of a computation that will happen sometime in
+the future. <span class="docutils literal"><span class="pre">Promise&lt;T&gt;</span></span> is the promise of a value of type <span class="docutils literal"><span class="pre">T</span></span>. We can
+schedule execution of asynchronous code by chaining promises, using the
+<span class="docutils literal"><span class="pre">then()</span></span> function.</p>
+<p>Let’s say we have a function that determines our location on the map. Because
+this function will work with the GPS, it may take longer to finish, so we make
+it asynchronous. It will return a promise of type <span class="docutils literal"><span class="pre">Promise&lt;Location&gt;</span></span>. Next,
+we have a function that, given a location, will contact a ride-sharing service
+to get us a <span class="docutils literal"><span class="pre">Car</span></span>:</p>
+<div class="highlight-ts notranslate"><div class="highlight"><pre><span/><span class="kr">declare</span> <span class="kd">function</span> <span class="nx">getLocation</span><span class="p">()</span><span class="o">:</span> <span class="nx">Promise</span><span class="o">&lt;</span><span class="nx">Location</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="kr">declare</span> <span class="kd">function</span> <span class="nx">hailRideshare</span><span class="p">(</span>
+    <span class="nx">location</span>: <span class="kt">Location</span><span class="p">)</span><span class="o">:</span> <span class="nx">Promise</span><span class="o">&lt;</span><span class="nx">Car</span><span class="o">&gt;</span><span class="p">;</span>
+
+<span class="kd">let</span> <span class="nx">car</span>: <span class="kt">Promise</span><span class="o">&lt;</span><span class="nx">Car</span><span class="o">&gt;</span> <span class="o">=</span> <span class="nx">getLocation</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">hailRideshare</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>When <span class="docutils literal"><span class="pre">getLocation()</span></span> returns, <span class="docutils literal"><span class="pre">hailRideshare()</span></span> will be invoked with its
+result. This should look very familiar to you at this point. <span class="docutils literal"><span class="pre">then()</span></span> is just
+how <span class="docutils literal"><span class="pre">Promise&lt;T&gt;</span></span> spells <span class="docutils literal"><span class="pre">bind()</span></span>!</p>
+<p>we can also create an instantly resolved promise by using <span class="docutils literal"><span class="pre">Promise.resolve()</span></span>.
+This takes a value and returns a resolved promise containing that value, which
+is the <span class="docutils literal"><span class="pre">Promise&lt;T&gt;</span></span> equivalent of <span class="docutils literal"><span class="pre">unit()</span></span>.</p>
+<p>Turns out chaining promises, an API available in virtually all mainstream
+programming languages, is monadic. It follows the same pattern that we saw in
+this section, but in a different domain. While dealing with error
+propagation, our monad encapsulated checking whether we have a value that we
+can continue operating on or have an error that we should propagate. With
+promises, the monad encapsulates the intricacies of scheduling and resuming
+execution. The pattern is the same, though.</p>
+</div>
+<div class="section" id="the-list-monad">
+<h2>The List Monad</h2>
+<p>Another commonly used monad is the list monad. Let’s look at an implementation
+over sequences: a <span class="docutils literal"><span class="pre">divisors()</span></span> function that takes a number n and returns an
+array containing all of its divisors except 1 and n itself.</p>
+<p>This straightforward implementation starts from 2 and goes up to half of n,
+and adds all numbers it finds that divide n without a remainder. There are
+more efficient ways to find all divisors of a number, but we’ll stick to a
+simple algorithm in this case:</p>
+<div class="highlight-ts notranslate"><div class="highlight"><pre><span/><span class="kd">function</span> <span class="nx">divisors</span><span class="p">(</span><span class="nx">n</span>: <span class="kt">number</span><span class="p">)</span><span class="o">:</span> <span class="kt">number</span><span class="p">[]</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">result</span>: <span class="kt">number</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[];</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="nx">n</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">n</span> <span class="o">%</span> <span class="nx">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Now let’s say we want to take an array of numbers and return an array
+containing all their divisors. We don’t need to worry about dupes. One way to
+do this is to provide a function that takes an array of input numbers,
+applies <span class="docutils literal"><span class="pre">divisors()</span></span> to each of them, and joins the results of all the calls
+to <span class="docutils literal"><span class="pre">divisors()</span></span> into a final result:</p>
+<div class="highlight-ts notranslate"><div class="highlight"><pre><span/><span class="kd">function</span> <span class="nx">allDivisors</span><span class="p">(</span><span class="nx">ns</span>: <span class="kt">number</span><span class="p">[])</span><span class="o">:</span> <span class="kt">number</span><span class="p">[]</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">result</span>: <span class="kt">number</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[];</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">n</span> <span class="nx">of</span> <span class="nx">ns</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">result</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">divisors</span><span class="p">(</span><span class="nx">n</span><span class="p">));</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>It turns out that this pattern is common. Let’s say that we have another
+function, <span class="docutils literal"><span class="pre">anagrams()</span></span>, that generates all permutations of a string and
+returns an array of strings. If we want to get the set of all anagrams of an
+array of strings, we would end up implementing a very similar function:</p>
+<div class="highlight-ts notranslate"><div class="highlight"><pre><span/><span class="kr">declare</span> <span class="kd">function</span> <span class="nx">anagram</span><span class="p">(</span><span class="nx">input</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="kt">string</span><span class="p">[];</span>
+
+<span class="kd">function</span> <span class="nx">allAnagrams</span><span class="p">(</span><span class="nx">inputs</span>: <span class="kt">string</span><span class="p">[])</span><span class="o">:</span> <span class="kt">string</span><span class="p">[]</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">result</span>: <span class="kt">string</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[];</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">input</span> <span class="nx">of</span> <span class="nx">inputs</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">result</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">anagram</span><span class="p">(</span><span class="nx">input</span><span class="p">));</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><span class="docutils literal"><span class="pre">allAnagrams()</span></span> is very similar to <span class="docutils literal"><span class="pre">allDivisors()</span></span>.</p>
+<p>Now let’s see whether we can replace <span class="docutils literal"><span class="pre">allDivisors()</span></span> and <span class="docutils literal"><span class="pre">allAnagrams()</span></span>
+with a generic function. This function would take an array of <span class="docutils literal"><span class="pre">T</span></span>s and a
+function from <span class="docutils literal"><span class="pre">T</span></span> to an array of <span class="docutils literal"><span class="pre">U</span></span>s, and return an array of <span class="docutils literal"><span class="pre">U</span></span>s:</p>
+<div class="highlight-ts notranslate"><div class="highlight"><pre><span/><span class="kd">function</span> <span class="nx">bind</span><span class="o">&lt;</span><span class="nx">T</span><span class="p">,</span> <span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span>
+    <span class="nx">inputs</span>: <span class="kt">T</span><span class="p">[],</span>
+    <span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">U</span><span class="p">[])</span><span class="o">:</span> <span class="nx">U</span><span class="p">[]</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">result</span>: <span class="kt">U</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[];</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">input</span> <span class="nx">of</span> <span class="nx">inputs</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">result</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">func</span><span class="p">(</span><span class="nx">input</span><span class="p">));</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">allDivisors</span><span class="p">(</span><span class="nx">ns</span>: <span class="kt">number</span><span class="p">[])</span><span class="o">:</span> <span class="kt">number</span><span class="p">[]</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">bind</span><span class="p">(</span><span class="nx">ns</span><span class="p">,</span> <span class="nx">divisors</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">allAnagrams</span><span class="p">(</span><span class="nx">inputs</span>: <span class="kt">string</span><span class="p">[])</span><span class="o">:</span> <span class="kt">string</span><span class="p">[]</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">bind</span><span class="p">(</span><span class="nx">inputs</span><span class="p">,</span> <span class="nx">anagram</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>As you’ve probably guessed, this is the <span class="docutils literal"><span class="pre">bind()</span></span> implementation for the list
+monad. In the case of lists, <span class="docutils literal"><span class="pre">bind()</span></span> flattens the arrays returned by each
+call of the given function into a single array. While the error-propagating
+monad decides whether to propagate an error or apply a function and the
+continuation monad wraps scheduling, the list monad combines a set of results
+(a list of lists) into a single flat list. In this case, the box is a
+sequence of values.</p>
+<img alt="../../../_images/bind3.png" class="align-center" src="http://vladris.com/blog/_images/bind3.png"/>
+<p>The <span class="docutils literal"><span class="pre">unit()</span></span> implementation is trivial. Given a value of type <span class="docutils literal"><span class="pre">T</span></span>, it
+returns a list containing just that value. This monad generalizes to all kinds
+of lists: arrays, linked lists, and iterator ranges.</p>
+<blockquote>
+<div><p><strong>Category theory</strong></p>
+<p>Functors and monads come from category theory, a branch of mathematics that
+deals with structures consisting of objects and arrows between these
+objects. With these small building blocks, we can build up structures such
+as functors and monads. We won’t go into its details now; we’ll just say
+that multiple domains, like set theory and even type systems, can be
+expressed in category theory.</p>
+<p>Haskell is a programming language that took a lot of inspiration from
+category theory, so its syntax and standard library make it easy to express
+concepts such as functors, monads, and other structures. Haskell fully
+supports higher kinded types.</p>
+<p>Maybe because the building blocks of category theory are so simple, the
+abstractions we’ve been talking about are applicable across so many domains.
+We just saw that monads are useful in the context of error propagation,
+asynchronous code, and sequence processing.</p>
+<p>Although most mainstream languages still treat monads as patterns instead of
+proper constructs, they are definitely useful structures that show up over
+and over in different contexts.</p>
+</div></blockquote>
+</div>
+<div class="section" id="other-monads">
+<h2>Other Monads</h2>
+<p>A couple of other common monads, which are popular in functional programming
+languages with pure functions (functions that don’t have side effects) and
+immutable data, are the state monad and the IO monad. We’ll provide only a
+high-level overview of these monads, but if you decide to learn a functional
+programming language such as Haskell, you will likely encounter them early in
+your journey.</p>
+<p>The state monad encapsulates a piece of state that it passes along with a
+value. This monad enables us to write pure functions that, given a current
+state, produce a value and an updated state. Chaining these together with
+<span class="docutils literal"><span class="pre">bind()</span></span> allows us to propagate and update state through a pipeline without
+explicitly storing it in a variable, enabling purely functional code to
+process and update state.</p>
+<p>The IO monad encapsulates side effects. It allows us to implement pure functions
+that can still read user input or write to a file or terminal because the
+impure behavior is removed from the function and wrapped in the IO monad.</p>
+</div>
+]]></description>
+             <pubDate>Sat, 07 Sep 2019 00:00:00 -0700</pubDate>
+        </item>
+    
         <item>
             <link>http://vladris.com/blog/2019/09/06/higher-kinded-types-functors.html</link>
             <guid>http://vladris.com/blog/2019/09/06/higher-kinded-types-functors.html</guid>
@@ -293,7 +799,7 @@ provide the abstraction to remove the duplicate code. We can pass either
 </div>
 <div class="section" id="functors-and-higher-kinded-types">
 <h2>Functors and Higher Kinded Types</h2>
-<p>What we just talked about in this section are <strong>functors</strong>.</p>
+<p>What we just talked about in this section are <em>functors</em>.</p>
 <p>A functor is a generalization of functions that perform mapping operations. For
 any generic type like <span class="docutils literal"><span class="pre">Box&lt;T&gt;</span></span>, a <span class="docutils literal"><span class="pre">map()</span></span> operation which takes a
 <span class="docutils literal"><span class="pre">Box&lt;T&gt;</span></span> and a function from <span class="docutils literal"><span class="pre">T</span></span> to <span class="docutils literal"><span class="pre">U</span></span> and produces a <span class="docutils literal"><span class="pre">Box&lt;U&gt;</span></span> is a
@@ -306,7 +812,7 @@ an empty circle and <span class="docutils literal"><span class="pre">U</span></s
 the result back into an <span class="docutils literal"><span class="pre">H&lt;U&gt;</span></span>.</p>
 <p>Functors are extremely powerful concepts, but most mainstream languages do not
 have a good way to express them. That’s because the general definition of a
-functor relies on <strong>higher kinded types</strong>.</p>
+functor relies on <em>higher kinded types</em>.</p>
 <p>A generic type is a type which has a type parameter, for example a generic type
 <span class="docutils literal"><span class="pre">T</span></span>, or a type like <span class="docutils literal"><span class="pre">Box&lt;T&gt;</span></span>, have a type parameter <span class="docutils literal"><span class="pre">T</span></span>. A higher kinded
 type, just like a higher-order function, represents a type parameter with
