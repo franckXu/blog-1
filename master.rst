@@ -4,6 +4,7 @@ Sitemap
 .. toctree::
    :maxdepth: 1
 
+   2019/09/07/higher-kinded-types-monads
    2019/09/06/higher-kinded-types-functors
    2019/08/10/common-algorithms
    2019/07/16/a-switchless-state-machine

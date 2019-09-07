@@ -306,7 +306,7 @@ Now let's define this family of ``map()`` functions.
 Functors and Higher Kinded Types
 --------------------------------
 
-What we just talked about in this section are **functors**.
+What we just talked about in this section are *functors*.
 
 A functor is a generalization of functions that perform mapping operations. For
 any generic type like ``Box<T>``, a ``map()`` operation which takes a
@@ -324,7 +324,7 @@ the result back into an ``H<U>``.
 
 Functors are extremely powerful concepts, but most mainstream languages do not
 have a good way to express them. That's because the general definition of a
-functor relies on **higher kinded types**.
+functor relies on *higher kinded types*.
 
 A generic type is a type which has a type parameter, for example a generic type
 ``T``, or a type like ``Box<T>``, have a type parameter ``T``. A higher kinded
