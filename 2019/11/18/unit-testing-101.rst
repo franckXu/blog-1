@@ -158,6 +158,7 @@ Design for Testability
 ~~~~~~~~~~~~~~~~~~~~~~
 
 The general steps for making code testable:
+
 * Extract interface (if one doesn't exist already)
 * Create adapters if concrete implementation doesn't implement an interface
 * Initialize class with real implementations in production
