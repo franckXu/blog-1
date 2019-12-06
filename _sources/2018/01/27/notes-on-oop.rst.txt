@@ -406,5 +406,3 @@ isolation and reused when needed.
 
 .. [#] Or better yet a free function which takes a ``Date`` and returns a new
        instance - immutability seems like a good idea in this case.
-
-.. comments::

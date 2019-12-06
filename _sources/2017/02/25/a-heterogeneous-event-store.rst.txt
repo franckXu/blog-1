@@ -307,5 +307,3 @@ Callers can use it like this::
 In this case, adding a new event requires declaring a new struct and adding it
 to the tuple. Since we are retrieving the event by its type, no mapping is
 involved.
-
-.. comments::

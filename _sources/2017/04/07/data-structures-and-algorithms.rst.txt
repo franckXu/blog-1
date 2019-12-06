@@ -168,5 +168,3 @@ Recommended reading:
   by Alexander A. Stepanov and Daniel E. Rose
 * `Elements of Programming <https://www.goodreads.com/book/show/6142482-elements-of-programming>`_
   by Alexander A. Stepanov and Paul McJones
-
-.. comments::

@@ -718,5 +718,3 @@ In this post we implemented a generic variant type in C#, going over:
 ----
 
 .. [#] See `"tagged union" on Wikipedia <https://en.wikipedia.org/wiki/Tagged_union>`_
-
-.. comments::

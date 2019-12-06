@@ -458,5 +458,3 @@ This blog post covered:
 
 My humble conclusion is that generating Fibonacci numbers is more than an
 introductory exercise.
-
-.. comments::

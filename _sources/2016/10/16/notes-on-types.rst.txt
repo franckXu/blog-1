@@ -636,5 +636,3 @@ design from CppCon is `C++, Abstract Algebra and Practical Applications
 <https://www.youtube.com/watch?v=632a-DMM5J0>`_ by Robert Ramey. And then there
 is Bartosz Milewski `blog <https://bartoszmilewski.com/>`_ about Haskell,
 C++, and category theory.
-
-.. comments::

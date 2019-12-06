@@ -455,5 +455,3 @@ Summary
   error propagation
 * With higher kinded types, we can express constructs like functors using
   generics which themselves have type parameters 
-
-.. comments::

@@ -335,5 +335,3 @@ in the previous post.
 
 .. [#] Other disadvantages are slower compile times and potential code bloat,
        as each template instantiation gets translated into a new function.
-
-.. comments::

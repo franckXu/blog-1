@@ -655,5 +655,3 @@ Summary
   (``std::partition`` algorithm).
 * The same algorithm can be implemented in other languages, as generic as the
   available abstractions allow.
-
-.. comments::

@@ -401,5 +401,3 @@ looked at:
 
 .. [#] An example of how an attacker can exploit integer overflow is the
        following `SSH1 vulnerability <https://www.kb.cert.org/vuls/id/945216>`_.
-
-.. comments::

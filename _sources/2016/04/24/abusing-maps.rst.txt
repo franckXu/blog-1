@@ -280,5 +280,3 @@ an ``associative_array`` as a ``constexpr`` fully evaluated at compile-time.
 .. [#] Boost ``flat_map`` documentation is `here <http://www.boost.org/doc/libs/1_56_0/doc/html/boost/container/flat_map.html>`_.
 
 .. [#] For more details on trivial types, see the `is_trivial type trait <http://www.cplusplus.com/reference/type_traits/is_trivial/>`_.
-
-.. comments::

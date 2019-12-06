@@ -220,5 +220,3 @@ outdated software practices, which is not a symptom of any problem, it's the
 result of implementing a successful business. It is our duty as software
 craftsman to remove the compromises and update the outdated practices, question
 the status quo and strive to make things better. Write unit tests!
-
-.. comments::

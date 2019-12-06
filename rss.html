@@ -157,13 +157,15 @@ expects a <span class="docutils literal"><span class="pre">WriteLine()</span></s
 <span class="docutils literal"><span class="pre">Get()</span></span>, then verify <span class="docutils literal"><span class="pre">mockOutput</span></span> was used as expected.</p>
 <div class="section" id="design-for-testability">
 <h3>Design for Testability</h3>
-<p>The general steps for making code testable:
-* Extract interface (if one doesn’t exist already)
-* Create adapters if concrete implementation doesn’t implement an interface
-* Initialize class with real implementations in production
-* Initialize class with mocks in tests
-* Setup mocks to behave as required by each test
-* Verify mocks</p>
+<p>The general steps for making code testable:</p>
+<ul class="simple">
+<li>Extract interface (if one doesn’t exist already)</li>
+<li>Create adapters if concrete implementation doesn’t implement an interface</li>
+<li>Initialize class with real implementations in production</li>
+<li>Initialize class with mocks in tests</li>
+<li>Setup mocks to behave as required by each test</li>
+<li>Verify mocks</li>
+</ul>
 <p>I will not talk about dependency injection in this post, but once all
 components of the system expect several interfaces to run, it is worth
 thinking about leveraging a DI framework to handle putting things together.</p>
@@ -823,7 +825,7 @@ to <span class="docutils literal"><span class="pre">divisors()</span></span> int
 <div class="highlight-ts notranslate"><div class="highlight"><pre><span/><span class="kd">function</span> <span class="nx">allDivisors</span><span class="p">(</span><span class="nx">ns</span>: <span class="kt">number</span><span class="p">[])</span><span class="o">:</span> <span class="kt">number</span><span class="p">[]</span> <span class="p">{</span>
     <span class="kd">let</span> <span class="nx">result</span>: <span class="kt">number</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[];</span>
 
-    <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">n</span> <span class="nx">of</span> <span class="nx">ns</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">n</span> <span class="k">of</span> <span class="nx">ns</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">result</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">divisors</span><span class="p">(</span><span class="nx">n</span><span class="p">));</span>
     <span class="p">}</span>
 
@@ -840,7 +842,7 @@ array of strings, we would end up implementing a very similar function:</p>
 <span class="kd">function</span> <span class="nx">allAnagrams</span><span class="p">(</span><span class="nx">inputs</span>: <span class="kt">string</span><span class="p">[])</span><span class="o">:</span> <span class="kt">string</span><span class="p">[]</span> <span class="p">{</span>
     <span class="kd">let</span> <span class="nx">result</span>: <span class="kt">string</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[];</span>
 
-    <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">input</span> <span class="nx">of</span> <span class="nx">inputs</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">input</span> <span class="k">of</span> <span class="nx">inputs</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">result</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">anagram</span><span class="p">(</span><span class="nx">input</span><span class="p">));</span>
     <span class="p">}</span>
 
@@ -857,7 +859,7 @@ function from <span class="docutils literal"><span class="pre">T</span></span> t
     <span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">U</span><span class="p">[])</span><span class="o">:</span> <span class="nx">U</span><span class="p">[]</span> <span class="p">{</span>
     <span class="kd">let</span> <span class="nx">result</span>: <span class="kt">U</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[];</span>
 
-    <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">input</span> <span class="nx">of</span> <span class="nx">inputs</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">input</span> <span class="k">of</span> <span class="nx">inputs</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">result</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">func</span><span class="p">(</span><span class="nx">input</span><span class="p">));</span>
     <span class="p">}</span>
 
@@ -949,7 +951,7 @@ transformed elements.</p>
 <div class="highlight-ts notranslate"><div class="highlight"><pre><span/><span class="kd">function</span><span class="o">*</span> <span class="nx">map</span><span class="o">&lt;</span><span class="nx">T</span><span class="p">,</span> <span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span>
     <span class="nx">iter</span>: <span class="kt">Iterable</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">,</span>
     <span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">item</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">U</span><span class="p">)</span><span class="o">:</span> <span class="nx">IterableIterator</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span> <span class="p">{</span>
-    <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">value</span> <span class="nx">of</span> <span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">value</span> <span class="k">of</span> <span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">yield</span> <span class="nx">func</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
     <span class="p">}</span>
 <span class="p">}</span>
@@ -1439,7 +1441,7 @@ element to the caller:</p>
     <span class="nx">items</span>: <span class="kt">Iterable</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">,</span>
     <span class="nx">pred</span><span class="o">:</span> <span class="p">(</span><span class="nx">x</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="kr">boolean</span><span class="p">)</span>
     <span class="o">:</span><span class="nx">IterableIterator</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="p">{</span>
-    <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">item</span> <span class="nx">of</span> <span class="nx">items</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">item</span> <span class="k">of</span> <span class="nx">items</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">pred</span><span class="p">(</span><span class="nx">item</span><span class="p">))</span> <span class="p">{</span>
             <span class="nx">yield</span> <span class="nx">item</span><span class="p">;</span>
         <span class="p">}</span>
@@ -1458,7 +1460,7 @@ sequence and reduces all the elements to a single value, which it returns:</p>
     <span class="o">:</span> <span class="nx">T</span> <span class="p">{</span>
     <span class="kd">let</span> <span class="nx">result</span>: <span class="kt">T</span> <span class="o">=</span> <span class="nx">init</span><span class="p">;</span>
 
-    <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">item</span> <span class="nx">of</span> <span class="nx">items</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">item</span> <span class="k">of</span> <span class="nx">items</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">result</span> <span class="o">=</span> <span class="nx">op</span><span class="p">(</span><span class="nx">result</span><span class="p">,</span> <span class="nx">item</span><span class="p">);</span>
     <span class="p">}</span>
 
@@ -1504,14 +1506,14 @@ argument – the iterable is a member of the class. Let’s do this for
 
     <span class="o">*</span><span class="nx">map</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">item</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">U</span><span class="p">)</span>
         <span class="o">:</span> <span class="nx">IterableIterator</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span> <span class="p">{</span>
-        <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">value</span> <span class="nx">of</span> <span class="k">this</span><span class="p">.</span><span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">value</span> <span class="k">of</span> <span class="k">this</span><span class="p">.</span><span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">yield</span> <span class="nx">func</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">}</span>
 
     <span class="o">*</span><span class="nx">filter</span><span class="p">(</span><span class="nx">pred</span><span class="o">:</span> <span class="p">(</span><span class="nx">item</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="kr">boolean</span><span class="p">)</span>
         <span class="o">:</span> <span class="nx">IterableIterator</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="p">{</span>
-        <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">value</span> <span class="nx">of</span> <span class="k">this</span><span class="p">.</span><span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">value</span> <span class="k">of</span> <span class="k">this</span><span class="p">.</span><span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">pred</span><span class="p">(</span><span class="nx">value</span><span class="p">))</span> <span class="p">{</span>
                 <span class="nx">yield</span> <span class="nx">value</span><span class="p">;</span>
             <span class="p">}</span>
@@ -1522,7 +1524,7 @@ argument – the iterable is a member of the class. Let’s do this for
         <span class="o">:</span> <span class="nx">T</span> <span class="p">{</span>
         <span class="kd">let</span> <span class="nx">result</span>: <span class="kt">T</span> <span class="o">=</span> <span class="nx">init</span><span class="p">;</span>
 
-        <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">value</span> <span class="nx">of</span> <span class="k">this</span><span class="p">.</span><span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">value</span> <span class="k">of</span> <span class="k">this</span><span class="p">.</span><span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">result</span> <span class="o">=</span> <span class="nx">op</span><span class="p">(</span><span class="nx">result</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
         <span class="p">}</span>
 
@@ -1574,7 +1576,7 @@ public <span class="docutils literal"><span class="pre">map()</span></span> and 
 
     <span class="kr">private</span> <span class="o">*</span><span class="nx">mapImpl</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">item</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">U</span><span class="p">)</span>
         <span class="o">:</span> <span class="nx">IterableIterator</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span> <span class="p">{</span>
-        <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">value</span> <span class="nx">of</span> <span class="k">this</span><span class="p">.</span><span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">value</span> <span class="k">of</span> <span class="k">this</span><span class="p">.</span><span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">yield</span> <span class="nx">func</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">}</span>
@@ -1586,7 +1588,7 @@ public <span class="docutils literal"><span class="pre">map()</span></span> and 
 
     <span class="kr">private</span> <span class="o">*</span><span class="nx">filterImpl</span><span class="p">(</span><span class="nx">pred</span><span class="o">:</span> <span class="p">(</span><span class="nx">item</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="kr">boolean</span><span class="p">)</span>
         <span class="o">:</span> <span class="nx">IterableIterator</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="p">{</span>
-        <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">value</span> <span class="nx">of</span> <span class="k">this</span><span class="p">.</span><span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">value</span> <span class="k">of</span> <span class="k">this</span><span class="p">.</span><span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">pred</span><span class="p">(</span><span class="nx">value</span><span class="p">))</span> <span class="p">{</span>
                 <span class="nx">yield</span> <span class="nx">value</span><span class="p">;</span>
             <span class="p">}</span>
@@ -1597,7 +1599,7 @@ public <span class="docutils literal"><span class="pre">map()</span></span> and 
         <span class="o">:</span> <span class="nx">T</span> <span class="p">{</span>
         <span class="kd">let</span> <span class="nx">result</span>: <span class="kt">T</span> <span class="o">=</span> <span class="nx">init</span><span class="p">;</span>
 
-        <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">value</span> <span class="nx">of</span> <span class="k">this</span><span class="p">.</span><span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">value</span> <span class="k">of</span> <span class="k">this</span><span class="p">.</span><span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">result</span> <span class="o">=</span> <span class="nx">op</span><span class="p">(</span><span class="nx">result</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
         <span class="p">}</span>
 
@@ -1771,7 +1773,7 @@ result to the caller:</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">result</span> <span class="o">=</span> <span class="p">[];</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">mode</span> <span class="o">=</span> <span class="nx">TextProcessingMode</span><span class="p">.</span><span class="nx">Text</span><span class="p">;</span>
 
-        <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">line</span> <span class="nx">of</span> <span class="nx">lines</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">line</span> <span class="k">of</span> <span class="nx">lines</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">processLine</span><span class="p">(</span><span class="nx">line</span><span class="p">);</span>
         <span class="p">}</span>
 
@@ -1849,7 +1851,7 @@ our state. We don’t even need an enum:</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">result</span> <span class="o">=</span> <span class="p">[];</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">processLine</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">processTextLine</span><span class="p">;</span>
 
-        <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">line</span> <span class="nx">of</span> <span class="nx">lines</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">line</span> <span class="k">of</span> <span class="nx">lines</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">processLine</span><span class="p">(</span><span class="nx">line</span><span class="p">);</span>
         <span class="p">}</span>
 
@@ -1984,7 +1986,7 @@ provides a <span class="docutils literal"><span class="pre">process()</span></sp
     <span class="kd">let</span> <span class="nx">processor</span>: <span class="kt">TextLineProcessor</span> <span class="o">|</span> <span class="nx">MarkerLineProcessor</span>
         <span class="o">|</span> <span class="nx">CodeLineProcessor</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">TextLineProcessor</span><span class="p">([]);</span>
 
-    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">line</span> <span class="nx">of</span> <span class="nx">lines</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">line</span> <span class="k">of</span> <span class="nx">lines</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">processor</span> <span class="o">=</span> <span class="nx">processor</span><span class="p">.</span><span class="nx">process</span><span class="p">(</span><span class="nx">line</span><span class="p">);</span>
     <span class="p">}</span>
 
@@ -4748,8 +4750,8 @@ new graph. If our graph has one node, we found a solution. If we run out of
 steps, our candidate solution is not good so we backtrack:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span/><span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">print</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
-        <span class="nb">exit</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
+        <span class="n">exit</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span>
@@ -4791,8 +4793,8 @@ backtrack if we have more colors than steps + 1:</p>
 <span class="docutils literal"><span class="pre">nodes</span></span> dictionary. Updated <span class="docutils literal"><span class="pre">solve</span></span> looks like this:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span/><span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">print</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
-        <span class="nb">exit</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
+        <span class="n">exit</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span>
@@ -6705,11 +6707,11 @@ could potentially be the same operator).</p>
     <span class="c1"># For every possible combination of 3 operators</span>
     <span class="k">for</span> <span class="n">ops</span> <span class="ow">in</span> <span class="n">product</span><span class="p">(</span><span class="s1">'+-*/'</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
         <span class="c1"># For every possible grouping</span>
-        <span class="k">for</span> <span class="n">exp</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'({} {} {}) {} ({} {} {})'</span><span class="p">,</span>
-                    <span class="s1">'(({} {} {}) {} {}) {} {}'</span><span class="p">,</span>
-                    <span class="s1">'({} {} ({} {} {})) {} {}'</span><span class="p">,</span>
-                    <span class="s1">'{} {} ({} {} ({} {} {}))'</span><span class="p">,</span>
-                    <span class="s1">'{} {} (({} {} {}) {} {})'</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">exp</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'(</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">) </span><span class="si">{}</span><span class="s1"> (</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">)'</span><span class="p">,</span>
+                    <span class="s1">'((</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">) </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">) </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">'</span><span class="p">,</span>
+                    <span class="s1">'(</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> (</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">)) </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">'</span><span class="p">,</span>
+                    <span class="s1">'</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> (</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> (</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">))'</span><span class="p">,</span>
+                    <span class="s1">'</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> ((</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">) </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">)'</span><span class="p">]:</span>
 
             <span class="c1"># Place operands and operators in expression</span>
             <span class="n">exp</span> <span class="o">=</span> <span class="n">exp</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">xs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ops</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">xs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ops</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">xs</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
@@ -6718,15 +6720,15 @@ could potentially be the same operator).</p>
             <span class="k">try</span><span class="p">:</span>
                 <span class="c1"># If expression evaluates to 24, we found a solution</span>
                 <span class="k">if</span> <span class="nb">eval</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">24</span><span class="p">:</span>
-                    <span class="k">print</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span>
-                    <span class="nb">exit</span><span class="p">()</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span>
+                    <span class="n">exit</span><span class="p">()</span>
             <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
                 <span class="c1"># Ignore division by zero errors</span>
                 <span class="k">pass</span>
 
 <span class="c1"># If we get here we tried all combinations and couldn't</span>
 <span class="c1"># find any solution</span>
-<span class="k">print</span><span class="p">(</span><span class="s1">'No solution'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'No solution'</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>We have ten possible cards (ace and number cards), and taking combination with
@@ -6773,21 +6775,21 @@ need the groupings</p>
         <span class="k">continue</span>
 
     <span class="k">for</span> <span class="n">ops</span> <span class="ow">in</span> <span class="n">product</span><span class="p">(</span><span class="s1">'+-*/'</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">exp</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'({} {} {}) {} ({} {} {})'</span><span class="p">,</span>
-                    <span class="s1">'(({} {} {}) {} {}) {} {}'</span><span class="p">,</span>
-                    <span class="s1">'({} {} ({} {} {})) {} {}'</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">exp</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'(</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">) </span><span class="si">{}</span><span class="s1"> (</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">)'</span><span class="p">,</span>
+                    <span class="s1">'((</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">) </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">) </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">'</span><span class="p">,</span>
+                    <span class="s1">'(</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> (</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">)) </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">'</span><span class="p">]:</span>
 
             <span class="n">exp</span> <span class="o">=</span> <span class="n">exp</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">xs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ops</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">xs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ops</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">xs</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
                 <span class="n">ops</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">xs</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
 
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">eval</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">24</span><span class="p">:</span>
-                    <span class="k">print</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span>
-                    <span class="nb">exit</span><span class="p">()</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span>
+                    <span class="n">exit</span><span class="p">()</span>
             <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
                 <span class="k">pass</span>
 
-<span class="k">print</span><span class="p">(</span><span class="s1">'No solution'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'No solution'</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>This means that for games without aces, we need to check 24 (<span class="math notranslate">\(4!\)</span>)
@@ -6813,9 +6815,9 @@ and groupings as above:</p>
 
 <span class="n">operands</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">permutations</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="mi">4</span><span class="p">))</span> <span class="c1"># 24 of these</span>
 <span class="n">operators</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="s1">'+-*/'</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">3</span><span class="p">))</span> <span class="c1"># 64 of these</span>
-<span class="n">groupings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'({} {} {}) {} ({} {} {})'</span><span class="p">,</span>
-             <span class="s1">'(({} {} {}) {} {}) {} {}'</span><span class="p">,</span>
-             <span class="s1">'({} {} ({} {} {})) {} {}'</span><span class="p">]</span> <span class="c1"># 3 of these</span>
+<span class="n">groupings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'(</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">) </span><span class="si">{}</span><span class="s1"> (</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">)'</span><span class="p">,</span>
+             <span class="s1">'((</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">) </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">) </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">'</span><span class="p">,</span>
+             <span class="s1">'(</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> (</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">)) </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">'</span><span class="p">]</span> <span class="c1"># 3 of these</span>
 </pre></div>
 </div>
 <p>Note that here we are looking at all possible games so operands are permutations
@@ -6836,9 +6838,9 @@ expressions which evaluate to 24:</p>
                     <span class="k">if</span> <span class="nb">eval</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">inp</span><span class="p">[</span><span class="n">xs</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">ops</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
                             <span class="n">inp</span><span class="p">[</span><span class="n">xs</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">ops</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">inp</span><span class="p">[</span><span class="n">xs</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span>
                             <span class="n">ops</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">inp</span><span class="p">[</span><span class="n">xs</span><span class="p">[</span><span class="mi">3</span><span class="p">]]))</span> <span class="o">==</span> <span class="mi">24</span><span class="p">:</span>
-                        <span class="k">yield</span> <span class="n">exp</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">f</span><span class="s1">'x{xs[0]}'</span><span class="p">,</span> <span class="n">ops</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-                            <span class="n">f</span><span class="s1">'x{xs[1]}'</span><span class="p">,</span> <span class="n">ops</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">f</span><span class="s1">'x{xs[2]}'</span><span class="p">,</span>
-                            <span class="n">ops</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">f</span><span class="s1">'x{xs[3]}'</span><span class="p">)</span>
+                        <span class="k">yield</span> <span class="n">exp</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="sa">f</span><span class="s1">'x</span><span class="si">{xs[0]}</span><span class="s1">'</span><span class="p">,</span> <span class="n">ops</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                            <span class="sa">f</span><span class="s1">'x</span><span class="si">{xs[1]}</span><span class="s1">'</span><span class="p">,</span> <span class="n">ops</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="sa">f</span><span class="s1">'x</span><span class="si">{xs[2]}</span><span class="s1">'</span><span class="p">,</span>
+                            <span class="n">ops</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="sa">f</span><span class="s1">'x</span><span class="si">{xs[3]}</span><span class="s1">'</span><span class="p">)</span>
                 <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
                     <span class="k">pass</span>
 </pre></div>
@@ -7028,12 +7030,12 @@ source file, together with the code to test input:</p>
             <span class="n">exp</span> <span class="o">=</span> <span class="n">exp</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'x'</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">eval</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">24</span><span class="p">:</span>
-                <span class="k">print</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span>
                 <span class="k">return</span>
         <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
             <span class="k">pass</span>
 
-<span class="k">print</span><span class="p">(</span><span class="s1">'No solution'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'No solution'</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>We can test this by ensuring that we still see 117 games without solution when
@@ -7057,10 +7059,10 @@ can define equivalence as:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span/><span class="k">def</span> <span class="nf">equivalent</span><span class="p">(</span><span class="n">exp1</span><span class="p">,</span> <span class="n">exp2</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">exp1</span> <span class="ow">in</span> <span class="n">result</span> <span class="ow">and</span> <span class="n">exp2</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">False</span>
+            <span class="k">return</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="n">exp1</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span> <span class="ow">and</span> <span class="n">exp2</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">False</span>
-    <span class="k">return</span> <span class="bp">True</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span>
 </pre></div>
 </div>
 <p>With this function, we can go over our univese <span class="math notranslate">\(\mathcal{U}\)</span> of
@@ -8971,11 +8973,11 @@ typing means that accessing a member of an object works as long as that object
 has such a member, regardless of the type of the object. In Python:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span/><span class="k">class</span> <span class="nc">Foo</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">print</span><span class="p">(</span><span class="s2">"foo"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"foo"</span><span class="p">)</span>
 
 <span class="k">class</span> <span class="nc">Bar</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">print</span><span class="p">(</span><span class="s2">"bar"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"bar"</span><span class="p">)</span>
 
 <span class="p">[</span><span class="n">obj</span><span class="o">.</span><span class="n">func</span><span class="p">()</span> <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="p">[</span><span class="n">Foo</span><span class="p">(),</span> <span class="n">Bar</span><span class="p">()]]</span> <span class="c1"># prints "foo" and "bar"</span>
 </pre></div>
@@ -8988,10 +8990,10 @@ runtime. For example we can swap the <span class="docutils literal"><span class=
 with another function like this:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span/><span class="k">class</span> <span class="nc">Foo</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">print</span><span class="p">(</span><span class="s2">"foo"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"foo"</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">func_bar</span><span class="p">():</span>
-    <span class="k">print</span><span class="p">(</span><span class="s2">"bar"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"bar"</span><span class="p">)</span>
 
 <span class="n">obj</span> <span class="o">=</span> <span class="n">Foo</span><span class="p">()</span>
 <span class="n">obj</span><span class="o">.</span><span class="n">func</span><span class="p">()</span> <span class="c1"># prints "foo"</span>

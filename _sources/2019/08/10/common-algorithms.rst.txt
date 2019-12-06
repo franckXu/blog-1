@@ -286,5 +286,3 @@ methods, which enable us to add methods to a class or interface without
 modifying its code. Not all languages have such features though. That being
 said, in most situations you should be using an existing algorithm library,
 not implementing a new one from scratch.
-
-.. comments::

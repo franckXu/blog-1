@@ -128,5 +128,3 @@ print, and today I was notified it is being sent to the printer.
 Writing the book was a great experience and I got the chance to work with some
 wonderful people. I hope the final product is a good book which leads to better
 software.
-
-.. comments::

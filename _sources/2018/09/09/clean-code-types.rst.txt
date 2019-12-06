@@ -311,5 +311,3 @@ Types are great tools for implementing safer, reusable code.
 
 .. [#] There is a great series of posts on Fluent C++ on `Strong Typing
        <https://www.fluentcpp.com/category/strong-types/>`_.
-
-.. comments::

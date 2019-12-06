@@ -532,5 +532,3 @@ internally).
 ----
 
 .. [#] For more details on ``novtable``, see `MSDN <https://msdn.microsoft.com/en-us/library/k13k85ky.aspx>`_.
-
-.. comments::

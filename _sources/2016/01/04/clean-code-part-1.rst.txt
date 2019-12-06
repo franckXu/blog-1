@@ -566,5 +566,3 @@ library functions ran slightly faster.
    will automatically add a finally block to dispose of the Linq-returned
    IEnumerables in case of exception. That being said, I prefer
    compiler-generated complexity to developer-generated complexity.
-
-.. comments::

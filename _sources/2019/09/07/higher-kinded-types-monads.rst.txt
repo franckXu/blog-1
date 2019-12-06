@@ -546,6 +546,4 @@ process and update state.
 The IO monad encapsulates side effects. It allows us to implement pure functions
 that can still read user input or write to a file or terminal because the
 impure behavior is removed from the function and wrapped in the IO monad.
-
-.. comments::
  

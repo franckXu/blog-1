@@ -382,5 +382,3 @@ and cons:
   cycles
 * Concepts of ownership and lifetime - no runtime overhead, but should be
   supplemented by static analysis to avoid dangling references
-
-.. comments::

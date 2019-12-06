@@ -198,5 +198,3 @@ Summary
 
 * Certain algorithms require the types they operate on to have relations with
   certain properties.
-
-.. comments::

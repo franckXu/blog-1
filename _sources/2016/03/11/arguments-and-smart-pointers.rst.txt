@@ -450,5 +450,3 @@ A summary of the summary:
 .. [#] Move constructors can be implicitly declared by the compiler if certain
    conditions are met, see `here <http://en.cppreference.com/w/cpp/language/move_constructor#Implicitly-declared_move_constructor>`_
    for details.
-
-.. comments::

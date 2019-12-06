@@ -384,5 +384,4 @@ situations do ``fold`` and ``fold_right`` return the same result.
   a semigroup for the fold direction not to matter. The first one returns an
   empty optional if there are no values to combine; the second returns a value
   supplied as argument, without otherwise combining it.
-
-.. comments::
+  
