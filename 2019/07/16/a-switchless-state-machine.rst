@@ -426,5 +426,3 @@ Let's quickly review the alternative implementations discussed.
   re-assigning the variable to another state. This allows us to add additional
   properties and members to each state and keep them grouped together. The
   drawback is that the code is more verbose than the functional alternative.
-
-.. comments::

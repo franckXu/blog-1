@@ -105,5 +105,3 @@ like functors and monads. The joke goes that as soon as you understand monads,
 you lose the ability to explain them. I'm taking it as a challenge.
 
 Check out my book `here <https://www.manning.com/books/programming-with-types>`_.
-
-.. comments::

@@ -549,5 +549,3 @@ C++ generators with a focus on composability:
   the best approach today
 * Unified call syntax would simplify things a lot, enabling a mechanism to
   implement these algorithms as extension methods
-
-.. comments::

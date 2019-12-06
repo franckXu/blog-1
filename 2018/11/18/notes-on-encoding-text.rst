@@ -357,5 +357,3 @@ In this post we looked at some common text encoding standards and concepts:
   + The inefficient UTF-32
   + UTF-16 and surrogate pairs
   + Popular UTF-8
-
-.. comments::

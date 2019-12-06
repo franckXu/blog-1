@@ -265,5 +265,3 @@ nodes in the graph is longer than twice the number of remaining steps, we would
 again not be able to find a solution from the current state.
 
 The full source code is available `on GitHub <https://gist.github.com/vladris/c283de5d8a3289303c7aca258e9cbdb1>`_.
-
-.. comments::

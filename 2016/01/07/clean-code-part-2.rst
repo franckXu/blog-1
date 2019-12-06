@@ -291,5 +291,3 @@ meantime, I'll leave you with this one sentence summary:
    ``baz()``, then the shared pointer constructor, in which case an exception
    thrown by ``baz()`` would leak the newly allocated ``Foo`` object, since the
    shared pointer didn't get ownership of it yet.
-
-.. comments::

@@ -601,5 +601,3 @@ Summary
 .. [#] Wikipedia explains the `set cover problem <https://en.wikipedia.org/wiki/Set_cover_problem>`_
        which is equivalent to the hitting set problem (one can be converted to
        the other).
-
-.. comments::

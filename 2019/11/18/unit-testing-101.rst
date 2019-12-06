@@ -304,5 +304,3 @@ Summary
 ----
 
 .. [#] Moq is my favorite C# mocking library: `<https://github.com/moq/moq4>`_. 
-
-.. comments::

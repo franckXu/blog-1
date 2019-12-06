@@ -332,5 +332,3 @@ runtime, problem domain, application type etc.
 
 .. [#] See Chandler Carruth's CppCon talk `Garbage In, Garbage Out
        <https://www.youtube.com/watch?v=yG1OZ69H_-o>`_.
-
-.. comments::

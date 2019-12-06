@@ -31,9 +31,6 @@ website = 'http://vladris.com/blog/'
 # More tweaks you can do
 # **************************************************************
 
-# Add your Disqus shortname to enable comments powered by Disqus
-disqus_shortname = 'vladris'
-
 # Change your favicon (new favicon goes in _static directory)
 html_favicon = '_static/tinkerer.ico'
 
@@ -69,7 +66,7 @@ first_page_title = None
 # **************************************************************
 
 # Add other Sphinx extensions here
-extensions = ['tinkerer.ext.blog', 'tinkerer.ext.disqus', 'sphinx.ext.mathjax']
+extensions = ['tinkerer.ext.blog', 'sphinx.ext.mathjax']
 
 # Add other template paths here
 templates_path = ['_templates']

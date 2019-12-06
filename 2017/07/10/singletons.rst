@@ -384,5 +384,3 @@ Summary
   cases
 * If needed, singletons can be extended with a shutdown mechanism
 * Three-state singletons can terminate on use-after-shutdown
-
-.. comments::
