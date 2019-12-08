@@ -4,6 +4,7 @@ Sitemap
 .. toctree::
    :maxdepth: 1
 
+   2019/12/08/notes-on-data-engineering
    2019/11/18/unit-testing-101
    2019/10/16/programming-with-types-rtm
    2019/09/07/higher-kinded-types-monads
