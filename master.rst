@@ -4,6 +4,7 @@ Sitemap
 .. toctree::
    :maxdepth: 1
 
+   2020/01/19/time-and-complexity
    2019/12/27/variance
    2019/12/08/notes-on-data-engineering
    2019/11/18/unit-testing-101
