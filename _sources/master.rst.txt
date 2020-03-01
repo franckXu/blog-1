@@ -4,6 +4,7 @@ Sitemap
 .. toctree::
    :maxdepth: 1
 
+   2020/03/01/azure-data-explorer
    2020/02/01/self-serve-analytics
    2020/01/19/time-and-complexity
    2019/12/27/variance
