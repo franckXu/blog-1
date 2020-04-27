@@ -5,8 +5,186 @@
         <link>http://vladris.com/blog/</link>
         <description></description>
         <language>en-us</language>
-        <pubDate>Sun, 01 Mar 2020 00:00:00 -0800</pubDate>
+        <pubDate>Mon, 27 Apr 2020 00:00:00 -0700</pubDate>
         
+        <item>
+            <link>http://vladris.com/blog/2020/04/27/machine-learning-at-scale.html</link>
+            <guid>http://vladris.com/blog/2020/04/27/machine-learning-at-scale.html</guid>
+            <title><![CDATA[Machine Learning at Scale]]></title>
+            <description><![CDATA[<h1>Machine Learning at Scale</h1>
+<p>This is a cross-post of the article I wrote for Data Science @ Microsoft,
+<a class="reference external" href="https://medium.com/data-science-at-microsoft/running-machine-learning-at-scale-808b90f0ec75">Running machine learning at scale</a>.</p>
+<p>Our team runs dozens of production machine learning models on a daily,
+weekly, and monthly basis. We recently went through a redesign of our ML
+infrastructure to increase its abilities to enable self-serve, scale to match
+computing needs, reduce impacts among models running on the same VM, and
+remove differences between dev and production environments. In this post, I
+will describe the challenges we faced with the previous infrastructure and
+how we addressed them with our Version 2 architecture.</p>
+<div class="section" id="version-1">
+<h2>Version 1</h2>
+<p>Our machine learning engineers use Python and R to implement models. Our
+Version 1 infrastructure used a custom XML format from which we generated
+Azure Data Factory (ADF) v1 pipelines to copy the model input data to blob
+storage. Then the models ran on a set of VMs our team maintained. The models
+read their input from and wrote their output back to blob storage. The ADF
+pipelines then copied the outputs to <a class="reference external" href="https://vladris.com/blog/2020/03/01/azure-data-explorer.html">Azure Data Explorer</a>
+and to our data distribution Data Lake.</p>
+<img alt="../../../_images/v1.png" class="align-center" src="http://vladris.com/blog/_images/v1.png"/>
+<p><em>The Control VM consumes XML from Git and generates ADF pipelines to
+orchestrate data movement and run ML code on a set of VMs.</em></p>
+<p>The V1 infrastructure had several challenges we set out to overcome:</p>
+<ul class="simple">
+<li><strong>No self-serve</strong>: Much like how we <a class="reference external" href="https://vladris.com/blog/2020/02/01/self-serve-analytics.html">implemented a self-serve environment
+for analytics</a>,
+we wanted to do something similar for machine learning, so our ML engineers
+can create and deploy models without needing help from the data engineering
+team.</li>
+<li><strong>Auto-scaling</strong>: We have some compute-intensive models that run on a certain
+day of the month when upstream datasets become available. For a few days, we
+need large compute. Then, until the next month, our compute needs decrease
+significantly. The V1 infrastructure didn’t account for this and we had a
+constant number of VMs running at all times.</li>
+<li><strong>Isolation</strong>: We used to pack multiple models on the same VM, so if one of
+them consumed, for example, too much RAM, it would impact all the other
+models running on the same VM. We needed better isolation.</li>
+<li><strong>Differences between dev and prod environments</strong>: One issue we kept hitting
+involved models that ran fine on the ML engineer’s VM but failed when
+moving to production because of environment differences such as missing
+packages.</li>
+</ul>
+<p>The combination of these issues created significant operational costs for the
+data engineering team: VM management, scaling issues, and having to re-run
+models that failed because of either resource constraints or bugs caused by
+missing packages in the production environment. As our machine learning
+engineers develop more and more models, we decided to invest in making our
+infrastructure more robust, scalable, and self-serve.</p>
+</div>
+<div class="section" id="version-2">
+<h2>Version 2</h2>
+<p>Our Version 2 infrastructure aims to address all these issues and provide a
+scalable, self-serve platform for machine learning. Built fully on Azure, it
+is made up of the following components, which we’ll discuss in turn:</p>
+<ul class="simple">
+<li>Orchestration</li>
+<li>Storage and distribution</li>
+<li>Compute</li>
+<li>DevOps</li>
+<li>Monitoring and alerting</li>
+</ul>
+<img alt="../../../_images/v2.png" class="align-center" src="http://vladris.com/blog/_images/v2.png"/>
+<p><em>ADF pipelines deployed from Git orchestrate data movement and running ML
+code, also deployed from Git, on Azure Machine Learning. Data is distributed
+through ADLS. The system is monitored using Azure Monitor.</em></p>
+<div class="section" id="orchestration">
+<h3>Orchestration</h3>
+<p>For orchestration, we use Azure Data Factory V2. In contrast to our V1
+infrastructure, we don’t use XML to generate pipelines, rather we provide a
+set of <a class="reference external" href="https://docs.microsoft.com/en-us/azure/data-factory/solution-templates-introduction">templates</a>
+that ML engineers can use to author the pipelines themselves. We have a dev
+ADF and a production one.</p>
+<p>In general, an end-to-end machine learning pipeline has three steps: Move
+inputs, kick off compute, and move outputs. Templates make it easy to create
+and configure a pipeline.</p>
+<p>We use <a class="reference external" href="https://docs.microsoft.com/en-us/azure/data-factory/continuous-integration-deployment">CI/CD for ADF</a>:
+The dev ADF instance is synced with Git, and so an ML engineer can submit a
+pull request for review. Once approved and merged to master, ADF generates
+the ARM template we use to deploy the production ADF instance.</p>
+<p>The two data factories are similar, except that they are connecting to
+different environments: Dev to the development storage and compute, and
+production to the production storage and compute, which is locked down. This
+addresses one of the limitations of our V1, as we now have similar dev and
+production environments and so graduating a model from dev to production is
+much more seamless.</p>
+</div>
+<div class="section" id="storage-and-distribution">
+<h3>Storage and distribution</h3>
+<p>For storage, we switched from blob to Azure Data Lake Storage (ADLS) gen2.
+ADLS gen2 is backed by blob storage, with a couple of important additional
+features: A hierarchical file system and granular access control. Both are
+key to our infrastructure.</p>
+<p>The hierarchical file system allows us to create a common folder structure
+for our models, with separate folders for inputs and outputs for each run.
+The granular access control allows us to enforce who gets to see what data.
+This is an important aspect of our platform, since some models are trained on
+sensitive information such as Microsoft revenue that not everyone can view.</p>
+<p>Because we are already distributing data through ADLS, we can skip a copy
+step: Instead of moving the model output to our data distribution Data Lake,
+we can share it in place, applying proper access control. The less data moves
+around, the less opportunity for issues in our system and the less network
+bandwidth our platform needs to use.</p>
+</div>
+<div class="section" id="compute">
+<h3>Compute</h3>
+<p>Compute is our biggest upgrade from V1: Instead of maintaining VMs, we
+switched to using <a class="reference external" href="https://azure.microsoft.com/en-us/services/machine-learning/">Azure Machine Learning</a> (AML). This
+is an important switch from IaaS to PaaS, where a lot of the infrastructure
+we spent time maintaining is now provisioned and handled by AML.</p>
+<p>AML addresses two of the main problems we set out to solve: Auto-scaling and
+isolation for our models. We can run each model on dedicated compute and then
+AML <a class="reference external" href="https://docs.microsoft.com/en-us/azure/machine-learning/how-to-set-up-training-targets#run-based-creation">takes care of spinning up the resources required for a run</a>,
+winding them down once the run is over.</p>
+<p>Because the configuration for compute is done via code, the dev and
+production environments are identical, meaning we don’t run into any issues
+when graduating a model to production. We can also select the size of compute
+we want via this configuration, and so a model that is more resource
+intensive can be configured to run with more RAM and/or more CPU power. AML
+also gives us statistics on CPU and memory usage, which helps us right-size
+compute for each model.</p>
+</div>
+<div class="section" id="devops">
+<h3>DevOps</h3>
+<p>Both ADF and AML are synced with Git and deployed via two Azure DevOps
+<a class="reference external" href="https://docs.microsoft.com/en-us/azure/devops/pipelines/release/?view=azure-devops">release pipelines</a>.
+One of them updates the production ADF instance, the other updates the AML
+production instance. We split the two because updating model code doesn’t
+require any updates to the orchestration. This means, for example, that for a
+model bug fix it is enough to deploy to AML without touching the Data
+Factory.</p>
+<img alt="../../../_images/devops1.png" class="align-center" src="http://vladris.com/blog/_images/devops1.png"/>
+<p>Having everything in Git enables self-serve, and brings in the required
+engineering rigor: Changes are done through pull requests, we have a code
+review process, we don’t make manual changes in the production environment,
+we have a history of all the changes, and we can rebuild an environment from
+scratch if needed.</p>
+</div>
+<div class="section" id="monitoring-and-alerting">
+<h3>Monitoring and alerting</h3>
+<p>We are running a production system, and so monitoring and alerting are key
+components. For monitoring, we use Azure Monitor/Log Analytics. ADF
+orchestrates all our model runs and it <a class="reference external" href="https://docs.microsoft.com/en-us/azure/data-factory/monitor-using-azure-monitor">integrates natively</a>
+with Azure Monitor, where we can define alerts for pipeline failures.</p>
+<p>For alerting, we use IcM, the Microsoft-wide incident tracking system.
+Pipeline failures generate incident tickets, which alert engineering of live
+site issues, like all Azure production services. We are also providing a
+Power BI dashboard where stakeholders can see the status of all models.</p>
+<p>Monitoring and alerting help us maintain our service-level agreements and
+operational excellence.</p>
+</div>
+</div>
+<div class="section" id="summary">
+<h2>Summary</h2>
+<p>In this article we looked at our Version 2 machine learning infrastructure,
+going over its key components:</p>
+<ul class="simple">
+<li>We use Azure Data Factory to orchestrate all data movement and model runs.</li>
+<li>We use Azure Data Lake Storage to store both model inputs and outputs,
+which allows us to implement granular access control and easily distribute
+the data to teams downstream.</li>
+<li>We use Azure Machine Learning for compute, which enables auto-scaling and
+isolation for model runs.</li>
+<li>We use Azure DevOps to deploy from Git, which enables self-serve and
+reproducibility.</li>
+<li>We use Azure Monitor for production environment monitoring and alerting.</li>
+</ul>
+<p>This cloud-native architecture allows us to reliably run ML at scale with a
+self-serve environment for our machine learning team, increasing their
+productivity while decreasing the resources we need to spend.</p>
+</div>
+]]></description>
+             <pubDate>Mon, 27 Apr 2020 00:00:00 -0700</pubDate>
+        </item>
+    
         <item>
             <link>http://vladris.com/blog/2020/03/01/azure-data-explorer.html</link>
             <guid>http://vladris.com/blog/2020/03/01/azure-data-explorer.html</guid>
@@ -1899,7 +2077,7 @@ to <span class="docutils literal"><span class="pre">divisors()</span></span> int
 <div class="highlight-ts notranslate"><div class="highlight"><pre><span/><span class="kd">function</span> <span class="nx">allDivisors</span><span class="p">(</span><span class="nx">ns</span>: <span class="kt">number</span><span class="p">[])</span><span class="o">:</span> <span class="kt">number</span><span class="p">[]</span> <span class="p">{</span>
     <span class="kd">let</span> <span class="nx">result</span>: <span class="kt">number</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[];</span>
 
-    <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">n</span> <span class="k">of</span> <span class="nx">ns</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">n</span> <span class="nx">of</span> <span class="nx">ns</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">result</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">divisors</span><span class="p">(</span><span class="nx">n</span><span class="p">));</span>
     <span class="p">}</span>
 
@@ -1916,7 +2094,7 @@ array of strings, we would end up implementing a very similar function:</p>
 <span class="kd">function</span> <span class="nx">allAnagrams</span><span class="p">(</span><span class="nx">inputs</span>: <span class="kt">string</span><span class="p">[])</span><span class="o">:</span> <span class="kt">string</span><span class="p">[]</span> <span class="p">{</span>
     <span class="kd">let</span> <span class="nx">result</span>: <span class="kt">string</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[];</span>
 
-    <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">input</span> <span class="k">of</span> <span class="nx">inputs</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">input</span> <span class="nx">of</span> <span class="nx">inputs</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">result</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">anagram</span><span class="p">(</span><span class="nx">input</span><span class="p">));</span>
     <span class="p">}</span>
 
@@ -1933,7 +2111,7 @@ function from <span class="docutils literal"><span class="pre">T</span></span> t
     <span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">U</span><span class="p">[])</span><span class="o">:</span> <span class="nx">U</span><span class="p">[]</span> <span class="p">{</span>
     <span class="kd">let</span> <span class="nx">result</span>: <span class="kt">U</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[];</span>
 
-    <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">input</span> <span class="k">of</span> <span class="nx">inputs</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">input</span> <span class="nx">of</span> <span class="nx">inputs</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">result</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">func</span><span class="p">(</span><span class="nx">input</span><span class="p">));</span>
     <span class="p">}</span>
 
@@ -2025,7 +2203,7 @@ transformed elements.</p>
 <div class="highlight-ts notranslate"><div class="highlight"><pre><span/><span class="kd">function</span><span class="o">*</span> <span class="nx">map</span><span class="o">&lt;</span><span class="nx">T</span><span class="p">,</span> <span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span>
     <span class="nx">iter</span>: <span class="kt">Iterable</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">,</span>
     <span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">item</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">U</span><span class="p">)</span><span class="o">:</span> <span class="nx">IterableIterator</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span> <span class="p">{</span>
-    <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">value</span> <span class="k">of</span> <span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">value</span> <span class="nx">of</span> <span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">yield</span> <span class="nx">func</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
     <span class="p">}</span>
 <span class="p">}</span>
@@ -2515,7 +2693,7 @@ element to the caller:</p>
     <span class="nx">items</span>: <span class="kt">Iterable</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">,</span>
     <span class="nx">pred</span><span class="o">:</span> <span class="p">(</span><span class="nx">x</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="kr">boolean</span><span class="p">)</span>
     <span class="o">:</span><span class="nx">IterableIterator</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="p">{</span>
-    <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">item</span> <span class="k">of</span> <span class="nx">items</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">item</span> <span class="nx">of</span> <span class="nx">items</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">pred</span><span class="p">(</span><span class="nx">item</span><span class="p">))</span> <span class="p">{</span>
             <span class="nx">yield</span> <span class="nx">item</span><span class="p">;</span>
         <span class="p">}</span>
@@ -2534,7 +2712,7 @@ sequence and reduces all the elements to a single value, which it returns:</p>
     <span class="o">:</span> <span class="nx">T</span> <span class="p">{</span>
     <span class="kd">let</span> <span class="nx">result</span>: <span class="kt">T</span> <span class="o">=</span> <span class="nx">init</span><span class="p">;</span>
 
-    <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">item</span> <span class="k">of</span> <span class="nx">items</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">item</span> <span class="nx">of</span> <span class="nx">items</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">result</span> <span class="o">=</span> <span class="nx">op</span><span class="p">(</span><span class="nx">result</span><span class="p">,</span> <span class="nx">item</span><span class="p">);</span>
     <span class="p">}</span>
 
@@ -2580,14 +2758,14 @@ argument – the iterable is a member of the class. Let’s do this for
 
     <span class="o">*</span><span class="nx">map</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">item</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">U</span><span class="p">)</span>
         <span class="o">:</span> <span class="nx">IterableIterator</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span> <span class="p">{</span>
-        <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">value</span> <span class="k">of</span> <span class="k">this</span><span class="p">.</span><span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">value</span> <span class="nx">of</span> <span class="k">this</span><span class="p">.</span><span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">yield</span> <span class="nx">func</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">}</span>
 
     <span class="o">*</span><span class="nx">filter</span><span class="p">(</span><span class="nx">pred</span><span class="o">:</span> <span class="p">(</span><span class="nx">item</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="kr">boolean</span><span class="p">)</span>
         <span class="o">:</span> <span class="nx">IterableIterator</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="p">{</span>
-        <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">value</span> <span class="k">of</span> <span class="k">this</span><span class="p">.</span><span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">value</span> <span class="nx">of</span> <span class="k">this</span><span class="p">.</span><span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">pred</span><span class="p">(</span><span class="nx">value</span><span class="p">))</span> <span class="p">{</span>
                 <span class="nx">yield</span> <span class="nx">value</span><span class="p">;</span>
             <span class="p">}</span>
@@ -2598,7 +2776,7 @@ argument – the iterable is a member of the class. Let’s do this for
         <span class="o">:</span> <span class="nx">T</span> <span class="p">{</span>
         <span class="kd">let</span> <span class="nx">result</span>: <span class="kt">T</span> <span class="o">=</span> <span class="nx">init</span><span class="p">;</span>
 
-        <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">value</span> <span class="k">of</span> <span class="k">this</span><span class="p">.</span><span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">value</span> <span class="nx">of</span> <span class="k">this</span><span class="p">.</span><span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">result</span> <span class="o">=</span> <span class="nx">op</span><span class="p">(</span><span class="nx">result</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
         <span class="p">}</span>
 
@@ -2650,7 +2828,7 @@ public <span class="docutils literal"><span class="pre">map()</span></span> and 
 
     <span class="kr">private</span> <span class="o">*</span><span class="nx">mapImpl</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">item</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">U</span><span class="p">)</span>
         <span class="o">:</span> <span class="nx">IterableIterator</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span> <span class="p">{</span>
-        <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">value</span> <span class="k">of</span> <span class="k">this</span><span class="p">.</span><span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">value</span> <span class="nx">of</span> <span class="k">this</span><span class="p">.</span><span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">yield</span> <span class="nx">func</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">}</span>
@@ -2662,7 +2840,7 @@ public <span class="docutils literal"><span class="pre">map()</span></span> and 
 
     <span class="kr">private</span> <span class="o">*</span><span class="nx">filterImpl</span><span class="p">(</span><span class="nx">pred</span><span class="o">:</span> <span class="p">(</span><span class="nx">item</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="kr">boolean</span><span class="p">)</span>
         <span class="o">:</span> <span class="nx">IterableIterator</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="p">{</span>
-        <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">value</span> <span class="k">of</span> <span class="k">this</span><span class="p">.</span><span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">value</span> <span class="nx">of</span> <span class="k">this</span><span class="p">.</span><span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">pred</span><span class="p">(</span><span class="nx">value</span><span class="p">))</span> <span class="p">{</span>
                 <span class="nx">yield</span> <span class="nx">value</span><span class="p">;</span>
             <span class="p">}</span>
@@ -2673,7 +2851,7 @@ public <span class="docutils literal"><span class="pre">map()</span></span> and 
         <span class="o">:</span> <span class="nx">T</span> <span class="p">{</span>
         <span class="kd">let</span> <span class="nx">result</span>: <span class="kt">T</span> <span class="o">=</span> <span class="nx">init</span><span class="p">;</span>
 
-        <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">value</span> <span class="k">of</span> <span class="k">this</span><span class="p">.</span><span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">value</span> <span class="nx">of</span> <span class="k">this</span><span class="p">.</span><span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">result</span> <span class="o">=</span> <span class="nx">op</span><span class="p">(</span><span class="nx">result</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
         <span class="p">}</span>
 
@@ -2847,7 +3025,7 @@ result to the caller:</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">result</span> <span class="o">=</span> <span class="p">[];</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">mode</span> <span class="o">=</span> <span class="nx">TextProcessingMode</span><span class="p">.</span><span class="nx">Text</span><span class="p">;</span>
 
-        <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">line</span> <span class="k">of</span> <span class="nx">lines</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">line</span> <span class="nx">of</span> <span class="nx">lines</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">processLine</span><span class="p">(</span><span class="nx">line</span><span class="p">);</span>
         <span class="p">}</span>
 
@@ -2925,7 +3103,7 @@ our state. We don’t even need an enum:</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">result</span> <span class="o">=</span> <span class="p">[];</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">processLine</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">processTextLine</span><span class="p">;</span>
 
-        <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">line</span> <span class="k">of</span> <span class="nx">lines</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">line</span> <span class="nx">of</span> <span class="nx">lines</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">processLine</span><span class="p">(</span><span class="nx">line</span><span class="p">);</span>
         <span class="p">}</span>
 
@@ -3060,7 +3238,7 @@ provides a <span class="docutils literal"><span class="pre">process()</span></sp
     <span class="kd">let</span> <span class="nx">processor</span>: <span class="kt">TextLineProcessor</span> <span class="o">|</span> <span class="nx">MarkerLineProcessor</span>
         <span class="o">|</span> <span class="nx">CodeLineProcessor</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">TextLineProcessor</span><span class="p">([]);</span>
 
-    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">line</span> <span class="k">of</span> <span class="nx">lines</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">line</span> <span class="nx">of</span> <span class="nx">lines</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">processor</span> <span class="o">=</span> <span class="nx">processor</span><span class="p">.</span><span class="nx">process</span><span class="p">(</span><span class="nx">line</span><span class="p">);</span>
     <span class="p">}</span>
 
@@ -5824,8 +6002,8 @@ new graph. If our graph has one node, we found a solution. If we run out of
 steps, our candidate solution is not good so we backtrack:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span/><span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
-        <span class="n">exit</span><span class="p">()</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
+        <span class="nb">exit</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span>
@@ -5867,8 +6045,8 @@ backtrack if we have more colors than steps + 1:</p>
 <span class="docutils literal"><span class="pre">nodes</span></span> dictionary. Updated <span class="docutils literal"><span class="pre">solve</span></span> looks like this:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span/><span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
-        <span class="n">exit</span><span class="p">()</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
+        <span class="nb">exit</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span>
@@ -7781,11 +7959,11 @@ could potentially be the same operator).</p>
     <span class="c1"># For every possible combination of 3 operators</span>
     <span class="k">for</span> <span class="n">ops</span> <span class="ow">in</span> <span class="n">product</span><span class="p">(</span><span class="s1">'+-*/'</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
         <span class="c1"># For every possible grouping</span>
-        <span class="k">for</span> <span class="n">exp</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'(</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">) </span><span class="si">{}</span><span class="s1"> (</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">)'</span><span class="p">,</span>
-                    <span class="s1">'((</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">) </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">) </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">'</span><span class="p">,</span>
-                    <span class="s1">'(</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> (</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">)) </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">'</span><span class="p">,</span>
-                    <span class="s1">'</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> (</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> (</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">))'</span><span class="p">,</span>
-                    <span class="s1">'</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> ((</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">) </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">)'</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">exp</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'({} {} {}) {} ({} {} {})'</span><span class="p">,</span>
+                    <span class="s1">'(({} {} {}) {} {}) {} {}'</span><span class="p">,</span>
+                    <span class="s1">'({} {} ({} {} {})) {} {}'</span><span class="p">,</span>
+                    <span class="s1">'{} {} ({} {} ({} {} {}))'</span><span class="p">,</span>
+                    <span class="s1">'{} {} (({} {} {}) {} {})'</span><span class="p">]:</span>
 
             <span class="c1"># Place operands and operators in expression</span>
             <span class="n">exp</span> <span class="o">=</span> <span class="n">exp</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">xs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ops</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">xs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ops</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">xs</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
@@ -7794,15 +7972,15 @@ could potentially be the same operator).</p>
             <span class="k">try</span><span class="p">:</span>
                 <span class="c1"># If expression evaluates to 24, we found a solution</span>
                 <span class="k">if</span> <span class="nb">eval</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">24</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span>
-                    <span class="n">exit</span><span class="p">()</span>
+                    <span class="k">print</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span>
+                    <span class="nb">exit</span><span class="p">()</span>
             <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
                 <span class="c1"># Ignore division by zero errors</span>
                 <span class="k">pass</span>
 
 <span class="c1"># If we get here we tried all combinations and couldn't</span>
 <span class="c1"># find any solution</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">'No solution'</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">'No solution'</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>We have ten possible cards (ace and number cards), and taking combination with
@@ -7849,21 +8027,21 @@ need the groupings</p>
         <span class="k">continue</span>
 
     <span class="k">for</span> <span class="n">ops</span> <span class="ow">in</span> <span class="n">product</span><span class="p">(</span><span class="s1">'+-*/'</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">exp</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'(</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">) </span><span class="si">{}</span><span class="s1"> (</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">)'</span><span class="p">,</span>
-                    <span class="s1">'((</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">) </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">) </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">'</span><span class="p">,</span>
-                    <span class="s1">'(</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> (</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">)) </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">'</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">exp</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'({} {} {}) {} ({} {} {})'</span><span class="p">,</span>
+                    <span class="s1">'(({} {} {}) {} {}) {} {}'</span><span class="p">,</span>
+                    <span class="s1">'({} {} ({} {} {})) {} {}'</span><span class="p">]:</span>
 
             <span class="n">exp</span> <span class="o">=</span> <span class="n">exp</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">xs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ops</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">xs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ops</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">xs</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
                 <span class="n">ops</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">xs</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
 
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">eval</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">24</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span>
-                    <span class="n">exit</span><span class="p">()</span>
+                    <span class="k">print</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span>
+                    <span class="nb">exit</span><span class="p">()</span>
             <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
                 <span class="k">pass</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s1">'No solution'</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">'No solution'</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>This means that for games without aces, we need to check 24 (<span class="math notranslate">\(4!\)</span>)
@@ -7889,9 +8067,9 @@ and groupings as above:</p>
 
 <span class="n">operands</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">permutations</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="mi">4</span><span class="p">))</span> <span class="c1"># 24 of these</span>
 <span class="n">operators</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="s1">'+-*/'</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">3</span><span class="p">))</span> <span class="c1"># 64 of these</span>
-<span class="n">groupings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'(</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">) </span><span class="si">{}</span><span class="s1"> (</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">)'</span><span class="p">,</span>
-             <span class="s1">'((</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">) </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">) </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">'</span><span class="p">,</span>
-             <span class="s1">'(</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> (</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">)) </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">'</span><span class="p">]</span> <span class="c1"># 3 of these</span>
+<span class="n">groupings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'({} {} {}) {} ({} {} {})'</span><span class="p">,</span>
+             <span class="s1">'(({} {} {}) {} {}) {} {}'</span><span class="p">,</span>
+             <span class="s1">'({} {} ({} {} {})) {} {}'</span><span class="p">]</span> <span class="c1"># 3 of these</span>
 </pre></div>
 </div>
 <p>Note that here we are looking at all possible games so operands are permutations
@@ -7912,9 +8090,9 @@ expressions which evaluate to 24:</p>
                     <span class="k">if</span> <span class="nb">eval</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">inp</span><span class="p">[</span><span class="n">xs</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">ops</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
                             <span class="n">inp</span><span class="p">[</span><span class="n">xs</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">ops</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">inp</span><span class="p">[</span><span class="n">xs</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span>
                             <span class="n">ops</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">inp</span><span class="p">[</span><span class="n">xs</span><span class="p">[</span><span class="mi">3</span><span class="p">]]))</span> <span class="o">==</span> <span class="mi">24</span><span class="p">:</span>
-                        <span class="k">yield</span> <span class="n">exp</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="sa">f</span><span class="s1">'x</span><span class="si">{xs[0]}</span><span class="s1">'</span><span class="p">,</span> <span class="n">ops</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-                            <span class="sa">f</span><span class="s1">'x</span><span class="si">{xs[1]}</span><span class="s1">'</span><span class="p">,</span> <span class="n">ops</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="sa">f</span><span class="s1">'x</span><span class="si">{xs[2]}</span><span class="s1">'</span><span class="p">,</span>
-                            <span class="n">ops</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="sa">f</span><span class="s1">'x</span><span class="si">{xs[3]}</span><span class="s1">'</span><span class="p">)</span>
+                        <span class="k">yield</span> <span class="n">exp</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">f</span><span class="s1">'x{xs[0]}'</span><span class="p">,</span> <span class="n">ops</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                            <span class="n">f</span><span class="s1">'x{xs[1]}'</span><span class="p">,</span> <span class="n">ops</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">f</span><span class="s1">'x{xs[2]}'</span><span class="p">,</span>
+                            <span class="n">ops</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">f</span><span class="s1">'x{xs[3]}'</span><span class="p">)</span>
                 <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
                     <span class="k">pass</span>
 </pre></div>
@@ -8104,12 +8282,12 @@ source file, together with the code to test input:</p>
             <span class="n">exp</span> <span class="o">=</span> <span class="n">exp</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'x'</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">eval</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">24</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span>
+                <span class="k">print</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span>
                 <span class="k">return</span>
         <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
             <span class="k">pass</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s1">'No solution'</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">'No solution'</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>We can test this by ensuring that we still see 117 games without solution when
@@ -8133,10 +8311,10 @@ can define equivalence as:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span/><span class="k">def</span> <span class="nf">equivalent</span><span class="p">(</span><span class="n">exp1</span><span class="p">,</span> <span class="n">exp2</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">exp1</span> <span class="ow">in</span> <span class="n">result</span> <span class="ow">and</span> <span class="n">exp2</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">return</span> <span class="bp">False</span>
         <span class="k">if</span> <span class="n">exp1</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span> <span class="ow">and</span> <span class="n">exp2</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span>
-    <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">return</span> <span class="bp">False</span>
+    <span class="k">return</span> <span class="bp">True</span>
 </pre></div>
 </div>
 <p>With this function, we can go over our univese <span class="math notranslate">\(\mathcal{U}\)</span> of
@@ -10047,11 +10225,11 @@ typing means that accessing a member of an object works as long as that object
 has such a member, regardless of the type of the object. In Python:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span/><span class="k">class</span> <span class="nc">Foo</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">"foo"</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"foo"</span><span class="p">)</span>
 
 <span class="k">class</span> <span class="nc">Bar</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">"bar"</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"bar"</span><span class="p">)</span>
 
 <span class="p">[</span><span class="n">obj</span><span class="o">.</span><span class="n">func</span><span class="p">()</span> <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="p">[</span><span class="n">Foo</span><span class="p">(),</span> <span class="n">Bar</span><span class="p">()]]</span> <span class="c1"># prints "foo" and "bar"</span>
 </pre></div>
@@ -10064,10 +10242,10 @@ runtime. For example we can swap the <span class="docutils literal"><span class=
 with another function like this:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span/><span class="k">class</span> <span class="nc">Foo</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">"foo"</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"foo"</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">func_bar</span><span class="p">():</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"bar"</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">"bar"</span><span class="p">)</span>
 
 <span class="n">obj</span> <span class="o">=</span> <span class="n">Foo</span><span class="p">()</span>
 <span class="n">obj</span><span class="o">.</span><span class="n">func</span><span class="p">()</span> <span class="c1"># prints "foo"</span>

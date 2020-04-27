@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Common Algorithms" href="../../08/10/common-algorithms.html" /><link rel="prev" title="Higher Kinded Types: Monads" href="../07/higher-kinded-types-monads.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.7.2',
+        VERSION:     '1.7.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -68,7 +68,7 @@ transformed elements.</p>
 <div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span><span class="o">*</span> <span class="nx">map</span><span class="o">&lt;</span><span class="nx">T</span><span class="p">,</span> <span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span>
     <span class="nx">iter</span>: <span class="kt">Iterable</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">,</span>
     <span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">item</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">U</span><span class="p">)</span><span class="o">:</span> <span class="nx">IterableIterator</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span> <span class="p">{</span>
-    <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">value</span> <span class="k">of</span> <span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">value</span> <span class="nx">of</span> <span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">yield</span> <span class="nx">func</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
     <span class="p">}</span>
 <span class="p">}</span>

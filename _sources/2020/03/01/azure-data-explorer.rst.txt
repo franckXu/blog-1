@@ -134,10 +134,10 @@ regardless of whether it is restricted or not. The ADX team is also working
 on enabling table-level access control, which will allow even more granular
 RBAC assignments.
 
-We are also leveraging ADX retention policies to ensure data doesn’t stick
+We are also leveraging ADX retention policies to ensure data doesn't stick
 around forever. In some cases, this is a requirement of the Microsoft data
 handling standards that are mandatory across the company. In other cases, we
-ensure prototypes and proofs-of-concept are cleaned up so they don’t make
+ensure prototypes and proofs-of-concept are cleaned up so they don't make
 their way into our production boundary. I detailed this in my `previous post <https://vladris.com/blog/2020/02/01/self-serve-analytics.html>`_,
 where I discussed how we move analytics from the prototype Scratch database
 (with its 30-day retention policy) to WorkArea and then to Production.
@@ -186,7 +186,7 @@ and tables we want to replicate.
 Summary
 -------
 
-In this post, I’ve discussed our team’s use of Azure Data Explorer:
+In this post, I've discussed our team's use of Azure Data Explorer:
 
 * Many of our scenarios involve data exploration. That activity, combined with
   the large data ingestion and cross-cluster capabilities of ADX, makes ADX a

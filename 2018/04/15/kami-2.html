@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Fibonacci" href="../../02/11/fibonacci.html" /><link rel="prev" title="IoC Containers" href="../../06/23/ioc-containers.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.7.2',
+        VERSION:     '1.7.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -220,8 +220,8 @@ new graph. If our graph has one node, we found a solution. If we run out of
 steps, our candidate solution is not good so we backtrack:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
-        <span class="n">exit</span><span class="p">()</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
+        <span class="nb">exit</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span>
@@ -263,8 +263,8 @@ backtrack if we have more colors than steps + 1:</p>
 <span class="docutils literal"><span class="pre">nodes</span></span> dictionary. Updated <span class="docutils literal"><span class="pre">solve</span></span> looks like this:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
-        <span class="n">exit</span><span class="p">()</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
+        <span class="nb">exit</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span>

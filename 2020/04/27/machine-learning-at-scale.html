@@ -1,0 +1,243 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="Vlad's Tech Blog">
+        <meta name="viewport" content="width=device-width">
+        <title>Machine Learning at Scale &mdash; Blog</title>
+            <link rel="stylesheet" href="../../../_static/normalize.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/sphinx.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/main.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/flat.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+            <link rel="stylesheet" href="../../../_static/font-awesome.min.css" type="text/css">
+        <link rel="shortcut icon" href="../../../_static/tinkerer.ico" /><!-- Load modernizr and JQuery -->
+        <script src="../../../_static/vendor/modernizr-2.6.2.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="../../../_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
+        <script src="../../../_static/plugins.js"></script>
+        <script src="../../../_static/main.js"></script>
+        <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Azure Data Explorer" href="../../03/01/azure-data-explorer.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.7.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        SOURCELINK_SUFFIX: '.txt',
+        HAS_SOURCE:  true
+      };
+    </script><script type="text/javascript" src="../../../_static/underscore.js"></script><script type="text/javascript" src="../../../_static/doctools.js"></script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script type="text/javascript" src="../../../_static/google_analytics.js"></script><link rel="stylesheet" href="../../../_static/extra.css" type="text/css" />
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+</script></head>
+    <body role="document">
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+      <div id="container"><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>April 27, 2020</span>
+        </div>
+    <div class="section" id="machine-learning-at-scale">
+<h1>Machine Learning at Scale</h1>
+<p>This is a cross-post of the article I wrote for Data Science &#64; Microsoft,
+<a class="reference external" href="https://medium.com/data-science-at-microsoft/running-machine-learning-at-scale-808b90f0ec75">Running machine learning at scale</a>.</p>
+<p>Our team runs dozens of production machine learning models on a daily,
+weekly, and monthly basis. We recently went through a redesign of our ML
+infrastructure to increase its abilities to enable self-serve, scale to match
+computing needs, reduce impacts among models running on the same VM, and
+remove differences between dev and production environments. In this post, I
+will describe the challenges we faced with the previous infrastructure and
+how we addressed them with our Version 2 architecture.</p>
+<div class="section" id="version-1">
+<h2>Version 1</h2>
+<p>Our machine learning engineers use Python and R to implement models. Our
+Version 1 infrastructure used a custom XML format from which we generated
+Azure Data Factory (ADF) v1 pipelines to copy the model input data to blob
+storage. Then the models ran on a set of VMs our team maintained. The models
+read their input from and wrote their output back to blob storage. The ADF
+pipelines then copied the outputs to <a class="reference external" href="https://vladris.com/blog/2020/03/01/azure-data-explorer.html">Azure Data Explorer</a>
+and to our data distribution Data Lake.</p>
+<img alt="../../../_images/v1.png" class="align-center" src="../../../_images/v1.png" />
+<p><em>The Control VM consumes XML from Git and generates ADF pipelines to
+orchestrate data movement and run ML code on a set of VMs.</em></p>
+<p>The V1 infrastructure had several challenges we set out to overcome:</p>
+<ul class="simple">
+<li><strong>No self-serve</strong>: Much like how we <a class="reference external" href="https://vladris.com/blog/2020/02/01/self-serve-analytics.html">implemented a self-serve environment
+for analytics</a>,
+we wanted to do something similar for machine learning, so our ML engineers
+can create and deploy models without needing help from the data engineering
+team.</li>
+<li><strong>Auto-scaling</strong>: We have some compute-intensive models that run on a certain
+day of the month when upstream datasets become available. For a few days, we
+need large compute. Then, until the next month, our compute needs decrease
+significantly. The V1 infrastructure didn’t account for this and we had a
+constant number of VMs running at all times.</li>
+<li><strong>Isolation</strong>: We used to pack multiple models on the same VM, so if one of
+them consumed, for example, too much RAM, it would impact all the other
+models running on the same VM. We needed better isolation.</li>
+<li><strong>Differences between dev and prod environments</strong>: One issue we kept hitting
+involved models that ran fine on the ML engineer’s VM but failed when
+moving to production because of environment differences such as missing
+packages.</li>
+</ul>
+<p>The combination of these issues created significant operational costs for the
+data engineering team: VM management, scaling issues, and having to re-run
+models that failed because of either resource constraints or bugs caused by
+missing packages in the production environment. As our machine learning
+engineers develop more and more models, we decided to invest in making our
+infrastructure more robust, scalable, and self-serve.</p>
+</div>
+<div class="section" id="version-2">
+<h2>Version 2</h2>
+<p>Our Version 2 infrastructure aims to address all these issues and provide a
+scalable, self-serve platform for machine learning. Built fully on Azure, it
+is made up of the following components, which we’ll discuss in turn:</p>
+<ul class="simple">
+<li>Orchestration</li>
+<li>Storage and distribution</li>
+<li>Compute</li>
+<li>DevOps</li>
+<li>Monitoring and alerting</li>
+</ul>
+<img alt="../../../_images/v2.png" class="align-center" src="../../../_images/v2.png" />
+<p><em>ADF pipelines deployed from Git orchestrate data movement and running ML
+code, also deployed from Git, on Azure Machine Learning. Data is distributed
+through ADLS. The system is monitored using Azure Monitor.</em></p>
+<div class="section" id="orchestration">
+<h3>Orchestration</h3>
+<p>For orchestration, we use Azure Data Factory V2. In contrast to our V1
+infrastructure, we don’t use XML to generate pipelines, rather we provide a
+set of <a class="reference external" href="https://docs.microsoft.com/en-us/azure/data-factory/solution-templates-introduction">templates</a>
+that ML engineers can use to author the pipelines themselves. We have a dev
+ADF and a production one.</p>
+<p>In general, an end-to-end machine learning pipeline has three steps: Move
+inputs, kick off compute, and move outputs. Templates make it easy to create
+and configure a pipeline.</p>
+<p>We use <a class="reference external" href="https://docs.microsoft.com/en-us/azure/data-factory/continuous-integration-deployment">CI/CD for ADF</a>:
+The dev ADF instance is synced with Git, and so an ML engineer can submit a
+pull request for review. Once approved and merged to master, ADF generates
+the ARM template we use to deploy the production ADF instance.</p>
+<p>The two data factories are similar, except that they are connecting to
+different environments: Dev to the development storage and compute, and
+production to the production storage and compute, which is locked down. This
+addresses one of the limitations of our V1, as we now have similar dev and
+production environments and so graduating a model from dev to production is
+much more seamless.</p>
+</div>
+<div class="section" id="storage-and-distribution">
+<h3>Storage and distribution</h3>
+<p>For storage, we switched from blob to Azure Data Lake Storage (ADLS) gen2.
+ADLS gen2 is backed by blob storage, with a couple of important additional
+features: A hierarchical file system and granular access control. Both are
+key to our infrastructure.</p>
+<p>The hierarchical file system allows us to create a common folder structure
+for our models, with separate folders for inputs and outputs for each run.
+The granular access control allows us to enforce who gets to see what data.
+This is an important aspect of our platform, since some models are trained on
+sensitive information such as Microsoft revenue that not everyone can view.</p>
+<p>Because we are already distributing data through ADLS, we can skip a copy
+step: Instead of moving the model output to our data distribution Data Lake,
+we can share it in place, applying proper access control. The less data moves
+around, the less opportunity for issues in our system and the less network
+bandwidth our platform needs to use.</p>
+</div>
+<div class="section" id="compute">
+<h3>Compute</h3>
+<p>Compute is our biggest upgrade from V1: Instead of maintaining VMs, we
+switched to using <a class="reference external" href="https://azure.microsoft.com/en-us/services/machine-learning/">Azure Machine Learning</a> (AML). This
+is an important switch from IaaS to PaaS, where a lot of the infrastructure
+we spent time maintaining is now provisioned and handled by AML.</p>
+<p>AML addresses two of the main problems we set out to solve: Auto-scaling and
+isolation for our models. We can run each model on dedicated compute and then
+AML <a class="reference external" href="https://docs.microsoft.com/en-us/azure/machine-learning/how-to-set-up-training-targets#run-based-creation">takes care of spinning up the resources required for a run</a>,
+winding them down once the run is over.</p>
+<p>Because the configuration for compute is done via code, the dev and
+production environments are identical, meaning we don’t run into any issues
+when graduating a model to production. We can also select the size of compute
+we want via this configuration, and so a model that is more resource
+intensive can be configured to run with more RAM and/or more CPU power. AML
+also gives us statistics on CPU and memory usage, which helps us right-size
+compute for each model.</p>
+</div>
+<div class="section" id="devops">
+<h3>DevOps</h3>
+<p>Both ADF and AML are synced with Git and deployed via two Azure DevOps
+<a class="reference external" href="https://docs.microsoft.com/en-us/azure/devops/pipelines/release/?view=azure-devops">release pipelines</a>.
+One of them updates the production ADF instance, the other updates the AML
+production instance. We split the two because updating model code doesn’t
+require any updates to the orchestration. This means, for example, that for a
+model bug fix it is enough to deploy to AML without touching the Data
+Factory.</p>
+<img alt="../../../_images/devops1.png" class="align-center" src="../../../_images/devops1.png" />
+<p>Having everything in Git enables self-serve, and brings in the required
+engineering rigor: Changes are done through pull requests, we have a code
+review process, we don’t make manual changes in the production environment,
+we have a history of all the changes, and we can rebuild an environment from
+scratch if needed.</p>
+</div>
+<div class="section" id="monitoring-and-alerting">
+<h3>Monitoring and alerting</h3>
+<p>We are running a production system, and so monitoring and alerting are key
+components. For monitoring, we use Azure Monitor/Log Analytics. ADF
+orchestrates all our model runs and it <a class="reference external" href="https://docs.microsoft.com/en-us/azure/data-factory/monitor-using-azure-monitor">integrates natively</a>
+with Azure Monitor, where we can define alerts for pipeline failures.</p>
+<p>For alerting, we use IcM, the Microsoft-wide incident tracking system.
+Pipeline failures generate incident tickets, which alert engineering of live
+site issues, like all Azure production services. We are also providing a
+Power BI dashboard where stakeholders can see the status of all models.</p>
+<p>Monitoring and alerting help us maintain our service-level agreements and
+operational excellence.</p>
+</div>
+</div>
+<div class="section" id="summary">
+<h2>Summary</h2>
+<p>In this article we looked at our Version 2 machine learning infrastructure,
+going over its key components:</p>
+<ul class="simple">
+<li>We use Azure Data Factory to orchestrate all data movement and model runs.</li>
+<li>We use Azure Data Lake Storage to store both model inputs and outputs,
+which allows us to implement granular access control and easily distribute
+the data to teams downstream.</li>
+<li>We use Azure Machine Learning for compute, which enables auto-scaling and
+isolation for model runs.</li>
+<li>We use Azure DevOps to deploy from Git, which enables self-serve and
+reproducibility.</li>
+<li>We use Azure Monitor for production environment monitoring and alerting.</li>
+</ul>
+<p>This cloud-native architecture allows us to reliably run ML at scale with a
+self-serve environment for our machine learning team, increasing their
+productivity while decreasing the resources we need to spend.</p>
+</div>
+</div>
+
+    <div class="postmeta">
+        
+        
+        
+        </div><ul class="related clearfix">
+            <li class="left"></li>
+            <li class="right"><a href="../../03/01/azure-data-explorer.html">Azure Data Explorer</a> &raquo; </li>
+        </ul></article></div> <!-- #main --></div> <!-- #main-container -->
+
+        <div class="footer-container" role="contentinfo"><div style="text-align: center; color: #93a4ad">
+    By Vlad Rișcuția | <a href="http://feeds.feedburner.com/vladris">Subscribe</a> | <a href="http://vladris.com/blog/archive">Archive</a>
+</div></div> <!-- footer-container -->
+
+      </div> <!--! end of #container --><!--[if lt IE 7 ]>
+          <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+          <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+        <![endif]-->
+    </body>
+</html>

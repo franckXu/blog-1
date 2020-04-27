@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Composable Generators" href="../09/composable-generators.html" /><link rel="prev" title="Notes on Error Handling" href="../../12/03/notes-on-error-handling.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.7.2',
+        VERSION:     '1.7.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -87,11 +87,11 @@ typing means that accessing a member of an object works as long as that object
 has such a member, regardless of the type of the object. In Python:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Foo</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;foo&quot;</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;foo&quot;</span><span class="p">)</span>
 
 <span class="k">class</span> <span class="nc">Bar</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span>
 
 <span class="p">[</span><span class="n">obj</span><span class="o">.</span><span class="n">func</span><span class="p">()</span> <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="p">[</span><span class="n">Foo</span><span class="p">(),</span> <span class="n">Bar</span><span class="p">()]]</span> <span class="c1"># prints &quot;foo&quot; and &quot;bar&quot;</span>
 </pre></div>
@@ -104,10 +104,10 @@ runtime. For example we can swap the <span class="docutils literal"><span class=
 with another function like this:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Foo</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;foo&quot;</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;foo&quot;</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">func_bar</span><span class="p">():</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span>
 
 <span class="n">obj</span> <span class="o">=</span> <span class="n">Foo</span><span class="p">()</span>
 <span class="n">obj</span><span class="o">.</span><span class="n">func</span><span class="p">()</span> <span class="c1"># prints &quot;foo&quot;</span>
