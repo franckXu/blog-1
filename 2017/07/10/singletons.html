@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Data Structures and Algorithms" href="../../04/07/data-structures-and-algorithms.html" /><link rel="prev" title="Idris: Totality, Dependent Types, Proofs" href="../20/idris-totality-dependent-types-proofs.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.7.1',
+        VERSION:     '1.7.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -68,7 +68,7 @@ cases using a namespace and flat functions is the simplest and best way to
 implement a singleton:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">namespace</span> <span class="n">Foo</span> <span class="p">{</span>
 
-<span class="kt">void</span> <span class="n">DoFoo</span><span class="p">();</span>
+<span class="kt">void</span> <span class="nf">DoFoo</span><span class="p">();</span>
 
 <span class="p">}</span>
 </pre></div>
@@ -80,7 +80,7 @@ implement a singleton:</p>
     <span class="kt">void</span> <span class="n">DoFoo</span><span class="p">();</span>
 <span class="p">};</span>
 
-<span class="n">Foo</span><span class="o">&amp;</span> <span class="n">UseFoo</span><span class="p">();</span>
+<span class="n">Foo</span><span class="o">&amp;</span> <span class="nf">UseFoo</span><span class="p">();</span>
 </pre></div>
 </div>
 <p>I completely agree with this, with the caveat that sometimes we do want to
@@ -93,19 +93,19 @@ and flat functions.</p>
 <h2>Dependency Injection</h2>
 <p>Given an interface, an implementation, and a function to retrieve the singleton
 like the following:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">IFoo</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">IFoo</span>
 <span class="p">{</span>
     <span class="k">virtual</span> <span class="kt">void</span> <span class="n">DoFoo</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
     <span class="k">virtual</span> <span class="o">~</span><span class="n">IFoo</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
 <span class="p">};</span>
 
-<span class="k">struct</span> <span class="nl">Foo</span> <span class="p">:</span> <span class="n">IFoo</span>
+<span class="k">struct</span> <span class="nc">Foo</span> <span class="o">:</span> <span class="n">IFoo</span>
 <span class="p">{</span>
-    <span class="kt">void</span> <span class="n">DoFoo</span><span class="p">()</span> <span class="k">override</span> <span class="p">{</span> <span class="cm">/*...*/</span> <span class="p">};</span>
+    <span class="kt">void</span> <span class="nf">DoFoo</span><span class="p">()</span> <span class="k">override</span> <span class="p">{</span> <span class="cm">/*...*/</span> <span class="p">};</span>
 <span class="p">};</span>
 
-<span class="n">IFoo</span><span class="o">&amp;</span> <span class="n">UseFoo</span><span class="p">();</span>
+<span class="n">IFoo</span><span class="o">&amp;</span> <span class="nf">UseFoo</span><span class="p">();</span>
 </pre></div>
 </div>
 <p>a common mistake I see is components directly calling the function like this:</p>
@@ -165,7 +165,7 @@ the concurrent execution shall wait for completion of the initialization.</div><
 the simple way to implement a singleton (for example according to Scott Meyer’s
 <a class="reference external" href="https://www.goodreads.com/book/show/22800553-effective-modern-c">Effective Modern C++</a>)
 is:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">IFoo</span><span class="o">&amp;</span> <span class="n">UseFoo</span><span class="p">()</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">IFoo</span><span class="o">&amp;</span> <span class="nf">UseFoo</span><span class="p">()</span>
 <span class="p">{</span>
     <span class="k">static</span> <span class="n">Foo</span> <span class="n">instance</span><span class="p">;</span>
     <span class="k">return</span> <span class="n">instance</span><span class="p">;</span>
@@ -173,7 +173,7 @@ is:</p>
 </pre></div>
 </div>
 <p>Or the heap-allocated version:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">IFoo</span><span class="o">&amp;</span> <span class="n">UseFoo</span><span class="p">()</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">IFoo</span><span class="o">&amp;</span> <span class="nf">UseFoo</span><span class="p">()</span>
 <span class="p">{</span>
     <span class="k">static</span> <span class="k">auto</span> <span class="n">instance</span> <span class="o">=</span> <span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">();</span>
     <span class="k">return</span> <span class="o">*</span><span class="n">instance</span><span class="p">;</span>
@@ -188,7 +188,7 @@ deterministic shutdown. A local static, once created, will be live for the
 duration of the program, which might not always be desirable. Building on the
 previous implementation, here is a singleton which we can also shutdown on
 demand:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">Singleton</span>
 <span class="p">{</span>
 <span class="k">public</span><span class="o">:</span>
@@ -211,16 +211,16 @@ demand:</p>
     <span class="k">static</span> <span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">m_instance</span><span class="p">;</span>
 <span class="p">};</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span> <span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">Singleton</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">m_instance</span><span class="p">;</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span> <span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">Singleton</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">m_instance</span><span class="p">;</span>
 
 <span class="cm">/* ... */</span>
 
-<span class="n">IFoo</span><span class="o">&amp;</span> <span class="n">UseFoo</span><span class="p">()</span>
+<span class="n">IFoo</span><span class="o">&amp;</span> <span class="nf">UseFoo</span><span class="p">()</span>
 <span class="p">{</span>
     <span class="k">return</span> <span class="n">Singleton</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;::</span><span class="n">Use</span><span class="p">();</span>
 <span class="p">}</span>
 
-<span class="kt">void</span> <span class="n">FreeFoo</span><span class="p">()</span>
+<span class="kt">void</span> <span class="nf">FreeFoo</span><span class="p">()</span>
 <span class="p">{</span>
     <span class="n">Singleton</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;::</span><span class="n">Free</span><span class="p">();</span>
 <span class="p">}</span>
@@ -276,7 +276,7 @@ much more efficient implementation using an atomic pointer on architectures
 where atomics are lock-free and we are not worried about redundantly calling the
 constructor in the rare cases of concurrent access that requires
 initialization:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">Singleton</span>
 <span class="p">{</span>
 <span class="k">public</span><span class="o">:</span>
@@ -305,16 +305,16 @@ initialization:</p>
     <span class="k">static</span> <span class="n">atomic</span><span class="o">&lt;</span><span class="n">T</span><span class="o">*&gt;</span> <span class="n">m_instance</span><span class="p">;</span>
 <span class="p">};</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span> <span class="n">atomic</span><span class="o">&lt;</span><span class="n">T</span><span class="o">*&gt;</span> <span class="n">Singleton</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">m_instance</span><span class="p">;</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span> <span class="n">atomic</span><span class="o">&lt;</span><span class="n">T</span><span class="o">*&gt;</span> <span class="n">Singleton</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">m_instance</span><span class="p">;</span>
 
 <span class="cm">/* ... */</span>
 
-<span class="n">IFoo</span><span class="o">&amp;</span> <span class="n">UseFoo</span><span class="p">()</span>
+<span class="n">IFoo</span><span class="o">&amp;</span> <span class="nf">UseFoo</span><span class="p">()</span>
 <span class="p">{</span>
     <span class="k">return</span> <span class="n">Singleton</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;::</span><span class="n">Use</span><span class="p">();</span>
 <span class="p">}</span>
 
-<span class="kt">void</span> <span class="n">FreeFoo</span><span class="p">()</span>
+<span class="kt">void</span> <span class="nf">FreeFoo</span><span class="p">()</span>
 <span class="p">{</span>
     <span class="n">Singleton</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;::</span><span class="n">Free</span><span class="p">();</span>
 <span class="p">}</span>
@@ -360,7 +360,7 @@ three states: <em>not initialized</em>, <em>live</em>, <em>freed</em> and termin
 is attempted in the <em>freed</em> state:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="kt">uintptr_t</span> <span class="n">FreedSingleton</span> <span class="o">=</span> <span class="mh">0xDEADBEEF</span><span class="p">;</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">Singleton</span>
 <span class="p">{</span>
 <span class="k">public</span><span class="o">:</span>
@@ -399,7 +399,7 @@ is attempted in the <em>freed</em> state:</p>
     <span class="k">static</span> <span class="n">atomic</span><span class="o">&lt;</span><span class="n">T</span><span class="o">*&gt;</span> <span class="n">m_instance</span><span class="p">;</span>
 <span class="p">};</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span> <span class="n">atomic</span><span class="o">&lt;</span><span class="n">T</span><span class="o">*&gt;</span> <span class="n">Singleton</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">m_instance</span><span class="p">;</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span> <span class="n">atomic</span><span class="o">&lt;</span><span class="n">T</span><span class="o">*&gt;</span> <span class="n">Singleton</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">m_instance</span><span class="p">;</span>
 </pre></div>
 </div>
 <p>We now have an efficient generic singleton which we can shutdown on-demand and

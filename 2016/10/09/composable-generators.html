@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Concepts and Modules" href="../../08/17/concepts-and-modules.html" /><link rel="prev" title="Notes on Types" href="../16/notes-on-types.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.7.1',
+        VERSION:     '1.7.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -151,7 +151,7 @@ for creating and awaiting tasks (which I won’t cover in this post), while
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span> <span class="nf">count_to</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span>
 <span class="p">{</span>
     <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
-        <span class="n">co_yield</span> <span class="n">i</span><span class="p">;</span>
+        <span class="k">co_yield</span> <span class="n">i</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
@@ -175,33 +175,33 @@ some of them:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span> <span class="nf">count</span><span class="p">()</span>
 <span class="p">{</span>
     <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">100</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
-        <span class="n">co_yield</span> <span class="n">i</span><span class="p">;</span>
+        <span class="k">co_yield</span> <span class="n">i</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span>
 <span class="k">auto</span> <span class="n">take_n</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">gen</span><span class="p">,</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
     <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="nl">item</span> <span class="p">:</span> <span class="n">gen</span><span class="p">)</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">i</span><span class="o">++</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">)</span>
-            <span class="n">co_yield</span> <span class="n">item</span><span class="p">;</span>
+            <span class="k">co_yield</span> <span class="n">item</span><span class="p">;</span>
         <span class="k">else</span>
             <span class="k">return</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Predicate</span><span class="o">&gt;</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">Predicate</span><span class="o">&gt;</span>
 <span class="k">auto</span> <span class="n">filter</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">gen</span><span class="p">,</span> <span class="n">Predicate</span> <span class="n">pred</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="nl">item</span> <span class="p">:</span> <span class="n">gen</span><span class="p">)</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">pred</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
-            <span class="n">co_yield</span> <span class="n">item</span><span class="p">;</span>
+            <span class="k">co_yield</span> <span class="n">item</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="p">,</span> <span class="k">typename</span> <span class="n">BinaryOperation</span><span class="o">&gt;</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">BinaryOperation</span><span class="o">&gt;</span>
 <span class="k">auto</span> <span class="n">map</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">gen</span><span class="p">,</span> <span class="n">BinaryOperation</span> <span class="n">op</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="nl">item</span> <span class="p">:</span> <span class="n">gen</span><span class="p">)</span>
-        <span class="n">co_yield</span> <span class="n">op</span><span class="p">(</span><span class="n">item</span><span class="p">);</span>
+        <span class="k">co_yield</span> <span class="n">op</span><span class="p">(</span><span class="n">item</span><span class="p">);</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -238,33 +238,33 @@ design to achieve better chaining.</p>
 <p>The next idea comes from pure OOP - let’s create a decorator over <span class="docutils literal"><span class="pre">generator</span></span>
 that exposes these algorithms. First, let’s declare our decorator as
 <span class="docutils literal"><span class="pre">enumerable&lt;T&gt;</span></span> and change our algorithms to work with the new type:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
-<span class="k">struct</span> <span class="n">enumerable</span><span class="p">;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="nc">enumerable</span><span class="p">;</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span>
 <span class="k">auto</span> <span class="n">take_n</span><span class="p">(</span><span class="n">enumerable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">gen</span><span class="p">,</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">enumerable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>
 <span class="p">{</span>
     <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
     <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="nl">item</span> <span class="p">:</span> <span class="n">gen</span><span class="p">)</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">i</span><span class="o">++</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">)</span>
-            <span class="n">co_yield</span> <span class="n">item</span><span class="p">;</span>
+            <span class="k">co_yield</span> <span class="n">item</span><span class="p">;</span>
         <span class="k">else</span>
             <span class="k">return</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Predicate</span><span class="o">&gt;</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">Predicate</span><span class="o">&gt;</span>
 <span class="k">auto</span> <span class="n">filter</span><span class="p">(</span><span class="n">enumerable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">gen</span><span class="p">,</span> <span class="n">Predicate</span> <span class="n">pred</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">enumerable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>
 <span class="p">{</span>
     <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="nl">item</span> <span class="p">:</span> <span class="n">gen</span><span class="p">)</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">pred</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
-            <span class="n">co_yield</span> <span class="n">item</span><span class="p">;</span>
+            <span class="k">co_yield</span> <span class="n">item</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="p">,</span> <span class="k">typename</span> <span class="n">BinaryOperation</span><span class="o">&gt;</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">BinaryOperation</span><span class="o">&gt;</span>
 <span class="k">auto</span> <span class="n">map</span><span class="p">(</span><span class="n">enumerable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">gen</span><span class="p">,</span> <span class="n">BinaryOperation</span> <span class="n">op</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">enumerable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>
 <span class="p">{</span>
     <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="nl">item</span> <span class="p">:</span> <span class="n">gen</span><span class="p">)</span>
-        <span class="n">co_yield</span> <span class="n">op</span><span class="p">(</span><span class="n">item</span><span class="p">);</span>
+        <span class="k">co_yield</span> <span class="n">op</span><span class="p">(</span><span class="n">item</span><span class="p">);</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -274,11 +274,11 @@ type annotation is mandatory, as by default the complier would create a
 <span class="docutils literal"><span class="pre">generator&lt;T&gt;</span></span>.</p>
 <p>We can then implement our enumerable to wrap a generator and expose member
 functions which forward to the above algorithms:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
-<span class="k">struct</span> <span class="n">enumerable</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="nc">enumerable</span>
 <span class="p">{</span>
     <span class="c1">// Needed by compiler to create enumerable from co_yield</span>
-    <span class="k">using</span> <span class="n">promise_type</span> <span class="o">=</span> <span class="k">typename</span> <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">promise_type</span><span class="p">;</span>
+    <span class="k">using</span> <span class="n">promise_type</span> <span class="o">=</span> <span class="k">typename</span> <span class="nc">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">promise_type</span><span class="p">;</span>
 
     <span class="n">enumerable</span><span class="p">(</span><span class="n">promise_type</span><span class="o">&amp;</span> <span class="n">promise</span><span class="p">)</span> <span class="o">:</span> <span class="n">_gen</span><span class="p">(</span><span class="n">promise</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
     <span class="n">enumerable</span><span class="p">(</span><span class="n">enumerable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="o">:</span> <span class="n">_gen</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">other</span><span class="p">.</span><span class="n">_gen</span><span class="p">))</span> <span class="p">{</span> <span class="p">}</span>
@@ -294,13 +294,13 @@ functions which forward to the above algorithms:</p>
         <span class="k">return</span> <span class="o">::</span><span class="n">take_n</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">),</span> <span class="n">n</span><span class="p">);</span>
     <span class="p">}</span>
 
-    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Predicate</span><span class="o">&gt;</span>
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Predicate</span><span class="o">&gt;</span>
     <span class="k">auto</span> <span class="n">filter</span><span class="p">(</span><span class="n">Predicate</span> <span class="n">pred</span><span class="p">)</span>
     <span class="p">{</span>
         <span class="k">return</span> <span class="o">::</span><span class="n">filter</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">),</span> <span class="n">pred</span><span class="p">);</span>
     <span class="p">}</span>
 
-    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">BinaryOperation</span><span class="o">&gt;</span>
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">BinaryOperation</span><span class="o">&gt;</span>
     <span class="k">auto</span> <span class="n">map</span><span class="p">(</span><span class="n">BinaryOperation</span> <span class="n">op</span><span class="p">)</span>
     <span class="p">{</span>
         <span class="k">return</span> <span class="o">::</span><span class="n">map</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">),</span> <span class="n">op</span><span class="p">);</span>
@@ -319,11 +319,11 @@ This is intentional, as once we iterate over the encapsulated generator, it is
 no longer valid. Since we don’t expose a copy-constructor, we move out of
 <span class="docutils literal"><span class="pre">*this</span></span> when passing the generator to an algorithm. For completeness, we can
 also provide a function which converts from a generator to an enumerable:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span>
 <span class="k">auto</span> <span class="n">to_enumerable</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">gen</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">enumerable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>
 <span class="p">{</span>
     <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="nl">item</span> <span class="p">:</span> <span class="n">gen</span><span class="p">)</span>
-        <span class="n">co_yield</span> <span class="n">item</span><span class="p">;</span>
+        <span class="k">co_yield</span> <span class="n">item</span><span class="p">;</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -371,28 +371,28 @@ like this:</p>
 <p>One way we can get this working is to first create a type that wraps an
 algorithm and an <span class="docutils literal"><span class="pre">operator|</span></span> implementation between a lhs <span class="docutils literal"><span class="pre">generator</span></span> and a
 rhs of our type:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Predicate</span><span class="o">&gt;</span>
-<span class="k">struct</span> <span class="n">filter_t</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Predicate</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="nc">filter_t</span>
 <span class="p">{</span>
     <span class="n">filter_t</span><span class="p">(</span><span class="n">Predicate</span> <span class="n">pred</span><span class="p">)</span> <span class="o">:</span> <span class="n">_pred</span><span class="p">(</span><span class="n">pred</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
 
-    <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+    <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span>
     <span class="k">auto</span> <span class="k">operator</span><span class="p">()(</span><span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">gen</span><span class="p">)</span> <span class="k">const</span>
     <span class="p">{</span>
         <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="nl">item</span> <span class="p">:</span> <span class="n">gen</span><span class="p">)</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">_pred</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
-                <span class="n">co_yield</span> <span class="n">item</span><span class="p">;</span>
+                <span class="k">co_yield</span> <span class="n">item</span><span class="p">;</span>
     <span class="p">}</span>
 
     <span class="k">const</span> <span class="n">Predicate</span> <span class="n">_pred</span><span class="p">;</span>
 <span class="p">};</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Predicate</span><span class="o">&gt;</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">Predicate</span><span class="o">&gt;</span>
 <span class="k">auto</span> <span class="k">operator</span><span class="o">|</span><span class="p">(</span>
     <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">lhs</span><span class="p">,</span>
     <span class="k">const</span> <span class="n">filter_t</span><span class="o">&lt;</span><span class="n">Predicate</span><span class="o">&gt;&amp;</span> <span class="n">rhs</span><span class="p">)</span>
 <span class="p">{</span>
-    <span class="k">return</span> <span class="n">rhs</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">lhs</span><span class="p">));</span>
+    <span class="k">return</span> <span class="nf">rhs</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">lhs</span><span class="p">));</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -402,7 +402,7 @@ instantiate <span class="docutils literal"><span class="pre">filter_t</span></sp
 without specifying the Predicate type in the call. If we want to leverage type
 deduction, we can create a simple helper function that creates a <span class="docutils literal"><span class="pre">filter_t</span></span>
 from a given argument:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Predicate</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Predicate</span><span class="o">&gt;</span>
 <span class="k">auto</span> <span class="n">filter</span><span class="p">(</span><span class="n">Predicate</span> <span class="n">pred</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">return</span> <span class="n">filter_t</span><span class="o">&lt;</span><span class="n">Predicate</span><span class="o">&gt;</span><span class="p">(</span><span class="n">pred</span><span class="p">);</span>
@@ -412,17 +412,17 @@ from a given argument:</p>
 <p>With this we can call <span class="docutils literal"><span class="pre">|</span> <span class="pre">filter(/*</span> <span class="pre">predicate</span> <span class="pre">*/)</span></span> on a generator and get back
 a filtered generator. Full implementation for <span class="docutils literal"><span class="pre">take_n</span></span>, <span class="docutils literal"><span class="pre">filter</span></span> and <span class="docutils literal"><span class="pre">map</span></span>
 would be:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">take_n_t</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">take_n_t</span>
 <span class="p">{</span>
     <span class="n">take_n_t</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="o">:</span> <span class="n">_n</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
 
-    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span>
     <span class="k">auto</span> <span class="k">operator</span><span class="p">()(</span><span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">gen</span><span class="p">)</span> <span class="k">const</span>
     <span class="p">{</span>
         <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
         <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="nl">item</span> <span class="p">:</span> <span class="n">gen</span><span class="p">)</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">i</span><span class="o">++</span> <span class="o">&lt;</span> <span class="n">_n</span><span class="p">)</span>
-                <span class="n">co_yield</span> <span class="n">item</span><span class="p">;</span>
+                <span class="k">co_yield</span> <span class="n">item</span><span class="p">;</span>
             <span class="k">else</span>
                 <span class="k">return</span><span class="p">;</span>
     <span class="p">}</span>
@@ -430,73 +430,73 @@ would be:</p>
     <span class="k">const</span> <span class="kt">int</span> <span class="n">_n</span><span class="p">;</span>
 <span class="p">};</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span>
 <span class="k">auto</span> <span class="k">operator</span><span class="o">|</span><span class="p">(</span>
     <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">lhs</span><span class="p">,</span>
     <span class="k">const</span> <span class="n">take_n_t</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">)</span>
 <span class="p">{</span>
-    <span class="k">return</span> <span class="n">rhs</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">lhs</span><span class="p">));</span>
+    <span class="k">return</span> <span class="nf">rhs</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">lhs</span><span class="p">));</span>
 <span class="p">}</span>
 
 <span class="k">auto</span> <span class="n">take_n</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span>
 <span class="p">{</span>
-    <span class="k">return</span> <span class="n">take_n_t</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nf">take_n_t</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
 <span class="p">}</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Predicate</span><span class="o">&gt;</span>
-<span class="k">struct</span> <span class="n">filter_t</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Predicate</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="nc">filter_t</span>
 <span class="p">{</span>
     <span class="n">filter_t</span><span class="p">(</span><span class="n">Predicate</span> <span class="n">pred</span><span class="p">)</span> <span class="o">:</span> <span class="n">_pred</span><span class="p">(</span><span class="n">pred</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
 
-    <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+    <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span>
     <span class="k">auto</span> <span class="k">operator</span><span class="p">()(</span><span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">gen</span><span class="p">)</span> <span class="k">const</span>
     <span class="p">{</span>
         <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="nl">item</span> <span class="p">:</span> <span class="n">gen</span><span class="p">)</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">_pred</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
-                <span class="n">co_yield</span> <span class="n">item</span><span class="p">;</span>
+                <span class="k">co_yield</span> <span class="n">item</span><span class="p">;</span>
     <span class="p">}</span>
 
     <span class="k">const</span> <span class="n">Predicate</span> <span class="n">_pred</span><span class="p">;</span>
 <span class="p">};</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Predicate</span><span class="o">&gt;</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">Predicate</span><span class="o">&gt;</span>
 <span class="k">auto</span> <span class="k">operator</span><span class="o">|</span><span class="p">(</span>
     <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">lhs</span><span class="p">,</span>
     <span class="k">const</span> <span class="n">filter_t</span><span class="o">&lt;</span><span class="n">Predicate</span><span class="o">&gt;&amp;</span> <span class="n">rhs</span><span class="p">)</span>
 <span class="p">{</span>
-    <span class="k">return</span> <span class="n">rhs</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">lhs</span><span class="p">));</span>
+    <span class="k">return</span> <span class="nf">rhs</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">lhs</span><span class="p">));</span>
 <span class="p">}</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Predicate</span><span class="o">&gt;</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Predicate</span><span class="o">&gt;</span>
 <span class="k">auto</span> <span class="n">filter</span><span class="p">(</span><span class="n">Predicate</span> <span class="n">pred</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">return</span> <span class="n">filter_t</span><span class="o">&lt;</span><span class="n">Predicate</span><span class="o">&gt;</span><span class="p">(</span><span class="n">pred</span><span class="p">);</span>
 <span class="p">}</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">BinaryOperation</span><span class="o">&gt;</span>
-<span class="k">struct</span> <span class="n">map_t</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">BinaryOperation</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="nc">map_t</span>
 <span class="p">{</span>
     <span class="n">map_t</span><span class="p">(</span><span class="n">BinaryOperation</span> <span class="n">op</span><span class="p">)</span> <span class="o">:</span> <span class="n">_op</span><span class="p">(</span><span class="n">op</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
 
-    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span>
     <span class="k">auto</span> <span class="k">operator</span><span class="p">()(</span><span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">gen</span><span class="p">)</span> <span class="k">const</span>
     <span class="p">{</span>
         <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="nl">item</span> <span class="p">:</span> <span class="n">gen</span><span class="p">)</span>
-            <span class="n">co_yield</span> <span class="n">_op</span><span class="p">(</span><span class="n">item</span><span class="p">);</span>
+            <span class="k">co_yield</span> <span class="n">_op</span><span class="p">(</span><span class="n">item</span><span class="p">);</span>
     <span class="p">}</span>
 
     <span class="k">const</span> <span class="n">BinaryOperation</span> <span class="n">_op</span><span class="p">;</span>
 <span class="p">};</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="p">,</span> <span class="k">typename</span> <span class="n">BinaryOperation</span><span class="o">&gt;</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">BinaryOperation</span><span class="o">&gt;</span>
 <span class="k">auto</span> <span class="k">operator</span><span class="o">|</span><span class="p">(</span>
     <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">lhs</span><span class="p">,</span>
     <span class="k">const</span> <span class="n">map_t</span><span class="o">&lt;</span><span class="n">BinaryOperation</span><span class="o">&gt;&amp;</span> <span class="n">rhs</span><span class="p">)</span>
 <span class="p">{</span>
-    <span class="k">return</span> <span class="n">rhs</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">lhs</span><span class="p">));</span>
+    <span class="k">return</span> <span class="nf">rhs</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">lhs</span><span class="p">));</span>
 <span class="p">}</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">BinaryOperation</span><span class="o">&gt;</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">BinaryOperation</span><span class="o">&gt;</span>
 <span class="k">auto</span> <span class="n">map</span><span class="p">(</span><span class="n">BinaryOperation</span> <span class="n">op</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">return</span> <span class="n">map_t</span><span class="o">&lt;</span><span class="n">BinaryOperation</span><span class="o">&gt;</span><span class="p">(</span><span class="n">op</span><span class="p">);</span>
@@ -521,30 +521,30 @@ but there is a free function <span class="docutils literal"><span class="pre">f(
 <p>If it’s not obvious, unified call syntax would allow us to easily create
 extension methods. We would be able to revert our algorithm code to the first
 version:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span>
 <span class="k">auto</span> <span class="n">take_n</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">gen</span><span class="p">,</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
     <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="nl">item</span> <span class="p">:</span> <span class="n">gen</span><span class="p">)</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">i</span><span class="o">++</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">)</span>
-            <span class="n">co_yield</span> <span class="n">item</span><span class="p">;</span>
+            <span class="k">co_yield</span> <span class="n">item</span><span class="p">;</span>
         <span class="k">else</span>
             <span class="k">return</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Predicate</span><span class="o">&gt;</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">Predicate</span><span class="o">&gt;</span>
 <span class="k">auto</span> <span class="n">filter</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">gen</span><span class="p">,</span> <span class="n">Predicate</span> <span class="n">pred</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="nl">item</span> <span class="p">:</span> <span class="n">gen</span><span class="p">)</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">pred</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
-            <span class="n">co_yield</span> <span class="n">item</span><span class="p">;</span>
+            <span class="k">co_yield</span> <span class="n">item</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="p">,</span> <span class="k">typename</span> <span class="n">BinaryOperation</span><span class="o">&gt;</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">BinaryOperation</span><span class="o">&gt;</span>
 <span class="k">auto</span> <span class="n">map</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">gen</span><span class="p">,</span> <span class="n">BinaryOperation</span> <span class="n">op</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="nl">item</span> <span class="p">:</span> <span class="n">gen</span><span class="p">)</span>
-        <span class="n">co_yield</span> <span class="n">op</span><span class="p">(</span><span class="n">item</span><span class="p">);</span>
+        <span class="k">co_yield</span> <span class="n">op</span><span class="p">(</span><span class="n">item</span><span class="p">);</span>
 <span class="p">}</span>
 </pre></div>
 </div>

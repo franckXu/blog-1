@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Programming with Types" href="../../04/28/programming-with-types.html" /><link rel="prev" title="Common Algorithms" href="../../08/10/common-algorithms.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.7.1',
+        VERSION:     '1.7.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -104,13 +104,13 @@ get updated as they are processed in text processing mode.</p>
 </pre></div>
 </div>
 <p>We want to embed this in <span class="docutils literal"><span class="pre">Chapter1.md</span></span> and make sure it’s kept up to date.</p>
-<div class="highlight-md notranslate"><div class="highlight"><pre><span></span><span class="gh">#</span> Chapter 1
+<div class="highlight-md notranslate"><div class="highlight"><pre><span></span><span class="gh"># Chapter 1</span>
 
 Printing &quot;Hello world!&quot;.
 &lt;!-- helloWorld --&gt;
-<span class="s">```ts</span>
+<span class="sb">```ts</span>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">);</span>
-<span class="s">```</span>
+<span class="sb">```</span>
 </pre></div>
 </div>
 <p>This is not quite up to date, the string here is <span class="docutils literal"><span class="pre">&quot;Hello&quot;</span></span>, not matching
@@ -181,7 +181,7 @@ result to the caller:</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">result</span> <span class="o">=</span> <span class="p">[];</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">mode</span> <span class="o">=</span> <span class="nx">TextProcessingMode</span><span class="p">.</span><span class="nx">Text</span><span class="p">;</span>
 
-        <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">line</span> <span class="nx">of</span> <span class="nx">lines</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">line</span> <span class="k">of</span> <span class="nx">lines</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">processLine</span><span class="p">(</span><span class="nx">line</span><span class="p">);</span>
         <span class="p">}</span>
 
@@ -259,7 +259,7 @@ our state. We don’t even need an enum:</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">result</span> <span class="o">=</span> <span class="p">[];</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">processLine</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">processTextLine</span><span class="p">;</span>
 
-        <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">line</span> <span class="nx">of</span> <span class="nx">lines</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">line</span> <span class="k">of</span> <span class="nx">lines</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">processLine</span><span class="p">(</span><span class="nx">line</span><span class="p">);</span>
         <span class="p">}</span>
 
@@ -394,7 +394,7 @@ provides a <span class="docutils literal"><span class="pre">process()</span></sp
     <span class="kd">let</span> <span class="nx">processor</span>: <span class="kt">TextLineProcessor</span> <span class="o">|</span> <span class="nx">MarkerLineProcessor</span>
         <span class="o">|</span> <span class="nx">CodeLineProcessor</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">TextLineProcessor</span><span class="p">([]);</span>
 
-    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">line</span> <span class="nx">of</span> <span class="nx">lines</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">line</span> <span class="k">of</span> <span class="nx">lines</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">processor</span> <span class="o">=</span> <span class="nx">processor</span><span class="p">.</span><span class="nx">process</span><span class="p">(</span><span class="nx">line</span><span class="p">);</span>
     <span class="p">}</span>
 

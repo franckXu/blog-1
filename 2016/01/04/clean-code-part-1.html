@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Hello World" href="../../../2015/12/28/hello-world.html" /><link rel="prev" title="Clean Code - Part 2" href="../07/clean-code-part-2.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.7.1',
+        VERSION:     '1.7.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -160,7 +160,7 @@ instead of a whole convoluted function:</p>
 
   <span class="c1">// Find the total width of the panels to the left of the fixed panel.</span>
   <span class="kt">int</span> <span class="n">total_width</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-  <span class="n">fixed_index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+  <span class="n">fixed_index</span> <span class="o">=</span> <span class="mi">-1</span><span class="p">;</span>
   <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">expanded_panels_</span><span class="p">.</span><span class="n">size</span><span class="p">());</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">Panel</span><span class="o">*</span> <span class="n">panel</span> <span class="o">=</span> <span class="n">expanded_panels_</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">get</span><span class="p">();</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">panel</span> <span class="o">==</span> <span class="n">fixed_panel</span><span class="p">)</span> <span class="p">{</span>
@@ -170,7 +170,7 @@ instead of a whole convoluted function:</p>
     <span class="n">total_width</span> <span class="o">+=</span> <span class="n">panel</span><span class="o">-&gt;</span><span class="n">panel_width</span><span class="p">();</span>
   <span class="p">}</span>
 
-  <span class="n">CHECK_NE</span><span class="p">(</span><span class="n">fixed_index</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+  <span class="n">CHECK_NE</span><span class="p">(</span><span class="n">fixed_index</span><span class="p">,</span> <span class="mi">-1</span><span class="p">);</span>
   <span class="kt">int</span> <span class="n">new_fixed_index</span> <span class="o">=</span> <span class="n">fixed_index</span><span class="p">;</span>
 
   <span class="c1">// Move panels over to the right of the fixed panel until all of the ones</span>

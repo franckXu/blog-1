@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Composable Generators" href="../09/composable-generators.html" /><link rel="prev" title="Notes on Error Handling" href="../../12/03/notes-on-error-handling.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.7.1',
+        VERSION:     '1.7.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -87,11 +87,11 @@ typing means that accessing a member of an object works as long as that object
 has such a member, regardless of the type of the object. In Python:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Foo</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;foo&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;foo&quot;</span><span class="p">)</span>
 
 <span class="k">class</span> <span class="nc">Bar</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span>
 
 <span class="p">[</span><span class="n">obj</span><span class="o">.</span><span class="n">func</span><span class="p">()</span> <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="p">[</span><span class="n">Foo</span><span class="p">(),</span> <span class="n">Bar</span><span class="p">()]]</span> <span class="c1"># prints &quot;foo&quot; and &quot;bar&quot;</span>
 </pre></div>
@@ -104,10 +104,10 @@ runtime. For example we can swap the <span class="docutils literal"><span class=
 with another function like this:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Foo</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;foo&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;foo&quot;</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">func_bar</span><span class="p">():</span>
-    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span>
 
 <span class="n">obj</span> <span class="o">=</span> <span class="n">Foo</span><span class="p">()</span>
 <span class="n">obj</span><span class="o">.</span><span class="n">func</span><span class="p">()</span> <span class="c1"># prints &quot;foo&quot;</span>
@@ -143,7 +143,7 @@ this.</p>
 <p>It works just fine in JavaScript though:</p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="s2">&quot;foo&quot;</span><span class="p">;</span> <span class="c1">// foo is &quot;foo&quot;</span>
 <span class="nx">foo</span> <span class="o">=</span> <span class="nx">foo</span> <span class="o">+</span> <span class="s2">&quot; bar&quot;</span><span class="p">;</span> <span class="c1">// foo is &quot;foo bar&quot;</span>
-<span class="nx">foo</span> <span class="o">=</span> <span class="nx">foo</span> <span class="o">+</span> <span class="mi">5</span><span class="p">;</span> <span class="c1">// foo is &quot;foo bar5&quot;</span>
+<span class="nx">foo</span> <span class="o">=</span> <span class="nx">foo</span> <span class="o">+</span> <span class="mf">5</span><span class="p">;</span> <span class="c1">// foo is &quot;foo bar5&quot;</span>
 </pre></div>
 </div>
 <p>Note type strength is not an either/or - C++, while considered strongly typed,
@@ -156,22 +156,22 @@ so.</p>
 <p>Another difference to note is between static and dynamic polymorphism. Dynamic
 polymorphism happens at runtime, when calling a function on a base type gets
 resolved to the actual function of the deriving type:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">base</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">base</span>
 <span class="p">{</span>
     <span class="k">virtual</span> <span class="kt">void</span> <span class="n">func</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">};</span>
 
-<span class="k">struct</span> <span class="nl">foo</span> <span class="p">:</span> <span class="n">base</span>
+<span class="k">struct</span> <span class="nc">foo</span> <span class="o">:</span> <span class="n">base</span>
 <span class="p">{</span>
-    <span class="kt">void</span> <span class="n">func</span><span class="p">()</span> <span class="k">override</span>
+    <span class="kt">void</span> <span class="nf">func</span><span class="p">()</span> <span class="k">override</span>
     <span class="p">{</span>
         <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;foo&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">};</span>
 
-<span class="k">struct</span> <span class="nl">bar</span> <span class="p">:</span> <span class="n">base</span>
+<span class="k">struct</span> <span class="nc">bar</span> <span class="o">:</span> <span class="n">base</span>
 <span class="p">{</span>
-    <span class="kt">void</span> <span class="n">func</span><span class="p">()</span> <span class="k">override</span>
+    <span class="kt">void</span> <span class="nf">func</span><span class="p">()</span> <span class="k">override</span>
     <span class="p">{</span>
         <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;bar&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
     <span class="p">}</span>
@@ -192,23 +192,23 @@ takes a reference to a <span class="docutils literal"><span class="pre">base</sp
 the actual implementation of the function, which is different between the
 inheriting types <span class="docutils literal"><span class="pre">foo</span></span> and <span class="docutils literal"><span class="pre">bar</span></span>.</p>
 <p>Contrast this with the static alternative:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">foo</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">foo</span>
 <span class="p">{</span>
-    <span class="kt">void</span> <span class="n">func</span><span class="p">()</span>
+    <span class="kt">void</span> <span class="nf">func</span><span class="p">()</span>
     <span class="p">{</span>
         <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;foo&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">};</span>
 
-<span class="k">struct</span> <span class="n">bar</span>
+<span class="k">struct</span> <span class="nc">bar</span>
 <span class="p">{</span>
-    <span class="kt">void</span> <span class="n">func</span><span class="p">()</span>
+    <span class="kt">void</span> <span class="nf">func</span><span class="p">()</span>
     <span class="p">{</span>
         <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;bar&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">};</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span> <span class="kt">void</span> <span class="n">call_func</span><span class="p">(</span><span class="n">T</span><span class="o">&amp;</span> <span class="n">obj</span><span class="p">)</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span> <span class="kt">void</span> <span class="n">call_func</span><span class="p">(</span><span class="n">T</span><span class="o">&amp;</span> <span class="n">obj</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="n">obj</span><span class="p">.</span><span class="n">func</span><span class="p">();</span>
 <span class="p">}</span>
@@ -298,7 +298,7 @@ maps anything to this type:</p>
 </pre></div>
 </div>
 <p>In C++, the anonymous representation of a singleton is an empty <span class="docutils literal"><span class="pre">std::tuple</span></span>:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span> <span class="n">std</span><span class="o">::</span><span class="n">tuple</span><span class="o">&lt;&gt;</span> <span class="n">unit</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span> <span class="n">std</span><span class="o">::</span><span class="n">tuple</span><span class="o">&lt;&gt;</span> <span class="n">unit</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">return</span> <span class="p">{</span> <span class="p">};</span>
 <span class="p">}</span>
@@ -310,9 +310,9 @@ parameters (<span class="docutils literal"><span class="pre">a</span></span> in 
 template, but they boil down to the same thing. The non-anonymous C++
 representation is a struct which doesn’t contain anything. All instances of such
 a struct are equivalent:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">singleton</span> <span class="p">{</span> <span class="p">};</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">singleton</span> <span class="p">{</span> <span class="p">};</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span> <span class="n">singleton</span> <span class="n">unit</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span> <span class="n">singleton</span> <span class="n">unit</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">return</span> <span class="p">{</span> <span class="p">};</span>
 <span class="p">}</span>
@@ -386,10 +386,10 @@ depending on the contained type, it applies the appropriate function:</p>
 implementing something like this in C++ was using a union and a tag enum to keep
 track of which is the actual type we’re working with:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// Declaration of A and B not provided in this example</span>
-<span class="k">struct</span> <span class="n">A</span><span class="p">;</span>
-<span class="k">struct</span> <span class="n">B</span><span class="p">;</span>
+<span class="k">struct</span> <span class="nc">A</span><span class="p">;</span>
+<span class="k">struct</span> <span class="nc">B</span><span class="p">;</span>
 
-<span class="k">struct</span> <span class="n">Either</span>
+<span class="k">struct</span> <span class="nc">Either</span>
 <span class="p">{</span>
     <span class="n">Either</span><span class="p">(</span><span class="n">A</span> <span class="n">a</span><span class="p">)</span>
     <span class="p">{</span>
@@ -449,10 +449,10 @@ of any one of those types. Using variant, we can re-write the above as:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">variant</span><span class="o">&lt;</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="o">&gt;</span> <span class="n">transform</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">variant</span><span class="o">&lt;</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="o">&gt;</span> <span class="n">either</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">visit</span><span class="p">([](</span><span class="k">auto</span> <span class="n">e</span><span class="o">&amp;&amp;</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="k">constexpr</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">is_same_v</span><span class="o">&lt;</span><span class="k">decltype</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="n">A</span><span class="o">&gt;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nf">constexpr</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">is_same_v</span><span class="o">&lt;</span><span class="k">decltype</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="n">A</span><span class="o">&gt;</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">foo</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">get</span><span class="o">&lt;</span><span class="n">A</span><span class="o">&gt;</span><span class="p">(</span><span class="n">e</span><span class="p">));</span>
         <span class="k">else</span>
-            <span class="k">return</span> <span class="nf">bar</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">get</span><span class="o">&lt;</span><span class="n">B</span><span class="o">&gt;</span><span class="p">(</span><span class="n">e</span><span class="p">));</span>
+            <span class="k">return</span> <span class="n">bar</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">get</span><span class="o">&lt;</span><span class="n">B</span><span class="o">&gt;</span><span class="p">(</span><span class="n">e</span><span class="p">));</span>
     <span class="p">},</span> <span class="n">either</span><span class="p">);</span>
 <span class="p">}</span>
 </pre></div>
@@ -508,7 +508,7 @@ use that instead:</p>
 <span class="p">}</span>
 
 <span class="c1">// Named</span>
-<span class="k">struct</span> <span class="n">point</span>
+<span class="k">struct</span> <span class="nc">point</span>
 <span class="p">{</span>
     <span class="kt">int</span> <span class="n">x</span><span class="p">;</span>
     <span class="kt">int</span> <span class="n">y</span><span class="p">;</span>

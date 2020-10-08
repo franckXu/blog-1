@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Clean Code: Types" href="../../09/09/clean-code-types.html" /><link rel="prev" title="Notes on Encoding Text" href="../../11/18/notes-on-encoding-text.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.7.1',
+        VERSION:     '1.7.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -199,12 +199,12 @@ subtracting <span class="docutils literal"><span class="pre">b</span></span> on 
 <p>The following code implements these two checks:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;limits&gt;</span><span class="cp"></span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span>
 <span class="k">constexpr</span> <span class="kt">bool</span> <span class="n">AdditionOverflows</span><span class="p">(</span><span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">b</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">a</span> <span class="o">&gt;</span> <span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">b</span><span class="p">);</span>
 <span class="p">}</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span>
 <span class="k">constexpr</span> <span class="kt">bool</span> <span class="n">AdditionUnderflows</span><span class="p">(</span><span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">b</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">a</span> <span class="o">&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">min</span><span class="p">()</span> <span class="o">-</span> <span class="n">b</span><span class="p">);</span>
 <span class="p">}</span>
@@ -215,12 +215,12 @@ subtracting <span class="docutils literal"><span class="pre">b</span></span> on 
 to adjust the checks. <span class="docutils literal"><span class="pre">a</span> <span class="pre">-</span> <span class="pre">b</span> <span class="pre">&gt;</span> <span class="pre">MAX</span></span> means <span class="docutils literal"><span class="pre">a</span> <span class="pre">&gt;</span> <span class="pre">MAX</span> <span class="pre">+</span> <span class="pre">b</span></span> if <span class="docutils literal"><span class="pre">b</span></span> is negative
 (so we don’t cause an overflow during the check), while <span class="docutils literal"><span class="pre">a</span> <span class="pre">-</span> <span class="pre">b</span> <span class="pre">&lt;</span> <span class="pre">MIN</span></span> means
 <span class="docutils literal"><span class="pre">a</span> <span class="pre">&lt;</span> <span class="pre">MIN</span> <span class="pre">+</span> <span class="pre">b</span></span> if <span class="docutils literal"><span class="pre">b</span></span> is greater than or equal to 0:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span>
 <span class="k">constexpr</span> <span class="kt">bool</span> <span class="n">SubtractionOverflows</span><span class="p">(</span><span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">b</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">a</span> <span class="o">&gt;</span> <span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="n">b</span><span class="p">);</span>
 <span class="p">}</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span>
 <span class="k">constexpr</span> <span class="kt">bool</span> <span class="n">SubtractionUnderflows</span><span class="p">(</span><span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">b</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">a</span> <span class="o">&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">min</span><span class="p">()</span> <span class="o">+</span> <span class="n">b</span><span class="p">);</span>
 <span class="p">}</span>
@@ -234,13 +234,13 @@ a negative number, flips the sign of the inequality).</p>
 isn’t. So if <span class="docutils literal"><span class="pre">b</span> <span class="pre">&gt;=</span> <span class="pre">0</span></span>, <span class="docutils literal"><span class="pre">a</span> <span class="pre">&lt;</span> <span class="pre">0</span></span>, and <span class="docutils literal"><span class="pre">a</span> <span class="pre">&lt;</span> <span class="pre">MIN</span> <span class="pre">/</span> <span class="pre">b</span></span> or if <span class="docutils literal"><span class="pre">b</span> <span class="pre">&lt;</span> <span class="pre">0</span></span>,
 <span class="docutils literal"><span class="pre">a</span> <span class="pre">&gt;=</span> <span class="pre">0</span></span>, and <span class="docutils literal"><span class="pre">a</span> <span class="pre">&gt;</span> <span class="pre">MIN</span> <span class="pre">/</span> <span class="pre">b</span></span>.</p>
 <p>We can implement the checks as follows:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span>
 <span class="k">constexpr</span> <span class="kt">bool</span> <span class="n">MultiplicationOverflows</span><span class="p">(</span><span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="p">((</span><span class="n">b</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">a</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">a</span> <span class="o">&gt;</span> <span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">max</span><span class="p">()</span> <span class="o">/</span> <span class="n">b</span><span class="p">))</span>
         <span class="o">||</span> <span class="p">((</span><span class="n">b</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">a</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">a</span> <span class="o">&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">max</span><span class="p">()</span> <span class="o">/</span> <span class="n">b</span><span class="p">));</span>
 <span class="p">}</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span>
 <span class="k">constexpr</span> <span class="kt">bool</span> <span class="n">MultiplicationUnderflows</span><span class="p">(</span><span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="p">((</span><span class="n">b</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">a</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">a</span> <span class="o">&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">min</span><span class="p">()</span> <span class="o">/</span> <span class="n">b</span><span class="p">))</span>
         <span class="o">||</span> <span class="p">((</span><span class="n">b</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">a</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">a</span> <span class="o">&gt;</span> <span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">min</span><span class="p">()</span> <span class="o">/</span> <span class="n">b</span><span class="p">));</span>
@@ -255,9 +255,9 @@ integer can represent 128 positive values (0 to 127) and 128 negative values
 (-1 to -128). Overflow can only happen when we change the sign of the smallest
 possible value we can represent by dividing it with -1. -128 / -1 becomes 128,
 which is an overflow. This is the only case we need to check for:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span>
 <span class="k">constexpr</span> <span class="kt">bool</span> <span class="n">DivisionOverflows</span><span class="p">(</span><span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">a</span> <span class="o">==</span> <span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">min</span><span class="p">())</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">b</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">a</span> <span class="o">==</span> <span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">min</span><span class="p">())</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">b</span> <span class="o">==</span> <span class="mi">-1</span><span class="p">)</span>
         <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">a</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">);</span>
 <span class="p">}</span>
 </pre></div>
@@ -274,20 +274,20 @@ arithmetic topic. This post focuses on overflow and underflow only.</p>
 policies to handle them. Wrap-around is the default behavior in C++, so let’s
 look at the other two possibilities. We will implement a couple of types
 templated on an integer type <span class="docutils literal"><span class="pre">T</span></span>, with overflow and underflow handlers:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
-<span class="k">struct</span> <span class="n">Policy</span> <span class="p">{</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="nc">Policy</span> <span class="p">{</span>
     <span class="k">static</span> <span class="k">constexpr</span> <span class="n">T</span> <span class="n">OnOverflow</span><span class="p">()</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
     <span class="k">static</span> <span class="k">constexpr</span> <span class="n">T</span> <span class="n">OnUnderflow</span><span class="p">()</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
 <span class="p">};</span>
 </pre></div>
 </div>
 <p>The throwing policy looks like this:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nl">ArithmeticException</span> <span class="p">:</span> <span class="n">std</span><span class="o">::</span><span class="n">exception</span> <span class="p">{};</span>
-<span class="k">struct</span> <span class="nl">ArithmeticOverflowException</span> <span class="p">:</span> <span class="n">ArithmeticException</span> <span class="p">{};</span>
-<span class="k">struct</span> <span class="nl">ArithmeticUnderflowException</span> <span class="p">:</span> <span class="n">ArithmeticException</span> <span class="p">{};</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">ArithmeticException</span> <span class="o">:</span> <span class="n">std</span><span class="o">::</span><span class="n">exception</span> <span class="p">{};</span>
+<span class="k">struct</span> <span class="nc">ArithmeticOverflowException</span> <span class="o">:</span> <span class="n">ArithmeticException</span> <span class="p">{};</span>
+<span class="k">struct</span> <span class="nc">ArithmeticUnderflowException</span> <span class="o">:</span> <span class="n">ArithmeticException</span> <span class="p">{};</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
-<span class="k">struct</span> <span class="n">ThrowingPolicy</span> <span class="p">{</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="nc">ThrowingPolicy</span> <span class="p">{</span>
     <span class="k">static</span> <span class="k">constexpr</span> <span class="n">T</span> <span class="n">OnOverflow</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">throw</span> <span class="k">new</span> <span class="n">ArithmeticOverflowException</span><span class="p">{};</span>
     <span class="p">}</span>
@@ -299,8 +299,8 @@ templated on an integer type <span class="docutils literal"><span class="pre">T<
 </pre></div>
 </div>
 <p>The saturation policy is:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
-<span class="k">struct</span> <span class="n">SaturationPolicy</span> <span class="p">{</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="nc">SaturationPolicy</span> <span class="p">{</span>
     <span class="k">static</span> <span class="k">constexpr</span> <span class="n">T</span> <span class="n">OnOverflow</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">max</span><span class="p">();</span>
     <span class="p">}</span>
@@ -318,8 +318,8 @@ templated on an integer type <span class="docutils literal"><span class="pre">T<
 integer type and implements all the arithmetic operations checking for overflow
 or underflow. The type is templated on a policy for handling overflows and
 underflows:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="p">,</span> <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="o">&gt;</span> <span class="k">typename</span> <span class="n">Policy</span><span class="o">&gt;</span>
-<span class="k">struct</span> <span class="n">Integer</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">,</span> <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="o">&gt;</span> <span class="k">typename</span> <span class="nc">Policy</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="nc">Integer</span>
 <span class="p">{</span>
     <span class="n">T</span> <span class="n">value</span><span class="p">;</span>
 

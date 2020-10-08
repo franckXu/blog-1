@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Arguments and Smart Pointers" href="../../03/11/arguments-and-smart-pointers.html" /><link rel="prev" title="Dependency Injection in C++" href="../../07/06/dependency-injection-in-c.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.7.1',
+        VERSION:     '1.7.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -202,11 +202,11 @@ set of known values, it would be great to combine the efficiency of an array
 with the nice lookup semantics of an <span class="docutils literal"><span class="pre">unordered_map</span></span> conatiner.</p>
 <p>I propose a generic container of the following shape:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span>
-    <span class="k">typename</span> <span class="n">TKey</span><span class="p">,</span>
-    <span class="k">typename</span> <span class="n">T</span><span class="p">,</span>
+    <span class="k">typename</span> <span class="nc">TKey</span><span class="p">,</span>
+    <span class="k">typename</span> <span class="nc">T</span><span class="p">,</span>
     <span class="kt">size_t</span> <span class="n">N</span><span class="p">,</span>
-    <span class="k">typename</span> <span class="n">KeyEqual</span> <span class="o">=</span> <span class="n">key_equal</span><span class="o">&lt;</span><span class="n">TKey</span><span class="o">&gt;&gt;</span>
-<span class="k">struct</span> <span class="n">associative_array</span>
+    <span class="k">typename</span> <span class="nc">KeyEqual</span> <span class="o">=</span> <span class="n">key_equal</span><span class="o">&lt;</span><span class="n">TKey</span><span class="o">&gt;&gt;</span>
+<span class="k">struct</span> <span class="nc">associative_array</span>
 <span class="p">{</span>
     <span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="n">TKey</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;</span> <span class="n">m_array</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>
     <span class="p">...</span>
@@ -216,17 +216,17 @@ with the nice lookup semantics of an <span class="docutils literal"><span class=
 <p><span class="docutils literal"><span class="pre">keq_equal</span></span> should simply resolve to <span class="docutils literal"><span class="pre">==</span></span> for most types, but be
 specialized for strings types (to use <span class="docutils literal"><span class="pre">strcmp</span></span>, <span class="docutils literal"><span class="pre">wcscmp</span></span> etc.) and allow
 clients to specialize their own <span class="docutils literal"><span class="pre">key_equal</span></span> when needed.</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span> <span class="k">struct</span> <span class="n">key_equal</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span> <span class="k">struct</span> <span class="nc">key_equal</span>
 <span class="p">{</span>
-    <span class="kt">bool</span> <span class="k">operator</span><span class="p">(</span><span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">lhs</span><span class="p">,</span> <span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">)</span>
+    <span class="kt">bool</span> <span class="nf">operator</span><span class="p">(</span><span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">lhs</span><span class="p">,</span> <span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">)</span>
     <span class="p">{</span>
         <span class="k">return</span> <span class="n">lhs</span> <span class="o">==</span> <span class="n">rhs</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">};</span>
 
-<span class="k">template</span> <span class="o">&lt;&gt;</span> <span class="k">struct</span> <span class="n">key_equal</span><span class="o">&lt;</span><span class="kt">char</span><span class="o">*&gt;</span>
+<span class="k">template</span> <span class="o">&lt;&gt;</span> <span class="k">struct</span> <span class="nc">key_equal</span><span class="o">&lt;</span><span class="kt">char</span><span class="o">*&gt;</span>
 <span class="p">{</span>
-    <span class="kt">bool</span> <span class="k">operator</span><span class="p">(</span><span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">lhs</span><span class="p">,</span> <span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">)</span>
+    <span class="kt">bool</span> <span class="nf">operator</span><span class="p">(</span><span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">lhs</span><span class="p">,</span> <span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">)</span>
     <span class="p">{</span>
         <span class="k">return</span> <span class="n">strcmp</span><span class="p">(</span><span class="n">lhs</span><span class="p">,</span> <span class="n">rhs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">;</span>
     <span class="p">}</span>
@@ -239,7 +239,7 @@ clients to specialize their own <span class="docutils literal"><span class="pre"
 <span class="docutils literal"><span class="pre">N</span></span>, iterators over the member array are trivial to implement etc.), the only
 interesting methods are <span class="docutils literal"><span class="pre">find()</span></span>, <span class="docutils literal"><span class="pre">at()</span></span>, and <span class="docutils literal"><span class="pre">operator[]</span></span>:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="p">...</span>
-<span class="k">struct</span> <span class="n">associative_array</span>
+<span class="k">struct</span> <span class="nc">associative_array</span>
 <span class="p">{</span>
     <span class="p">...</span>
     <span class="n">iterator</span> <span class="n">find</span><span class="p">(</span><span class="k">const</span> <span class="n">TKey</span><span class="o">&amp;</span> <span class="n">key</span><span class="p">)</span>
@@ -260,7 +260,7 @@ interesting methods are <span class="docutils literal"><span class="pre">find()<
 
     <span class="n">T</span><span class="o">&amp;</span> <span class="k">operator</span><span class="p">[](</span><span class="k">const</span> <span class="n">TKey</span><span class="o">&amp;</span> <span class="n">key</span><span class="p">)</span>
     <span class="p">{</span>
-        <span class="k">return</span> <span class="n">find</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">second</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nf">find</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">second</span><span class="p">;</span>
     <span class="p">}</span>
     <span class="p">...</span>
 <span class="p">};</span>

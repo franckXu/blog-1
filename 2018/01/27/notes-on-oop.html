@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Evens before Odds" href="../../../2017/12/30/evens-before-odds.html" /><link rel="prev" title="Fibonacci" href="../../02/11/fibonacci.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.7.1',
+        VERSION:     '1.7.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -96,12 +96,12 @@ and so on. This makes things slightly complicated: what if we need something
 that waddles, but we don’t care about quacking? Do we separate our duck into two
 different interfaces? In general, do we add an interface for each behavior and
 then pull groups of interfaces together to form more refined types?</p>
-<div class="highlight-C++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">IQuack</span>
+<div class="highlight-C++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">IQuack</span>
 <span class="p">{</span>
     <span class="k">virtual</span> <span class="kt">void</span> <span class="n">Quack</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">};</span>
 
-<span class="k">struct</span> <span class="n">IWaddle</span>
+<span class="k">struct</span> <span class="nc">IWaddle</span>
 <span class="p">{</span>
     <span class="k">virtual</span> <span class="kt">void</span> <span class="n">Waddle</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">};</span>
@@ -130,7 +130,7 @@ though, using generic programming:</p>
     <span class="kt">void</span> <span class="n">Waddle</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span>
 <span class="p">};</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Duck</span><span class="o">&gt;</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Duck</span><span class="o">&gt;</span>
 <span class="kt">void</span> <span class="n">foo</span><span class="p">(</span><span class="n">Duck</span><span class="o">&amp;</span> <span class="n">duck</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="n">duck</span><span class="p">.</span><span class="n">Quack</span><span class="p">();</span>
@@ -289,7 +289,7 @@ this:</p>
     <span class="c1">// Open, Close, Send, Receive etc.</span>
 <span class="p">};</span>
 
-<span class="n">Connection</span><span class="o">&amp;</span> <span class="n">Make</span><span class="p">();</span>
+<span class="n">Connection</span><span class="o">&amp;</span> <span class="nf">Make</span><span class="p">();</span>
 <span class="kt">void</span> <span class="nf">CloseAll</span><span class="p">();</span>
 
 <span class="c1">// In .cpp file</span>
@@ -354,7 +354,7 @@ is derived from that. But let’s assume we have separate <em>day</em>, <em>mont
 <em>year</em> fields. This type should maintain an invariant that it represents a valid
 date, so we can’t have, for example, a June 31st. It’s hard to enforce the
 invariant with:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Date</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">Date</span>
 <span class="p">{</span>
     <span class="kt">uint8_t</span> <span class="n">day</span><span class="p">;</span>
     <span class="kt">uint8_t</span> <span class="n">month</span><span class="p">;</span>
@@ -390,7 +390,7 @@ days would increment the month and when incrementing the month would increment
 the year, such that the invariant of always having a valid date is enforced.</p>
 <p>On the other hand, a type which doesn’t need to maintain an invariant, say a
 point in the plane, should not be implemented as a class:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Point</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">Point</span>
 <span class="p">{</span>
     <span class="kt">int64_t</span> <span class="n">x</span><span class="p">;</span>
     <span class="kt">int64_t</span> <span class="n">y</span><span class="p">;</span>

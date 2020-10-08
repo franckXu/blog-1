@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="(Ab)using Maps" href="../../04/24/abusing-maps.html" /><link rel="prev" title="Concepts and Modules" href="../../08/17/concepts-and-modules.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.7.1',
+        VERSION:     '1.7.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -117,10 +117,10 @@ an <span class="docutils literal"><span class="pre">IEngine</span></span> interf
 <p><em>IEngine.h (publicly visible)</em>:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
 
-<span class="k">struct</span> <span class="n">IEngine</span>
+<span class="k">struct</span> <span class="nc">IEngine</span>
 <span class="p">{</span>
     <span class="k">virtual</span> <span class="kt">void</span> <span class="n">Start</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">Stop</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">Stop</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
     <span class="k">virtual</span> <span class="o">~</span><span class="n">IEngine</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
 <span class="p">};</span>
 
@@ -132,8 +132,8 @@ an <span class="docutils literal"><span class="pre">IEngine</span></span> interf
 
 <span class="k">class</span> <span class="nc">V8Engine</span> <span class="o">:</span> <span class="k">public</span> <span class="n">IEngine</span>
 <span class="p">{</span>
-    <span class="kt">void</span> <span class="n">Start</span><span class="p">()</span> <span class="k">override</span> <span class="p">{</span> <span class="cm">/* start the engine */</span> <span class="p">}</span>
-    <span class="kt">void</span> <span class="n">Stop</span><span class="p">()</span> <span class="k">override</span> <span class="p">{</span> <span class="cm">/* stop the engine */</span> <span class="p">}</span>
+    <span class="kt">void</span> <span class="nf">Start</span><span class="p">()</span> <span class="k">override</span> <span class="p">{</span> <span class="cm">/* start the engine */</span> <span class="p">}</span>
+    <span class="kt">void</span> <span class="nf">Stop</span><span class="p">()</span> <span class="k">override</span> <span class="p">{</span> <span class="cm">/* stop the engine */</span> <span class="p">}</span>
 <span class="p">};</span>
 
 <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">IEngine</span><span class="o">&gt;</span> <span class="n">MakeV8Engine</span><span class="p">()</span>
@@ -216,7 +216,7 @@ mind when working with MSVC.</p>
 functions to get object instances. Below is a possible naming convention, taking
 object ownership into account:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">IFoo</span><span class="o">&gt;</span> <span class="n">MakeFoo</span><span class="p">();</span>
-<span class="n">IFoo</span><span class="o">&amp;</span> <span class="n">UseFoo</span><span class="p">();</span>
+<span class="n">IFoo</span><span class="o">&amp;</span> <span class="nf">UseFoo</span><span class="p">();</span>
 <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">IFoo</span><span class="o">&gt;</span> <span class="n">GetFoo</span><span class="p">();</span>
 </pre></div>
 </div>
@@ -229,7 +229,7 @@ owned by someone else, with the guarantee that it will outlive the caller. In
 that case, there is no need for pointers and we can simply return a reference to
 the object. This can be used, for example, for singletons. Below is an example
 of a singleton <span class="docutils literal"><span class="pre">Engine</span></span>:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">IEngine</span><span class="o">&amp;</span> <span class="n">UseEngine</span><span class="p">()</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">IEngine</span><span class="o">&amp;</span> <span class="nf">UseEngine</span><span class="p">()</span>
 <span class="p">{</span>
     <span class="k">static</span> <span class="k">auto</span> <span class="n">instance</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Engine</span><span class="o">&gt;</span><span class="p">();</span>
     <span class="k">return</span> <span class="o">*</span><span class="n">instance</span><span class="p">;</span>
@@ -251,8 +251,8 @@ the engine:</p>
 
 <span class="k">class</span> <span class="nc">MockEngine</span> <span class="o">:</span> <span class="k">public</span> <span class="n">IEngine</span>
 <span class="p">{</span>
-    <span class="kt">void</span> <span class="n">Start</span><span class="p">()</span> <span class="k">override</span> <span class="p">{</span> <span class="cm">/* mock logic */</span> <span class="p">}</span>
-    <span class="kt">void</span> <span class="n">Stop</span><span class="p">()</span> <span class="k">override</span> <span class="p">{</span> <span class="cm">/* mock logic */</span> <span class="p">}</span>
+    <span class="kt">void</span> <span class="nf">Start</span><span class="p">()</span> <span class="k">override</span> <span class="p">{</span> <span class="cm">/* mock logic */</span> <span class="p">}</span>
+    <span class="kt">void</span> <span class="nf">Stop</span><span class="p">()</span> <span class="k">override</span> <span class="p">{</span> <span class="cm">/* mock logic */</span> <span class="p">}</span>
 <span class="p">};</span>
 
 <span class="kt">void</span> <span class="nf">Test</span><span class="p">()</span>
@@ -269,7 +269,7 @@ details, in which case we would end up with the following:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
 <span class="cp">#include</span> <span class="cpf">&quot;IEngine.h&quot;</span><span class="cp"></span>
 
-<span class="k">struct</span> <span class="n">ICar</span>
+<span class="k">struct</span> <span class="nc">ICar</span>
 <span class="p">{</span>
     <span class="k">virtual</span> <span class="kt">void</span> <span class="n">Drive</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
     <span class="k">virtual</span> <span class="o">~</span><span class="n">ICar</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
@@ -311,8 +311,8 @@ details, in which case we would end up with the following:</p>
 
 <span class="k">class</span> <span class="nc">MockEngine</span> <span class="o">:</span> <span class="k">public</span> <span class="n">IEngine</span>
 <span class="p">{</span>
-    <span class="kt">void</span> <span class="n">Start</span><span class="p">()</span> <span class="k">override</span> <span class="p">{</span> <span class="cm">/* mock logic */</span> <span class="p">}</span>
-    <span class="kt">void</span> <span class="n">Stop</span><span class="p">()</span> <span class="k">override</span> <span class="p">{</span> <span class="cm">/* mock logic */</span> <span class="p">}</span>
+    <span class="kt">void</span> <span class="nf">Start</span><span class="p">()</span> <span class="k">override</span> <span class="p">{</span> <span class="cm">/* mock logic */</span> <span class="p">}</span>
+    <span class="kt">void</span> <span class="nf">Stop</span><span class="p">()</span> <span class="k">override</span> <span class="p">{</span> <span class="cm">/* mock logic */</span> <span class="p">}</span>
 <span class="p">};</span>
 
 <span class="kt">void</span> <span class="nf">Test</span><span class="p">()</span>
@@ -415,7 +415,7 @@ when templates get instantiated:</p>
 <p><em>Car.h (publicly visible)</em>:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">TEngine</span><span class="o">&gt;</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">TEngine</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">Car</span>
 <span class="p">{</span>
 <span class="k">public</span><span class="o">:</span>
@@ -446,8 +446,8 @@ visible header. Now we can create an instance of <span class="docutils literal">
 
 <span class="k">class</span> <span class="nc">MockEngine</span>
 <span class="p">{</span>
-    <span class="kt">void</span> <span class="n">Start</span><span class="p">()</span> <span class="p">{</span> <span class="cm">/* mock logic */</span> <span class="p">}</span>
-    <span class="kt">void</span> <span class="n">Stop</span><span class="p">()</span> <span class="p">{</span> <span class="cm">/* mock logic */</span> <span class="p">}</span>
+    <span class="kt">void</span> <span class="nf">Start</span><span class="p">()</span> <span class="p">{</span> <span class="cm">/* mock logic */</span> <span class="p">}</span>
+    <span class="kt">void</span> <span class="nf">Stop</span><span class="p">()</span> <span class="p">{</span> <span class="cm">/* mock logic */</span> <span class="p">}</span>
 <span class="p">};</span>
 
 <span class="kt">void</span> <span class="nf">Test</span><span class="p">()</span>
@@ -478,7 +478,7 @@ we could have something like this:</p>
 <p><em>ICar.h (publicly visible)</em>:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
 
-<span class="k">struct</span> <span class="n">ICar</span>
+<span class="k">struct</span> <span class="nc">ICar</span>
 <span class="p">{</span>
     <span class="k">virtual</span> <span class="kt">void</span> <span class="n">Drive</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
     <span class="k">virtual</span> <span class="o">~</span><span class="n">ICar</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
@@ -492,7 +492,7 @@ we could have something like this:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
 <span class="cp">#include</span> <span class="cpf">&quot;ICar.h&quot;</span><span class="cp"></span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">TEngine</span><span class="o">&gt;</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">TEngine</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">Car</span> <span class="o">:</span> <span class="k">public</span> <span class="n">ICar</span>
 <span class="p">{</span>
 <span class="k">public</span><span class="o">:</span>

@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Clean Code - Part 1" href="../04/clean-code-part-1.html" /><link rel="prev" title="Arguments and Smart Pointers" href="../../03/11/arguments-and-smart-pointers.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.7.1',
+        VERSION:     '1.7.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -73,7 +73,7 @@ that. A good rule of thumb is to mark things as <span class="docutils literal"><
 <span class="docutils literal"><span class="pre">const*</span></span> etc.) and/or <span class="docutils literal"><span class="pre">readonly</span></span> by default, and make them mutable only when
 truly needed <a class="footnote-reference" href="#id5" id="id1">[1]</a>.</p>
 <p>A simple example:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">StringUtil</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">StringUtil</span>
 <span class="p">{</span>
     <span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">Concat1</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str1</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str2</span><span class="p">)</span>
     <span class="p">{</span>
@@ -93,7 +93,7 @@ for the same input, the difference being that <span class="docutils literal"><sp
 might be introduced accidentally and have unexpected consequences down the line.</p>
 <p>A simple way to address this is by explicitly marking the arguments as
 <span class="docutils literal"><span class="pre">const</span></span>:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">StringUtil</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">StringUtil</span>
 <span class="p">{</span>
     <span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">Concat1</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str1</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str2</span><span class="p">)</span>
     <span class="p">{</span>

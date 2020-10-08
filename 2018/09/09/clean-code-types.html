@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Implementing a Variant Type in C#" href="../../07/16/implementing-a-variant-type-in-csharp.html" /><link rel="prev" title="Arithmetic Overflow and Underflow" href="../../10/13/arithmetic-overflow-and-underflow.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.7.1',
+        VERSION:     '1.7.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -99,7 +99,7 @@ value in the problem’s domain and causes situations like the above. Representi
 zip codes as numbers, telephone numbers as strings, Ns and lbfs as <span class="docutils literal"><span class="pre">double</span></span>
 are all examples of this.</p>
 <p>A more type safe solution would have defined a simple <span class="docutils literal"><span class="pre">Ns</span></span> type:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Ns</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">Ns</span>
 <span class="p">{</span>
     <span class="kt">double</span> <span class="n">value</span><span class="p">;</span>
 <span class="p">};</span>
@@ -111,7 +111,7 @@ are all examples of this.</p>
 </pre></div>
 </div>
 <p>We can similarly define a simple <span class="docutils literal"><span class="pre">lbfs</span></span> type:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">lbfs</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">lbfs</span>
 <span class="p">{</span>
     <span class="kt">double</span> <span class="n">value</span><span class="p">;</span>
 <span class="p">};</span>
@@ -147,11 +147,11 @@ incompatible:</p>
 in code (<span class="docutils literal"><span class="pre">Ns{</span> <span class="pre">2</span> <span class="pre">}</span></span>, <span class="docutils literal"><span class="pre">lbfs{</span> <span class="pre">1.5</span> <span class="pre">}</span></span>).</p>
 <p>We can, of course, provide casting from <span class="docutils literal"><span class="pre">lbfs</span></span> to <span class="docutils literal"><span class="pre">Ns</span></span> as an explicit
 operator:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">lbfs</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">lbfs</span>
 <span class="p">{</span>
     <span class="kt">double</span> <span class="n">value</span><span class="p">;</span>
 
-    <span class="k">explicit</span> <span class="k">operator</span> <span class="nf">Ns</span><span class="p">()</span>
+    <span class="k">explicit</span> <span class="k">operator</span> <span class="n">Ns</span><span class="p">()</span>
     <span class="p">{</span>
         <span class="k">return</span> <span class="n">value</span> <span class="o">*</span> <span class="mf">4.448222</span><span class="p">;</span>
     <span class="p">}</span>
@@ -278,7 +278,7 @@ form of free, delete, close etc. on the resource.</p>
 <p>Since these resources are external, they are not directly expressed into our
 type system. For example if we allocate some heap memory, we get a pointer on
 which we have to call <span class="docutils literal"><span class="pre">delete</span></span>:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Foo</span> <span class="p">{};</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">Foo</span> <span class="p">{};</span>
 
 <span class="kt">void</span> <span class="nf">example</span><span class="p">()</span>
 <span class="p">{</span>

@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Programming with Types RTM" href="../../10/16/programming-with-types-rtm.html" /><link rel="prev" title="Notes on Data Engineering" href="../../12/08/notes-on-data-engineering.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.7.1',
+        VERSION:     '1.7.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -221,7 +221,7 @@ C++, for example, we can do it at compile-time, at link-time, or at run-time.</p
 <p>At compile-time, we can use a template parameter as the “interface”, have the
 production version of the code instantiate it with one concrete
 implementation and have the tests instantiate it with a mock:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">TImpl</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">TImpl</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">Example</span>
 <span class="p">{</span>
 <span class="k">private</span><span class="o">:</span>

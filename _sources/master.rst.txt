@@ -4,6 +4,7 @@ Sitemap
 .. toctree::
    :maxdepth: 1
 
+   2020/10/08/azure-data-engineering
    2020/04/27/machine-learning-at-scale
    2020/03/01/azure-data-explorer
    2020/02/01/self-serve-analytics

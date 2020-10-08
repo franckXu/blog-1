@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Idris: Totality, Dependent Types, Proofs" href="../../07/20/idris-totality-dependent-types-proofs.html" /><link rel="prev" title="Notes on Unit Testing" href="../../11/09/notes-on-unit-testing.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.7.1',
+        VERSION:     '1.7.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -95,11 +95,11 @@ could potentially be the same operator).</p>
     <span class="c1"># For every possible combination of 3 operators</span>
     <span class="k">for</span> <span class="n">ops</span> <span class="ow">in</span> <span class="n">product</span><span class="p">(</span><span class="s1">&#39;+-*/&#39;</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
         <span class="c1"># For every possible grouping</span>
-        <span class="k">for</span> <span class="n">exp</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;({} {} {}) {} ({} {} {})&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;(({} {} {}) {} {}) {} {}&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;({} {} ({} {} {})) {} {}&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;{} {} ({} {} ({} {} {}))&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;{} {} (({} {} {}) {} {})&#39;</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">exp</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;(</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">) </span><span class="si">{}</span><span class="s1"> (</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">)&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;((</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">) </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">) </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;(</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> (</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">)) </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> (</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> (</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">))&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> ((</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">) </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">)&#39;</span><span class="p">]:</span>
 
             <span class="c1"># Place operands and operators in expression</span>
             <span class="n">exp</span> <span class="o">=</span> <span class="n">exp</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">xs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ops</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">xs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ops</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">xs</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
@@ -108,15 +108,15 @@ could potentially be the same operator).</p>
             <span class="k">try</span><span class="p">:</span>
                 <span class="c1"># If expression evaluates to 24, we found a solution</span>
                 <span class="k">if</span> <span class="nb">eval</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">24</span><span class="p">:</span>
-                    <span class="k">print</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span>
-                    <span class="nb">exit</span><span class="p">()</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span>
+                    <span class="n">exit</span><span class="p">()</span>
             <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
                 <span class="c1"># Ignore division by zero errors</span>
                 <span class="k">pass</span>
 
 <span class="c1"># If we get here we tried all combinations and couldn&#39;t</span>
 <span class="c1"># find any solution</span>
-<span class="k">print</span><span class="p">(</span><span class="s1">&#39;No solution&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No solution&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>We have ten possible cards (ace and number cards), and taking combination with
@@ -163,21 +163,21 @@ need the groupings</p>
         <span class="k">continue</span>
 
     <span class="k">for</span> <span class="n">ops</span> <span class="ow">in</span> <span class="n">product</span><span class="p">(</span><span class="s1">&#39;+-*/&#39;</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">exp</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;({} {} {}) {} ({} {} {})&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;(({} {} {}) {} {}) {} {}&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;({} {} ({} {} {})) {} {}&#39;</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">exp</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;(</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">) </span><span class="si">{}</span><span class="s1"> (</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">)&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;((</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">) </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">) </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;(</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> (</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">)) </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">]:</span>
 
             <span class="n">exp</span> <span class="o">=</span> <span class="n">exp</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">xs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ops</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">xs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ops</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">xs</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
                 <span class="n">ops</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">xs</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
 
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">eval</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">24</span><span class="p">:</span>
-                    <span class="k">print</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span>
-                    <span class="nb">exit</span><span class="p">()</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span>
+                    <span class="n">exit</span><span class="p">()</span>
             <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
                 <span class="k">pass</span>
 
-<span class="k">print</span><span class="p">(</span><span class="s1">&#39;No solution&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No solution&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>This means that for games without aces, we need to check 24 (<span class="math notranslate">\(4!\)</span>)
@@ -203,9 +203,9 @@ and groupings as above:</p>
 
 <span class="n">operands</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">permutations</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="mi">4</span><span class="p">))</span> <span class="c1"># 24 of these</span>
 <span class="n">operators</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="s1">&#39;+-*/&#39;</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">3</span><span class="p">))</span> <span class="c1"># 64 of these</span>
-<span class="n">groupings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;({} {} {}) {} ({} {} {})&#39;</span><span class="p">,</span>
-             <span class="s1">&#39;(({} {} {}) {} {}) {} {}&#39;</span><span class="p">,</span>
-             <span class="s1">&#39;({} {} ({} {} {})) {} {}&#39;</span><span class="p">]</span> <span class="c1"># 3 of these</span>
+<span class="n">groupings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;(</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">) </span><span class="si">{}</span><span class="s1"> (</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">)&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;((</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">) </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">) </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;(</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> (</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">)) </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="c1"># 3 of these</span>
 </pre></div>
 </div>
 <p>Note that here we are looking at all possible games so operands are permutations
@@ -226,9 +226,9 @@ expressions which evaluate to 24:</p>
                     <span class="k">if</span> <span class="nb">eval</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">inp</span><span class="p">[</span><span class="n">xs</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">ops</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
                             <span class="n">inp</span><span class="p">[</span><span class="n">xs</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">ops</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">inp</span><span class="p">[</span><span class="n">xs</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span>
                             <span class="n">ops</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">inp</span><span class="p">[</span><span class="n">xs</span><span class="p">[</span><span class="mi">3</span><span class="p">]]))</span> <span class="o">==</span> <span class="mi">24</span><span class="p">:</span>
-                        <span class="k">yield</span> <span class="n">exp</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;x{xs[0]}&#39;</span><span class="p">,</span> <span class="n">ops</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-                            <span class="n">f</span><span class="s1">&#39;x{xs[1]}&#39;</span><span class="p">,</span> <span class="n">ops</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">f</span><span class="s1">&#39;x{xs[2]}&#39;</span><span class="p">,</span>
-                            <span class="n">ops</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">f</span><span class="s1">&#39;x{xs[3]}&#39;</span><span class="p">)</span>
+                        <span class="k">yield</span> <span class="n">exp</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;x</span><span class="si">{</span><span class="n">xs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">ops</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                            <span class="sa">f</span><span class="s1">&#39;x</span><span class="si">{</span><span class="n">xs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">ops</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="sa">f</span><span class="s1">&#39;x</span><span class="si">{</span><span class="n">xs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                            <span class="n">ops</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="sa">f</span><span class="s1">&#39;x</span><span class="si">{</span><span class="n">xs</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
                 <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
                     <span class="k">pass</span>
 </pre></div>
@@ -418,12 +418,12 @@ source file, together with the code to test input:</p>
             <span class="n">exp</span> <span class="o">=</span> <span class="n">exp</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;x&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">eval</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">24</span><span class="p">:</span>
-                <span class="k">print</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span>
                 <span class="k">return</span>
         <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
             <span class="k">pass</span>
 
-<span class="k">print</span><span class="p">(</span><span class="s1">&#39;No solution&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No solution&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>We can test this by ensuring that we still see 117 games without solution when
@@ -447,10 +447,10 @@ can define equivalence as:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">equivalent</span><span class="p">(</span><span class="n">exp1</span><span class="p">,</span> <span class="n">exp2</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">exp1</span> <span class="ow">in</span> <span class="n">result</span> <span class="ow">and</span> <span class="n">exp2</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">False</span>
+            <span class="k">return</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="n">exp1</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span> <span class="ow">and</span> <span class="n">exp2</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">False</span>
-    <span class="k">return</span> <span class="bp">True</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span>
 </pre></div>
 </div>
 <p>With this function, we can go over our univese <span class="math notranslate">\(\mathcal{U}\)</span> of

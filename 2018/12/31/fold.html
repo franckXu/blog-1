@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Notes on Encoding Text" href="../../11/18/notes-on-encoding-text.html" /><link rel="prev" title="Programming with Types" href="../../../2019/04/28/programming-with-types.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.7.1',
+        VERSION:     '1.7.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -132,8 +132,8 @@ single <span class="docutils literal"><span class="pre">Point</span></span> usin
 </div>
 <p>We can sketch out a function that, given a set of objects of any type <span class="docutils literal"><span class="pre">T</span></span> and
 an operation closed over <span class="docutils literal"><span class="pre">T</span></span>, produces a final value of type <span class="docutils literal"><span class="pre">T</span></span>:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">It</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Op</span><span class="p">,</span>
-    <span class="k">typename</span> <span class="n">T</span><span class="o">=</span><span class="k">typename</span> <span class="n">std</span><span class="o">::</span><span class="n">iterator_traits</span><span class="o">&lt;</span><span class="n">It</span><span class="o">&gt;::</span><span class="n">value_type</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">It</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">Op</span><span class="p">,</span>
+    <span class="k">typename</span> <span class="nc">T</span><span class="o">=</span><span class="k">typename</span> <span class="nc">std</span><span class="o">::</span><span class="n">iterator_traits</span><span class="o">&lt;</span><span class="n">It</span><span class="o">&gt;::</span><span class="n">value_type</span><span class="o">&gt;</span>
 <span class="n">T</span> <span class="n">fold</span><span class="p">(</span><span class="n">It</span> <span class="n">begin</span><span class="p">,</span> <span class="n">It</span> <span class="n">end</span><span class="p">,</span> <span class="n">T</span> <span class="n">init</span><span class="p">,</span> <span class="n">Op</span> <span class="n">op</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="n">T</span> <span class="n">result</span> <span class="o">=</span> <span class="n">init</span><span class="p">;</span>
@@ -159,8 +159,8 @@ the subtraction operation, if we start with the set of number <span class="docut
 <span class="docutils literal"><span class="pre">((1</span> <span class="pre">-</span> <span class="pre">1)</span> <span class="pre">-</span> <span class="pre">2)</span> <span class="pre">-</span> <span class="pre">3</span></span>, or <span class="docutils literal"><span class="pre">-5</span></span>. On the other hand, we can start from right
 to left, and fold <span class="docutils literal"><span class="pre">1</span> <span class="pre">-</span> <span class="pre">(2</span> <span class="pre">-</span> <span class="pre">(3</span> <span class="pre">-</span> <span class="pre">1))</span></span>, or <span class="docutils literal"><span class="pre">1</span></span>. Let’s call this verison
 <span class="docutils literal"><span class="pre">foldRight</span></span> and look at a possible implementation:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">It</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Op</span>
-    <span class="k">typename</span> <span class="n">T</span><span class="o">=</span><span class="k">typename</span> <span class="n">std</span><span class="o">::</span><span class="n">iterator_traits</span><span class="o">&lt;</span><span class="n">It</span><span class="o">&gt;::</span><span class="n">value_type</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">It</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">Op</span>
+    <span class="k">typename</span> <span class="nc">T</span><span class="o">=</span><span class="k">typename</span> <span class="nc">std</span><span class="o">::</span><span class="n">iterator_traits</span><span class="o">&lt;</span><span class="n">It</span><span class="o">&gt;::</span><span class="n">value_type</span><span class="o">&gt;</span>
 <span class="n">T</span> <span class="n">fold_right</span><span class="p">(</span><span class="n">It</span> <span class="n">begin</span><span class="p">,</span> <span class="n">It</span> <span class="n">end</span><span class="p">,</span> <span class="n">T</span> <span class="n">init</span><span class="p">,</span> <span class="n">Op</span> <span class="n">op</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="n">T</span> <span class="n">result</span> <span class="o">=</span> <span class="n">init</span><span class="p">;</span>
@@ -232,8 +232,8 @@ operation and an identity element. Note commutativity is not required. If the
 operation is also commutative, then we have a <em>commutative monoid</em>.</p>
 <p>If the default constructor of our type <span class="docutils literal"><span class="pre">T</span></span> creates an identiy, then we can
 reimplement <span class="docutils literal"><span class="pre">fold</span></span> like this:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">It</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Op</span><span class="p">,</span>
-    <span class="k">typename</span> <span class="n">T</span><span class="o">=</span><span class="k">typename</span> <span class="n">std</span><span class="o">::</span><span class="n">iterator_traits</span><span class="o">&lt;</span><span class="n">It</span><span class="o">&gt;::</span><span class="n">value_type</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">It</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">Op</span><span class="p">,</span>
+    <span class="k">typename</span> <span class="nc">T</span><span class="o">=</span><span class="k">typename</span> <span class="nc">std</span><span class="o">::</span><span class="n">iterator_traits</span><span class="o">&lt;</span><span class="n">It</span><span class="o">&gt;::</span><span class="n">value_type</span><span class="o">&gt;</span>
 <span class="n">T</span> <span class="n">fold</span><span class="p">(</span><span class="n">It</span> <span class="n">begin</span><span class="p">,</span> <span class="n">It</span> <span class="n">end</span><span class="p">,</span> <span class="n">Op</span> <span class="n">op</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="n">T</span> <span class="n">result</span><span class="p">{</span> <span class="p">};</span>
@@ -332,8 +332,8 @@ right can be left to the top function which combines the partial results.</p>
 <p>We covered traditional implementations of <span class="docutils literal"><span class="pre">fold</span></span> but let’s go over a couple of
 alternative implementations. We could say that if the set is empty, we don’t
 return anything, otherwise we take the first element as our initial value:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">It</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Op</span><span class="p">,</span>
-    <span class="k">typename</span> <span class="n">T</span><span class="o">=</span><span class="k">typename</span> <span class="n">std</span><span class="o">::</span><span class="n">iterator_traits</span><span class="o">&lt;</span><span class="n">It</span><span class="o">&gt;::</span><span class="n">value_type</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">It</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">Op</span><span class="p">,</span>
+    <span class="k">typename</span> <span class="nc">T</span><span class="o">=</span><span class="k">typename</span> <span class="nc">std</span><span class="o">::</span><span class="n">iterator_traits</span><span class="o">&lt;</span><span class="n">It</span><span class="o">&gt;::</span><span class="n">value_type</span><span class="o">&gt;</span>
 <span class="n">std</span><span class="o">::</span><span class="n">optional</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">fold</span><span class="p">(</span><span class="n">It</span> <span class="n">begin</span><span class="p">,</span> <span class="n">It</span> <span class="n">end</span><span class="p">,</span> <span class="n">Op</span> <span class="n">op</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">begin</span> <span class="o">==</span> <span class="n">end</span><span class="p">)</span> <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">nullopt</span><span class="p">;</span>
@@ -355,8 +355,8 @@ of a value.</p>
 <p>Another option is to take a default value as an argument and return that in case
 we have no elements to combine, but if we do, simply ignore that value instead
 of combining it with the input elements:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">It</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Op</span><span class="p">,</span>
-    <span class="k">typename</span> <span class="n">T</span><span class="o">=</span><span class="k">typename</span> <span class="n">std</span><span class="o">::</span><span class="n">iterator_traits</span><span class="o">&lt;</span><span class="n">It</span><span class="o">&gt;::</span><span class="n">value_type</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">It</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">Op</span><span class="p">,</span>
+    <span class="k">typename</span> <span class="nc">T</span><span class="o">=</span><span class="k">typename</span> <span class="nc">std</span><span class="o">::</span><span class="n">iterator_traits</span><span class="o">&lt;</span><span class="n">It</span><span class="o">&gt;::</span><span class="n">value_type</span><span class="o">&gt;</span>
 <span class="n">T</span> <span class="n">fold</span><span class="p">(</span><span class="n">It</span> <span class="n">begin</span><span class="p">,</span> <span class="n">It</span> <span class="n">end</span><span class="p">,</span> <span class="n">T</span> <span class="n">def</span><span class="p">,</span> <span class="n">Op</span> <span class="n">op</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">begin</span> <span class="o">==</span> <span class="n">end</span><span class="p">)</span> <span class="k">return</span> <span class="n">def</span><span class="p">;</span>

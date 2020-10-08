@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Notes on Types" href="../../10/16/notes-on-types.html" /><link rel="prev" title="Memory Management" href="../../../2017/02/20/memory-management.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.7.1',
+        VERSION:     '1.7.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -113,9 +113,9 @@ the allowed values. This is a trivial example but there are many more
 interesting ones. Take for example some connection which, if opened, can receive
 data and close and, if not opened, can be opened. This can be modelled like
 this:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">connection</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">connection</span>
 <span class="p">{</span>
-    <span class="k">auto</span> <span class="n">open</span><span class="p">()</span>
+    <span class="k">auto</span> <span class="nf">open</span><span class="p">()</span>
     <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">is_opened</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/* error, connection already opened */</span> <span class="p">}</span>
         <span class="p">...</span>
@@ -142,15 +142,15 @@ this:</p>
 operation on a connection that hasn’t been opened yet, and vice-versa. Another
 way to model this (as of C++17) is using a variant and separate types for open
 and closed connections:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">opened_connection</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">opened_connection</span>
 <span class="p">{</span>
-    <span class="k">auto</span> <span class="n">close</span><span class="p">()</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
-    <span class="k">auto</span> <span class="n">receive</span><span class="p">()</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+    <span class="k">auto</span> <span class="nf">close</span><span class="p">()</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+    <span class="k">auto</span> <span class="nf">receive</span><span class="p">()</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
 <span class="p">};</span>
 
-<span class="k">struct</span> <span class="n">closed_connection</span>
+<span class="k">struct</span> <span class="nc">closed_connection</span>
 <span class="p">{</span>
-    <span class="k">auto</span> <span class="n">open</span><span class="p">()</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+    <span class="k">auto</span> <span class="nf">open</span><span class="p">()</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
 <span class="p">};</span>
 
 <span class="k">using</span> <span class="n">connection</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">variant</span><span class="o">&lt;</span><span class="n">closed_connection</span><span class="p">,</span> <span class="n">opened_connection</span><span class="o">&gt;</span><span class="p">;</span>
@@ -274,7 +274,7 @@ better - take, for example, a generic algorithm that takes some throwing
 function. Since we supply the predicate, we know what exception it can throw and
 we can catch it in the code that invokes the generic algorithm, keeping this
 invisible to the algorithm:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">InputIt</span><span class="p">,</span> <span class="k">typename</span> <span class="n">UnaryFunction</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">InputIt</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">UnaryFunction</span><span class="o">&gt;</span>
 <span class="kt">void</span> <span class="n">for_each</span><span class="p">(</span><span class="n">InputIt</span> <span class="n">first</span><span class="p">,</span> <span class="n">InputIt</span> <span class="n">last</span><span class="p">,</span> <span class="n">UnaryFunction</span> <span class="n">f</span><span class="p">)</span> <span class="k">noexcept</span><span class="p">(</span><span class="k">noexcept</span><span class="p">(</span><span class="n">UnaryFunction</span><span class="p">))</span>
 <span class="p">{</span>
     <span class="k">for</span> <span class="p">(;</span> <span class="n">first</span> <span class="o">!=</span> <span class="n">last</span><span class="p">;</span> <span class="o">++</span><span class="n">first</span><span class="p">)</span>
@@ -284,7 +284,7 @@ invisible to the algorithm:</p>
 </div>
 <p>If our predicate returns an error code instead, the generic algorithm must be
 aware of this:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">InputIt</span><span class="p">,</span> <span class="k">typename</span> <span class="n">UnaryFunction</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">InputIt</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">UnaryFunction</span><span class="o">&gt;</span>
 <span class="k">auto</span> <span class="n">for_each</span><span class="p">(</span><span class="n">InputIt</span> <span class="n">first</span><span class="p">,</span> <span class="n">InputIt</span> <span class="n">last</span><span class="p">,</span> <span class="n">UnaryFunction</span> <span class="n">f</span><span class="p">)</span> <span class="k">noexcept</span>
 <span class="p">{</span>
     <span class="k">for</span> <span class="p">(;</span> <span class="n">first</span> <span class="o">!=</span> <span class="n">last</span><span class="p">;</span> <span class="o">++</span><span class="n">first</span><span class="p">)</span>
