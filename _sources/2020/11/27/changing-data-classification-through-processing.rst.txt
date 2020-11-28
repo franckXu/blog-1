@@ -188,7 +188,7 @@ transformation.
     :align: center
 
 Note that if we only have this dataset consisting of *Pseudonymous ID*,
-*Timestamp*, and *Feature*, we can produce a user ID. On the other hand, if
+*Timestamp*, and *Feature*, we can't produce a user ID. On the other hand, if
 we have a user ID, we can always hash it and link it to the pseudonymized
 data.
 
