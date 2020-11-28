@@ -54,10 +54,10 @@ Let's start by defining two datasets, as shown in the following figure:
     :align: center
 
 The first dataset, *User profiles*, contains user accounts, including names,
-credit cards, and billing addresses. We omitted actual billing to keep things
-short. This dataset also contains a *User ID* column which associates an
-identification number with each user. This is the primary ID in our system,
-since we can use it to link back to a user's profile information.
+credit cards, and billing addresses. We omitted actual billing addresses to
+keep things short. This dataset also contains a *User ID* column which
+associates an identification number with each user. This is the primary ID in
+our system, since we can use it to link back to a user's profile information.
 
 The second dataset, *User telemetry*, contains telemetry data we collect from
 our users. It contains the user ID, timestamp and product feature the user
