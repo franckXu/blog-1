@@ -4,6 +4,7 @@ Sitemap
 .. toctree::
    :maxdepth: 1
 
+   2020/11/27/changing-data-classification-through-processing
    2020/11/13/data-quality-testing-patterns
    2020/10/08/azure-data-engineering
    2020/04/27/machine-learning-at-scale
