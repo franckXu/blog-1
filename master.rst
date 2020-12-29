@@ -4,6 +4,7 @@ Sitemap
 .. toctree::
    :maxdepth: 1
 
+   2020/12/29/recommendations
    2020/12/10/notes-on-design-patterns
    2020/11/27/changing-data-classification-through-processing
    2020/11/13/data-quality-testing-patterns
