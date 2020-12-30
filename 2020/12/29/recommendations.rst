@@ -16,8 +16,8 @@ Understand big-O notation and complexity – this is important in practice, when
 implementing solutions that deal with real-world data. This is foundational to
 the field of computer science, so unless you are working on some cutting-edge
 stuff, there's probably a well-known solution to your problem. You don't need
-to know everything by heart but know what applies and where to look it up, be
-it an A* search or B-tree.
+to know all implementations by heart but know what applies and where to look
+it up when needed, be it an A* search or B-tree.
 
 **Understand your compute target** – this can be a physical machine, an
 operating system, a virtual machine like the JVM or .NET CLR, the browser, or
@@ -31,7 +31,7 @@ is everywhere, regardless of whether you are building services that talk to
 each other, a multi-threaded native application, or a Node.JS, event
 loop-based application. Having a good mental model of how concurrency works,
 understanding deadlocks, livelocks, synchronization mechanisms, and
-consistency models is truly fundamental.
+consistency models is foundational.
 
 Programming languages
 ---------------------
@@ -48,7 +48,7 @@ and functional code when appropriate. With that said, I suggest learning:
 **A system programming language** like C++, Rust or Swift if you need to write
 native, performant code. These languages are close to the machine and will
 help you understand OS resource management, how code gets executed, and what
-impact performance.
+impacts performance.
 
 **A "higher-level" language** for writing tools and services. Something like C#,
 Java or Go. These are all garbage collected and trade off some performance
@@ -159,11 +159,11 @@ problem? Do you know what will likely come up in 6 months from now or a year?
 
 **Security** – Software security is critical in today's connected world. You
 should understand security best practices, which hashing algorithms to use,
-how to properly store secrets and passwords, how trust gest established,
+how to properly store secrets and passwords, how trust gets established,
 attack vectors, how to create a `threat model <https://en.wikipedia.org/wiki/Threat_model>`_
 and so on.
 
-**AI** - AI is permeating ever more areas of software. It is also being
+**AI** - AI is permeating more areas of software. It is also being
 commoditized through libraries like scikit-learn and services like Azure
 Cognitive Services. While I won't quite yet put it under *fundamentals*, I
 believe using AI will soon be a must-know, much like concurrent programming.
