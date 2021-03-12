@@ -102,11 +102,11 @@ return type will be an <span class="docutils literal"><span class="pre">Either&l
 </div>
 <p>We are omitting the implementations, as they are not important. Let’s also
 quickly see the implementation of <span class="docutils literal"><span class="pre">Either</span></span>:</p>
-<div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">Either</span><span class="o">&lt;</span><span class="nx">TLeft</span><span class="p">,</span> <span class="nx">TRight</span><span class="o">&gt;</span> <span class="p">{</span>
-    <span class="kr">private</span> <span class="nx">readonly</span> <span class="nx">value</span>: <span class="kt">TLeft</span> <span class="o">|</span> <span class="nx">TRight</span><span class="p">;</span>
-    <span class="kr">private</span> <span class="nx">readonly</span> <span class="nx">left</span>: <span class="kt">boolean</span><span class="p">;</span>
+<div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">Either</span><span class="o">&lt;</span><span class="nx">TLeft</span><span class="p">,</span> <span class="nx">TRight</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="k">readonly</span> <span class="nx">value</span>: <span class="kt">TLeft</span> <span class="o">|</span> <span class="nx">TRight</span><span class="p">;</span>
+    <span class="k">private</span> <span class="k">readonly</span> <span class="nx">left</span>: <span class="kt">boolean</span><span class="p">;</span>
 
-    <span class="kr">private</span> <span class="kr">constructor</span><span class="p">(</span><span class="nx">value</span>: <span class="kt">TLeft</span> <span class="o">|</span> <span class="nx">TRight</span><span class="p">,</span> <span class="nx">left</span>: <span class="kt">boolean</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="kr">constructor</span><span class="p">(</span><span class="nx">value</span>: <span class="kt">TLeft</span> <span class="o">|</span> <span class="nx">TRight</span><span class="p">,</span> <span class="nx">left</span>: <span class="kt">boolean</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">left</span> <span class="o">=</span> <span class="nx">left</span><span class="p">;</span>
     <span class="p">}</span>
@@ -131,11 +131,11 @@ quickly see the implementation of <span class="docutils literal"><span class="pr
         <span class="k">return</span> <span class="o">&lt;</span><span class="nx">TRight</span><span class="o">&gt;</span><span class="k">this</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
     <span class="p">}</span>
 
-    <span class="kr">static</span> <span class="nx">makeLeft</span><span class="o">&lt;</span><span class="nx">TLeft</span><span class="p">,</span> <span class="nx">TRight</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">value</span>: <span class="kt">TLeft</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="nx">makeLeft</span><span class="o">&lt;</span><span class="nx">TLeft</span><span class="p">,</span> <span class="nx">TRight</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">value</span>: <span class="kt">TLeft</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">new</span> <span class="nx">Either</span><span class="o">&lt;</span><span class="nx">TLeft</span><span class="p">,</span> <span class="nx">TRight</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
     <span class="p">}</span>
 
-    <span class="kr">static</span> <span class="nx">makeRight</span><span class="o">&lt;</span><span class="nx">TLeft</span><span class="p">,</span> <span class="nx">TRight</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">value</span>: <span class="kt">TRight</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="nx">makeRight</span><span class="o">&lt;</span><span class="nx">TLeft</span><span class="p">,</span> <span class="nx">TRight</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">value</span>: <span class="kt">TRight</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">new</span> <span class="nx">Either</span><span class="o">&lt;</span><span class="nx">TLeft</span><span class="p">,</span> <span class="nx">TRight</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
     <span class="p">}</span>
 <span class="p">}</span>
@@ -172,7 +172,7 @@ those tasks to <span class="docutils literal"><span class="pre">map()</span></sp
 so <span class="docutils literal"><span class="pre">map()</span></span> will just propagate it. <span class="docutils literal"><span class="pre">map()</span></span> will apply a given function only
 if the <span class="docutils literal"><span class="pre">Either</span></span> contains a <span class="docutils literal"><span class="pre">TRight</span></span>:</p>
 <div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="nx">namespace</span> <span class="nx">Either</span> <span class="p">{</span>
-    <span class="kr">export</span> <span class="kd">function</span> <span class="nx">map</span><span class="o">&lt;</span><span class="nx">TLeft</span><span class="p">,</span> <span class="nx">TRight</span><span class="p">,</span> <span class="nx">URight</span><span class="o">&gt;</span><span class="p">(</span>
+    <span class="k">export</span> <span class="kd">function</span> <span class="nx">map</span><span class="o">&lt;</span><span class="nx">TLeft</span><span class="p">,</span> <span class="nx">TRight</span><span class="p">,</span> <span class="nx">URight</span><span class="o">&gt;</span><span class="p">(</span>
         <span class="nx">value</span>: <span class="kt">Either</span><span class="o">&lt;</span><span class="nx">TLeft</span><span class="p">,</span> <span class="nx">TRight</span><span class="o">&gt;</span><span class="p">,</span>
         <span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">TRight</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">URight</span><span class="p">)</span><span class="o">:</span> <span class="nx">Either</span><span class="o">&lt;</span><span class="nx">TLeft</span><span class="p">,</span> <span class="nx">URight</span><span class="o">&gt;</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">value</span><span class="p">.</span><span class="nx">isLeft</span><span class="p">())</span> <span class="k">return</span> <span class="nx">Either</span><span class="p">.</span><span class="nx">makeLeft</span><span class="p">(</span><span class="nx">value</span><span class="p">.</span><span class="nx">getLeft</span><span class="p">());</span>
@@ -223,7 +223,7 @@ that can deal with this type of function.</p>
 from <span class="docutils literal"><span class="pre">T</span></span> to <span class="docutils literal"><span class="pre">Either&lt;Error,</span> <span class="pre">U&gt;</span></span>. The standard name for such a function is
 <span class="docutils literal"><span class="pre">bind()</span></span>:</p>
 <div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="nx">namespace</span> <span class="nx">Either</span> <span class="p">{</span>
-    <span class="kr">export</span> <span class="kd">function</span> <span class="nx">bind</span><span class="o">&lt;</span><span class="nx">TLeft</span><span class="p">,</span> <span class="nx">TRight</span><span class="p">,</span> <span class="nx">URight</span><span class="o">&gt;</span><span class="p">(</span>
+    <span class="k">export</span> <span class="kd">function</span> <span class="nx">bind</span><span class="o">&lt;</span><span class="nx">TLeft</span><span class="p">,</span> <span class="nx">TRight</span><span class="p">,</span> <span class="nx">URight</span><span class="o">&gt;</span><span class="p">(</span>
         <span class="nx">value</span>: <span class="kt">Either</span><span class="o">&lt;</span><span class="nx">TLeft</span><span class="p">,</span> <span class="nx">TRight</span><span class="o">&gt;</span><span class="p">,</span>
         <span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">TRight</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">Either</span><span class="o">&lt;</span><span class="nx">TLeft</span><span class="p">,</span> <span class="nx">URight</span><span class="o">&gt;</span>
         <span class="p">)</span><span class="o">:</span> <span class="nx">Either</span><span class="o">&lt;</span><span class="nx">TLeft</span><span class="p">,</span> <span class="nx">URight</span><span class="o">&gt;</span> <span class="p">{</span>
@@ -282,7 +282,7 @@ in which our functions are directly from <span class="docutils literal"><span cl
 <span class="docutils literal"><span class="pre">string</span></span> representation, we can <span class="docutils literal"><span class="pre">map()</span></span> it on a <span class="docutils literal"><span class="pre">Box&lt;number&gt;</span></span> and get back
 a <span class="docutils literal"><span class="pre">Box&lt;string&gt;</span></span>:</p>
 <div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="nx">namespace</span> <span class="nx">Box</span> <span class="p">{</span>
-    <span class="kr">export</span> <span class="kd">function</span> <span class="nx">map</span><span class="o">&lt;</span><span class="nx">T</span><span class="p">,</span> <span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span>
+    <span class="k">export</span> <span class="kd">function</span> <span class="nx">map</span><span class="o">&lt;</span><span class="nx">T</span><span class="p">,</span> <span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span>
         <span class="nx">box</span>: <span class="kt">Box</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">,</span>
         <span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">U</span><span class="p">)</span><span class="o">:</span> <span class="nx">Box</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">new</span> <span class="nx">Box</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">func</span><span class="p">(</span><span class="nx">box</span><span class="p">.</span><span class="nx">value</span><span class="p">));</span>
@@ -293,15 +293,15 @@ a <span class="docutils literal"><span class="pre">Box&lt;string&gt;</span></spa
     <span class="k">return</span> <span class="nx">value</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
 <span class="p">}</span>
 
-<span class="kr">const</span> <span class="nx">s</span>: <span class="kt">Box</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">&gt;</span>
-    <span class="o">=</span> <span class="nx">Box</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="k">new</span> <span class="nx">Box</span><span class="p">(</span><span class="mi">42</span><span class="p">),</span> <span class="nx">stringify</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">s</span>: <span class="kt">Box</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">&gt;</span>
+    <span class="o">=</span> <span class="nx">Box</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="k">new</span> <span class="nx">Box</span><span class="p">(</span><span class="mf">42</span><span class="p">),</span> <span class="nx">stringify</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>If instead of <span class="docutils literal"><span class="pre">stringify()</span></span>, which goes from <span class="docutils literal"><span class="pre">number</span></span> to <span class="docutils literal"><span class="pre">string</span></span>, we have
 a <span class="docutils literal"><span class="pre">boxify()</span></span> function that goes from <span class="docutils literal"><span class="pre">number</span></span> directly to <span class="docutils literal"><span class="pre">Box&lt;string&gt;`</span></span>,
 <span class="docutils literal"><span class="pre">map()</span></span> won’t work. We’ll need <span class="docutils literal"><span class="pre">bind()</span></span> instead:</p>
 <div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="nx">namespace</span> <span class="nx">Box</span> <span class="p">{</span>
-    <span class="kr">export</span> <span class="kd">function</span> <span class="nx">bind</span><span class="o">&lt;</span><span class="nx">T</span><span class="p">,</span> <span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span>
+    <span class="k">export</span> <span class="kd">function</span> <span class="nx">bind</span><span class="o">&lt;</span><span class="nx">T</span><span class="p">,</span> <span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span>
         <span class="nx">box</span>: <span class="kt">Box</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">,</span>
         <span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">Box</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span><span class="p">)</span><span class="o">:</span> <span class="nx">Box</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">func</span><span class="p">(</span><span class="nx">box</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span>
@@ -312,8 +312,8 @@ a <span class="docutils literal"><span class="pre">boxify()</span></span> functi
     <span class="k">return</span> <span class="k">new</span> <span class="nx">Box</span><span class="p">(</span><span class="nx">value</span><span class="p">.</span><span class="nx">toString</span><span class="p">());</span>
 <span class="p">}</span>
 
-<span class="kr">const</span> <span class="nx">b</span>: <span class="kt">Box</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">&gt;</span> <span class="o">=</span>
-    <span class="nx">Box</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">new</span> <span class="nx">Box</span><span class="p">(</span><span class="mi">42</span><span class="p">),</span> <span class="nx">boxify</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">b</span>: <span class="kt">Box</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">&gt;</span> <span class="o">=</span>
+    <span class="nx">Box</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">new</span> <span class="nx">Box</span><span class="p">(</span><span class="mf">42</span><span class="p">),</span> <span class="nx">boxify</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>The result of both <span class="docutils literal"><span class="pre">map()</span></span> and <span class="docutils literal"><span class="pre">bind()</span></span> is still a <span class="docutils literal"><span class="pre">Box&lt;string&gt;</span></span>. We still
@@ -334,11 +334,11 @@ management, control flow, or side effects.</p>
 <p>Let’s look at a few examples of monads. We can start with our simple <span class="docutils literal"><span class="pre">Box&lt;T&gt;</span></span>
 type and add <span class="docutils literal"><span class="pre">unit()</span></span> to it to complete the monad:</p>
 <div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="nx">namespace</span> <span class="nx">Box</span> <span class="p">{</span>
-    <span class="kr">export</span> <span class="kd">function</span> <span class="nx">unit</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span><span class="o">:</span> <span class="nx">Box</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">export</span> <span class="kd">function</span> <span class="nx">unit</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span><span class="o">:</span> <span class="nx">Box</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">new</span> <span class="nx">Box</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
     <span class="p">}</span>
 
-    <span class="kr">export</span> <span class="kd">function</span> <span class="nx">bind</span><span class="o">&lt;</span><span class="nx">T</span><span class="p">,</span> <span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span>
+    <span class="k">export</span> <span class="kd">function</span> <span class="nx">bind</span><span class="o">&lt;</span><span class="nx">T</span><span class="p">,</span> <span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span>
         <span class="nx">box</span>: <span class="kt">Box</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">,</span>
         <span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">Box</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span><span class="p">)</span><span class="o">:</span> <span class="nx">Box</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">func</span><span class="p">(</span><span class="nx">box</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span>
@@ -352,11 +352,11 @@ instance of <span class="docutils literal"><span class="pre">Box&lt;T&gt;</span>
 <p>The implementation is very straightforward. Let’s look at the <span class="docutils literal"><span class="pre">Optional&lt;T&gt;</span></span>
 monad functions:</p>
 <div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="nx">namespace</span> <span class="nx">Optional</span> <span class="p">{</span>
-    <span class="kr">export</span> <span class="kd">function</span> <span class="nx">unit</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span><span class="o">:</span> <span class="nx">Optional</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">export</span> <span class="kd">function</span> <span class="nx">unit</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span><span class="o">:</span> <span class="nx">Optional</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">new</span> <span class="nx">Optional</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
     <span class="p">}</span>
 
-    <span class="kr">export</span> <span class="kd">function</span> <span class="nx">bind</span><span class="o">&lt;</span><span class="nx">T</span><span class="p">,</span> <span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span>
+    <span class="k">export</span> <span class="kd">function</span> <span class="nx">bind</span><span class="o">&lt;</span><span class="nx">T</span><span class="p">,</span> <span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span>
         <span class="nx">optional</span>: <span class="kt">Optional</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">,</span>
         <span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">Optional</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span><span class="p">)</span><span class="o">:</span> <span class="nx">Optional</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">optional</span><span class="p">.</span><span class="nx">hasValue</span><span class="p">())</span> <span class="k">return</span> <span class="k">new</span> <span class="nx">Optional</span><span class="p">();</span>
@@ -430,8 +430,8 @@ simple algorithm in this case:</p>
 <div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">divisors</span><span class="p">(</span><span class="nx">n</span>: <span class="kt">number</span><span class="p">)</span><span class="o">:</span> <span class="kt">number</span><span class="p">[]</span> <span class="p">{</span>
     <span class="kd">let</span> <span class="nx">result</span>: <span class="kt">number</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[];</span>
 
-    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="nx">n</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">n</span> <span class="o">%</span> <span class="nx">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mf">2</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="nx">n</span> <span class="o">/</span> <span class="mf">2</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">n</span> <span class="o">%</span> <span class="nx">i</span> <span class="o">==</span> <span class="mf">0</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">}</span>
@@ -448,7 +448,7 @@ to <span class="docutils literal"><span class="pre">divisors()</span></span> int
 <div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">allDivisors</span><span class="p">(</span><span class="nx">ns</span>: <span class="kt">number</span><span class="p">[])</span><span class="o">:</span> <span class="kt">number</span><span class="p">[]</span> <span class="p">{</span>
     <span class="kd">let</span> <span class="nx">result</span>: <span class="kt">number</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[];</span>
 
-    <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">n</span> <span class="k">of</span> <span class="nx">ns</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">const</span> <span class="nx">n</span> <span class="k">of</span> <span class="nx">ns</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">result</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">divisors</span><span class="p">(</span><span class="nx">n</span><span class="p">));</span>
     <span class="p">}</span>
 
@@ -465,7 +465,7 @@ array of strings, we would end up implementing a very similar function:</p>
 <span class="kd">function</span> <span class="nx">allAnagrams</span><span class="p">(</span><span class="nx">inputs</span>: <span class="kt">string</span><span class="p">[])</span><span class="o">:</span> <span class="kt">string</span><span class="p">[]</span> <span class="p">{</span>
     <span class="kd">let</span> <span class="nx">result</span>: <span class="kt">string</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[];</span>
 
-    <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">input</span> <span class="k">of</span> <span class="nx">inputs</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">const</span> <span class="nx">input</span> <span class="k">of</span> <span class="nx">inputs</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">result</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">anagram</span><span class="p">(</span><span class="nx">input</span><span class="p">));</span>
     <span class="p">}</span>
 
@@ -482,7 +482,7 @@ function from <span class="docutils literal"><span class="pre">T</span></span> t
     <span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">U</span><span class="p">[])</span><span class="o">:</span> <span class="nx">U</span><span class="p">[]</span> <span class="p">{</span>
     <span class="kd">let</span> <span class="nx">result</span>: <span class="kt">U</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[];</span>
 
-    <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">input</span> <span class="k">of</span> <span class="nx">inputs</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">const</span> <span class="nx">input</span> <span class="k">of</span> <span class="nx">inputs</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">result</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">func</span><span class="p">(</span><span class="nx">input</span><span class="p">));</span>
     <span class="p">}</span>
 

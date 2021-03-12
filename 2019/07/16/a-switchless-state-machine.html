@@ -166,16 +166,16 @@ when appropriate, transition to another state by updating the current state.</p>
 <p>Processing a Markdown document consisting of multiple lines of text means
 processing each line in turn using our state machine then returning the final
 result to the caller:</p>
-<div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kr">enum</span> <span class="nx">TextProcessingMode</span> <span class="p">{</span>
+<div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kd">enum</span> <span class="nx">TextProcessingMode</span> <span class="p">{</span>
     <span class="nx">Text</span><span class="p">,</span>
     <span class="nx">Marker</span><span class="p">,</span>
     <span class="nx">Code</span><span class="p">,</span>
 <span class="p">}</span>
 
-<span class="kr">class</span> <span class="nx">TextProcessor</span> <span class="p">{</span>
-    <span class="kr">private</span> <span class="nx">mode</span>: <span class="kt">TextProcessingMode</span> <span class="o">=</span> <span class="nx">TextProcessingMode</span><span class="p">.</span><span class="nx">Text</span><span class="p">;</span>
-    <span class="kr">private</span> <span class="nx">result</span>: <span class="kt">string</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[];</span>
-    <span class="kr">private</span> <span class="nx">codeSample</span>: <span class="kt">string</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[];</span>
+<span class="kd">class</span> <span class="nx">TextProcessor</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="nx">mode</span>: <span class="kt">TextProcessingMode</span> <span class="o">=</span> <span class="nx">TextProcessingMode</span><span class="p">.</span><span class="nx">Text</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nx">result</span>: <span class="kt">string</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="k">private</span> <span class="nx">codeSample</span>: <span class="kt">string</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[];</span>
 
     <span class="nx">processText</span><span class="p">(</span><span class="nx">lines</span>: <span class="kt">string</span><span class="p">[])</span><span class="o">:</span> <span class="kt">string</span><span class="p">[]</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">result</span> <span class="o">=</span> <span class="p">[];</span>
@@ -188,7 +188,7 @@ result to the caller:</p>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">result</span><span class="p">;</span>
     <span class="p">}</span>
 
-    <span class="kr">private</span> <span class="nx">processLine</span><span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="nx">processLine</span><span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span> <span class="p">{</span>
         <span class="k">switch</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">mode</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">case</span> <span class="nx">TextProcessingMode.Text</span>:
                 <span class="kt">this.processTextLine</span><span class="p">(</span><span class="nx">line</span><span class="p">);</span>
@@ -202,7 +202,7 @@ result to the caller:</p>
         <span class="p">}</span>
     <span class="p">}</span>
 
-    <span class="kr">private</span> <span class="nx">processTextLine</span><span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="nx">processTextLine</span><span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">line</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">line</span><span class="p">.</span><span class="nx">startsWith</span><span class="p">(</span><span class="s2">&quot;&lt;!--&quot;</span><span class="p">))</span> <span class="p">{</span>
@@ -212,7 +212,7 @@ result to the caller:</p>
         <span class="p">}</span>
     <span class="p">}</span>
 
-    <span class="kr">private</span> <span class="nx">processMarkerLine</span><span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="nx">processMarkerLine</span><span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">line</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">line</span><span class="p">.</span><span class="nx">startsWith</span><span class="p">(</span><span class="s2">&quot;```ts&quot;</span><span class="p">))</span> <span class="p">{</span>
@@ -222,7 +222,7 @@ result to the caller:</p>
         <span class="p">}</span>
     <span class="p">}</span>
 
-    <span class="kr">private</span> <span class="nx">processCodeLine</span><span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="nx">processCodeLine</span><span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">line</span><span class="p">.</span><span class="nx">startsWith</span><span class="p">(</span><span class="s2">&quot;```&quot;</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">line</span><span class="p">);</span>
 
@@ -230,7 +230,7 @@ result to the caller:</p>
         <span class="p">}</span>
     <span class="p">}</span>
 
-    <span class="kr">private</span> <span class="nx">loadCodeSample</span><span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="nx">loadCodeSample</span><span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
         <span class="cm">/* Load sample based on marker, store in this.codeSample  */</span>
     <span class="p">}</span>
 <span class="p">}</span>
@@ -250,10 +250,10 @@ with <span class="docutils literal"><span class="pre">processTextLine()</span></
 instead of setting <span class="docutils literal"><span class="pre">mode</span></span> to a different enum value, we set <span class="docutils literal"><span class="pre">processLine()</span></span>
 to a different method. In fact, we no longer need to externally keep track of
 our state. We don’t even need an enum:</p>
-<div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">TextProcessor</span> <span class="p">{</span>
-    <span class="kr">private</span> <span class="nx">result</span>: <span class="kt">string</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[];</span>
-    <span class="kr">private</span> <span class="nx">processLine</span><span class="o">:</span> <span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="k">void</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">processTextLine</span><span class="p">;</span>
-    <span class="kr">private</span> <span class="nx">codeSample</span>: <span class="kt">string</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[];</span>
+<div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">TextProcessor</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="nx">result</span>: <span class="kt">string</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="k">private</span> <span class="nx">processLine</span><span class="o">:</span> <span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="k">void</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">processTextLine</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nx">codeSample</span>: <span class="kt">string</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[];</span>
 
     <span class="nx">processText</span><span class="p">(</span><span class="nx">lines</span>: <span class="kt">string</span><span class="p">[])</span><span class="o">:</span> <span class="kt">string</span><span class="p">[]</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">result</span> <span class="o">=</span> <span class="p">[];</span>
@@ -266,7 +266,7 @@ our state. We don’t even need an enum:</p>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">result</span><span class="p">;</span>
     <span class="p">}</span>
 
-    <span class="kr">private</span> <span class="nx">processTextLine</span><span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="nx">processTextLine</span><span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">line</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">line</span><span class="p">.</span><span class="nx">startsWith</span><span class="p">(</span><span class="s2">&quot;&lt;!--&quot;</span><span class="p">))</span> <span class="p">{</span>
@@ -276,7 +276,7 @@ our state. We don’t even need an enum:</p>
         <span class="p">}</span>
     <span class="p">}</span>
 
-    <span class="kr">private</span> <span class="nx">processMarkerLine</span><span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="nx">processMarkerLine</span><span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">line</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">line</span><span class="p">.</span><span class="nx">startsWith</span><span class="p">(</span><span class="s2">&quot;```ts&quot;</span><span class="p">))</span> <span class="p">{</span>
@@ -286,7 +286,7 @@ our state. We don’t even need an enum:</p>
         <span class="p">}</span>
     <span class="p">}</span>
 
-    <span class="kr">private</span> <span class="nx">processCodeLine</span><span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="nx">processCodeLine</span><span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">line</span><span class="p">.</span><span class="nx">startsWith</span><span class="p">(</span><span class="s2">&quot;```&quot;</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">line</span><span class="p">);</span>
 
@@ -294,7 +294,7 @@ our state. We don’t even need an enum:</p>
         <span class="p">}</span>
     <span class="p">}</span>
 
-    <span class="kr">private</span> <span class="nx">loadCodeSample</span><span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="nx">loadCodeSample</span><span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
         <span class="cm">/* Load sample based on marker, store in this.codeSample  */</span>
     <span class="p">}</span>
 <span class="p">}</span>
@@ -327,7 +327,7 @@ but this is another alternative to a switch-based state machine.</p>
 <span class="docutils literal"><span class="pre">TextLineProcessor</span></span>, a <span class="docutils literal"><span class="pre">MarkerLineProcessor</span></span>, and a <span class="docutils literal"><span class="pre">CodeLineProcessor</span></span>.
 Each of them keeps track of the processed lines so far in a result member and
 provides a <span class="docutils literal"><span class="pre">process()</span></span> method to handle a line of text:</p>
-<div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">TextLineProcessor</span> <span class="p">{</span>
+<div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">TextLineProcessor</span> <span class="p">{</span>
     <span class="nx">result</span>: <span class="kt">string</span><span class="p">[];</span>
 
     <span class="kr">constructor</span><span class="p">(</span><span class="nx">result</span>: <span class="kt">string</span><span class="p">[])</span> <span class="p">{</span>
@@ -345,12 +345,12 @@ provides a <span class="docutils literal"><span class="pre">process()</span></sp
         <span class="p">}</span>
     <span class="p">}</span>
 
-    <span class="kr">private</span> <span class="nx">loadCodeSample</span><span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="kt">string</span><span class="p">[]</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="nx">loadCodeSample</span><span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="kt">string</span><span class="p">[]</span> <span class="p">{</span>
         <span class="cm">/* Load sample based on marker, store in this.codeSample */</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="kr">class</span> <span class="nx">MarkerLineProcessor</span> <span class="p">{</span>
+<span class="kd">class</span> <span class="nx">MarkerLineProcessor</span> <span class="p">{</span>
     <span class="nx">result</span>: <span class="kt">string</span><span class="p">[];</span>
     <span class="nx">codeSample</span>: <span class="kt">string</span><span class="p">[]</span>
 
@@ -372,7 +372,7 @@ provides a <span class="docutils literal"><span class="pre">process()</span></sp
     <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="kr">class</span> <span class="nx">CodeLineProcessor</span> <span class="p">{</span>
+<span class="kd">class</span> <span class="nx">CodeLineProcessor</span> <span class="p">{</span>
     <span class="nx">result</span>: <span class="kt">string</span><span class="p">[];</span>
 
     <span class="kr">constructor</span><span class="p">(</span><span class="nx">result</span>: <span class="kt">string</span><span class="p">[])</span> <span class="p">{</span>

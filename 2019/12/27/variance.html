@@ -85,20 +85,20 @@ argument types or return types.</p>
 <span class="docutils literal"><span class="pre">draw()</span></span> function which can draw a <span class="docutils literal"><span class="pre">Triangle</span></span>, a <span class="docutils literal"><span class="pre">Square</span></span>, or a
 <span class="docutils literal"><span class="pre">Circle</span></span>. Can we pass a <span class="docutils literal"><span class="pre">Triangle</span></span> or <span class="docutils literal"><span class="pre">Square</span></span> to it? As you might have
 guessed, the answer is “yes”. We can check that such code compiles:</p>
-<div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kr">declare</span> <span class="kr">const</span> <span class="nx">TriangleType</span>: <span class="kt">unique</span> <span class="nx">symbol</span><span class="p">;</span>
-<span class="kr">class</span> <span class="nx">Triangle</span> <span class="p">{</span>
+<div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kr">declare</span> <span class="kd">const</span> <span class="nx">TriangleType</span>: <span class="kt">unique</span> <span class="nx">symbol</span><span class="p">;</span>
+<span class="kd">class</span> <span class="nx">Triangle</span> <span class="p">{</span>
     <span class="p">[</span><span class="nx">TriangleType</span><span class="p">]</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
     <span class="cm">/* Triangle members */</span>
 <span class="p">}</span>
 
-<span class="kr">declare</span> <span class="kr">const</span> <span class="nx">SquareType</span>: <span class="kt">unique</span> <span class="nx">symbol</span><span class="p">;</span>
-<span class="kr">class</span> <span class="nx">Square</span> <span class="p">{</span>
+<span class="kr">declare</span> <span class="kd">const</span> <span class="nx">SquareType</span>: <span class="kt">unique</span> <span class="nx">symbol</span><span class="p">;</span>
+<span class="kd">class</span> <span class="nx">Square</span> <span class="p">{</span>
     <span class="p">[</span><span class="nx">SquareType</span><span class="p">]</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
     <span class="cm">/* Square members */</span>
 <span class="p">}</span>
 
-<span class="kr">declare</span> <span class="kr">const</span> <span class="nx">CircleType</span>: <span class="kt">unique</span> <span class="nx">symbol</span><span class="p">;</span>
-<span class="kr">class</span> <span class="nx">Circle</span> <span class="p">{</span>
+<span class="kr">declare</span> <span class="kd">const</span> <span class="nx">CircleType</span>: <span class="kt">unique</span> <span class="nx">symbol</span><span class="p">;</span>
+<span class="kd">class</span> <span class="nx">Circle</span> <span class="p">{</span>
     <span class="p">[</span><span class="nx">CircleType</span><span class="p">]</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
     <span class="cm">/* Circle members */</span>
 <span class="p">}</span>
@@ -139,8 +139,8 @@ with a subtype that has more properties than its supertype. For sum types it
 works the opposite way: the supertype has more types than the subtype.</p>
 <img alt="../../../_images/sum-types.png" class="align-center" src="../../../_images/sum-types.png" />
 <p>Say we have an <span class="docutils literal"><span class="pre">EquilateralTriangle</span></span> which inherits from <span class="docutils literal"><span class="pre">Triangle</span></span>:</p>
-<div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kr">declare</span> <span class="kr">const</span> <span class="nx">EquilateralTriangleType</span>: <span class="kt">unique</span> <span class="nx">symbol</span><span class="p">;</span>
-<span class="kr">class</span> <span class="nx">EquilateralTriangle</span> <span class="kr">extends</span> <span class="nx">Triangle</span> <span class="p">{</span>
+<div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kr">declare</span> <span class="kd">const</span> <span class="nx">EquilateralTriangleType</span>: <span class="kt">unique</span> <span class="nx">symbol</span><span class="p">;</span>
+<span class="kd">class</span> <span class="nx">EquilateralTriangle</span> <span class="k">extends</span> <span class="nx">Triangle</span> <span class="p">{</span>
     <span class="p">[</span><span class="nx">EquilateralTriangleType</span><span class="p">]</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
     <span class="cm">/* EquilateralTriangle members */</span>
 <span class="p">}</span>
@@ -158,12 +158,12 @@ returning <span class="docutils literal"><span class="pre">Triangle</span> <span
 start with arrays: can we pass an array of <span class="docutils literal"><span class="pre">Triangle</span></span> objects to a <span class="docutils literal"><span class="pre">draw()</span></span>
 function which accepts an array of <span class="docutils literal"><span class="pre">Shape</span></span> objects, if <span class="docutils literal"><span class="pre">Triangle</span></span> is a
 subtype of <span class="docutils literal"><span class="pre">Shape</span></span>?</p>
-<div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">Shape</span> <span class="p">{</span>
+<div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">Shape</span> <span class="p">{</span>
     <span class="cm">/* Shape members */</span>
 <span class="p">}</span>
 
-<span class="kr">declare</span> <span class="kr">const</span> <span class="nx">TriangleType</span>: <span class="kt">unique</span> <span class="nx">symbol</span><span class="p">;</span>
-<span class="kr">class</span> <span class="nx">Triangle</span> <span class="kr">extends</span> <span class="nx">Shape</span> <span class="p">{</span>
+<span class="kr">declare</span> <span class="kd">const</span> <span class="nx">TriangleType</span>: <span class="kt">unique</span> <span class="nx">symbol</span><span class="p">;</span>
+<span class="kd">class</span> <span class="nx">Triangle</span> <span class="k">extends</span> <span class="nx">Shape</span> <span class="p">{</span>
     <span class="p">[</span><span class="nx">TriangleType</span><span class="p">]</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
     <span class="cm">/* Triangle members */</span>
 <span class="p">}</span>
@@ -185,7 +185,7 @@ compile.</p>
 <img alt="../../../_images/arrays.png" class="align-center" src="../../../_images/arrays.png" />
 <p>Arrays are basic types that come out-of-the-box in many programming languages.
 What if we define a custom collection, say a <span class="docutils literal"><span class="pre">LinkedList&lt;T&gt;</span></span>?</p>
-<div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">LinkedList</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="p">{</span>
+<div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">LinkedList</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="p">{</span>
     <span class="nx">value</span>: <span class="kt">T</span><span class="p">;</span>
     <span class="nx">next</span>: <span class="kt">LinkedList</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="o">|</span> <span class="kc">undefined</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
 
@@ -304,13 +304,13 @@ their return type. If we implement a <span class="docutils literal"><span class=
 class <span class="docutils literal"><span class="pre">TriangleMaker</span></span> to return <span class="docutils literal"><span class="pre">Triangle</span></span> instead. The compiler will
 allow this, as calling either of the <span class="docutils literal"><span class="pre">make()</span></span> methods will give us a
 <span class="docutils literal"><span class="pre">Shape</span></span> object:</p>
-<div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">ShapeMaker</span> <span class="p">{</span>
+<div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">ShapeMaker</span> <span class="p">{</span>
     <span class="nx">make</span><span class="p">()</span><span class="o">:</span> <span class="nx">Shape</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">new</span> <span class="nx">Shape</span><span class="p">();</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="kr">class</span> <span class="nx">TriangleMaker</span> <span class="kr">extends</span> <span class="nx">ShapeMaker</span> <span class="p">{</span>
+<span class="kd">class</span> <span class="nx">TriangleMaker</span> <span class="k">extends</span> <span class="nx">ShapeMaker</span> <span class="p">{</span>
     <span class="nx">make</span><span class="p">()</span><span class="o">:</span> <span class="nx">Triangle</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">new</span> <span class="nx">Triangle</span><span class="p">();</span>
     <span class="p">}</span>
@@ -378,12 +378,12 @@ programming patterns. It can lead to runtime issues though. Let’s look at an
 example. We’ll first define a method <span class="docutils literal"><span class="pre">isRightAngled()</span></span> on our <span class="docutils literal"><span class="pre">Triangle</span></span>
 type, which would determine whether a given instance describes a right-angled
 triangle. The implementation of the method is not important:</p>
-<div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">Shape</span> <span class="p">{</span>
+<div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">Shape</span> <span class="p">{</span>
     <span class="cm">/* Shape members */</span>
 <span class="p">}</span>
 
-<span class="kr">declare</span> <span class="kr">const</span> <span class="nx">TriangleType</span>: <span class="kt">unique</span> <span class="nx">symbol</span><span class="p">;</span>
-<span class="kr">class</span> <span class="nx">Triangle</span> <span class="kr">extends</span> <span class="nx">Shape</span> <span class="p">{</span>
+<span class="kr">declare</span> <span class="kd">const</span> <span class="nx">TriangleType</span>: <span class="kt">unique</span> <span class="nx">symbol</span><span class="p">;</span>
+<span class="kd">class</span> <span class="nx">Triangle</span> <span class="k">extends</span> <span class="nx">Shape</span> <span class="p">{</span>
     <span class="p">[</span><span class="nx">TriangleType</span><span class="p">]</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
 
     <span class="nx">isRightAngled</span><span class="p">()</span><span class="o">:</span> <span class="kr">boolean</span> <span class="p">{</span>
