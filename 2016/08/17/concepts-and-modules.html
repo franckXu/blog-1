@@ -68,8 +68,8 @@ compile-time.</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// Our interface</span>
 <span class="k">struct</span> <span class="nc">IEngine</span>
 <span class="p">{</span>
-    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">Start</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">Stop</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">Start</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">Stop</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
     <span class="k">virtual</span> <span class="o">~</span><span class="n">IEngine</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
 <span class="p">};</span>
 
@@ -181,7 +181,7 @@ are notoriously hard to decipher. The proposed solution to both of the above
 are concepts. Here is how an engine concept would look like:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">TEngine</span><span class="o">&gt;</span>
 <span class="k">concept</span> <span class="nc">bool</span> <span class="n">Engine</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nf">requires</span><span class="p">(</span><span class="n">TEngine</span> <span class="n">engine</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">requires</span><span class="p">(</span><span class="n">TEngine</span> <span class="n">engine</span><span class="p">)</span> <span class="p">{</span>
         <span class="p">{</span> <span class="n">engine</span><span class="p">.</span><span class="n">Start</span><span class="p">()</span> <span class="p">};</span>
         <span class="p">{</span> <span class="n">engine</span><span class="p">.</span><span class="n">Stop</span><span class="p">()</span> <span class="p">};</span>
     <span class="p">}</span>
@@ -224,7 +224,7 @@ file pair from my previous post:</p>
 
 <span class="k">struct</span> <span class="nc">ICar</span>
 <span class="p">{</span>
-    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">Drive</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">Drive</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
     <span class="k">virtual</span> <span class="o">~</span><span class="n">ICar</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
 <span class="p">};</span>
 
@@ -266,7 +266,7 @@ file pair from my previous post:</p>
 
 <span class="k">export</span> <span class="k">struct</span> <span class="nc">ICar</span>
 <span class="p">{</span>
-    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">Drive</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">Drive</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
     <span class="k">virtual</span> <span class="o">~</span><span class="n">ICar</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
 <span class="p">};</span>
 
@@ -310,7 +310,7 @@ look like in the not too far future:</p>
 
 <span class="k">export</span> <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">TEngine</span><span class="o">&gt;</span>
 <span class="k">concept</span> <span class="nc">bool</span> <span class="n">Engine</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nf">requires</span><span class="p">(</span><span class="n">TEngine</span> <span class="n">engine</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">requires</span><span class="p">(</span><span class="n">TEngine</span> <span class="n">engine</span><span class="p">)</span> <span class="p">{</span>
         <span class="p">{</span> <span class="n">engine</span><span class="p">.</span><span class="n">Start</span><span class="p">()</span> <span class="p">};</span>
         <span class="p">{</span> <span class="n">engine</span><span class="p">.</span><span class="n">Stop</span><span class="p">()</span> <span class="p">};</span>
     <span class="p">}</span>

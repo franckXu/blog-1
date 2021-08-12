@@ -131,7 +131,7 @@ replace a lot of code.</p>
 talk, one of the best tech talks I’ve seen. The example he gives in the talk
 (from the Chrome codebase) shows how a couple of lines of STL code can be used
 instead of a whole convoluted function:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="n">PanelBar</span><span class="o">::</span><span class="n">RepositionExpandedPanels</span><span class="p">(</span><span class="n">Panel</span><span class="o">*</span> <span class="n">fixed_panel</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">PanelBar::RepositionExpandedPanels</span><span class="p">(</span><span class="n">Panel</span><span class="o">*</span> <span class="n">fixed_panel</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">CHECK</span><span class="p">(</span><span class="n">fixed_panel</span><span class="p">);</span>
 
   <span class="c1">// First, find the index of the fixed panel.</span>
@@ -247,7 +247,7 @@ instead of a whole convoluted function:</p>
 </pre></div>
 </div>
 <p>becomes:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="n">PanelBar</span><span class="o">::</span><span class="n">RepositionExpandedPanels</span><span class="p">(</span><span class="n">Panel</span><span class="o">*</span> <span class="n">fixed_panel</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">PanelBar::RepositionExpandedPanels</span><span class="p">(</span><span class="n">Panel</span><span class="o">*</span> <span class="n">fixed_panel</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">CHECK</span><span class="p">(</span><span class="n">fixed_panel</span><span class="p">);</span>
 
   <span class="c1">// First, find the index of the fixed panel.</span>

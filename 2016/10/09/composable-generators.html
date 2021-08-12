@@ -148,13 +148,13 @@ below compile with VS 2015 Update 3). The main syntax additions are the new
 for creating and awaiting tasks (which I won’t cover in this post), while
 <span class="docutils literal"><span class="pre">co_yield</span></span> is used in generators.</p>
 <p>Here is a lazy counter in C++:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span> <span class="nf">count_to</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span> <span class="n">count_to</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span>
 <span class="p">{</span>
     <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
         <span class="k">co_yield</span> <span class="n">i</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="kt">int</span> <span class="n">main</span><span class="p">()</span>
 <span class="p">{</span>
     <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="nl">i</span> <span class="p">:</span> <span class="n">count_to</span><span class="p">(</span><span class="mi">100</span><span class="p">))</span>
         <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">i</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; &quot;</span><span class="p">;</span>
@@ -172,7 +172,7 @@ this case.</p>
 that Linq adds to <span class="docutils literal"><span class="pre">IEnumerable</span></span>. So if we wanted to do something like the
 above pipeline, we would need some algorithms. Here’s one way of implementing
 some of them:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span> <span class="nf">count</span><span class="p">()</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span> <span class="n">count</span><span class="p">()</span>
 <span class="p">{</span>
     <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">100</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
         <span class="k">co_yield</span> <span class="n">i</span><span class="p">;</span>
@@ -286,10 +286,10 @@ functions which forward to the above algorithms:</p>
     <span class="n">enumerable</span><span class="p">(</span><span class="k">const</span> <span class="n">enumerable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">delete</span><span class="p">;</span>
     <span class="n">enumerable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span> <span class="n">enumerable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">delete</span><span class="p">;</span>
 
-    <span class="k">auto</span> <span class="nf">begin</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="n">_gen</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span> <span class="p">}</span>
-    <span class="k">auto</span> <span class="nf">end</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="n">_gen</span><span class="p">.</span><span class="n">end</span><span class="p">();</span> <span class="p">}</span>
+    <span class="k">auto</span> <span class="n">begin</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="n">_gen</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span> <span class="p">}</span>
+    <span class="k">auto</span> <span class="n">end</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="n">_gen</span><span class="p">.</span><span class="n">end</span><span class="p">();</span> <span class="p">}</span>
 
-    <span class="k">auto</span> <span class="nf">take_n</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span>
+    <span class="k">auto</span> <span class="n">take_n</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span>
     <span class="p">{</span>
         <span class="k">return</span> <span class="o">::</span><span class="n">take_n</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">),</span> <span class="n">n</span><span class="p">);</span>
     <span class="p">}</span>
@@ -392,7 +392,7 @@ rhs of our type:</p>
     <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">lhs</span><span class="p">,</span>
     <span class="k">const</span> <span class="n">filter_t</span><span class="o">&lt;</span><span class="n">Predicate</span><span class="o">&gt;&amp;</span> <span class="n">rhs</span><span class="p">)</span>
 <span class="p">{</span>
-    <span class="k">return</span> <span class="nf">rhs</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">lhs</span><span class="p">));</span>
+    <span class="k">return</span> <span class="n">rhs</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">lhs</span><span class="p">));</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -435,12 +435,12 @@ would be:</p>
     <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">lhs</span><span class="p">,</span>
     <span class="k">const</span> <span class="n">take_n_t</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">)</span>
 <span class="p">{</span>
-    <span class="k">return</span> <span class="nf">rhs</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">lhs</span><span class="p">));</span>
+    <span class="k">return</span> <span class="n">rhs</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">lhs</span><span class="p">));</span>
 <span class="p">}</span>
 
 <span class="k">auto</span> <span class="n">take_n</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span>
 <span class="p">{</span>
-    <span class="k">return</span> <span class="nf">take_n_t</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">take_n_t</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
 <span class="p">}</span>
 
 <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Predicate</span><span class="o">&gt;</span>
@@ -464,7 +464,7 @@ would be:</p>
     <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">lhs</span><span class="p">,</span>
     <span class="k">const</span> <span class="n">filter_t</span><span class="o">&lt;</span><span class="n">Predicate</span><span class="o">&gt;&amp;</span> <span class="n">rhs</span><span class="p">)</span>
 <span class="p">{</span>
-    <span class="k">return</span> <span class="nf">rhs</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">lhs</span><span class="p">));</span>
+    <span class="k">return</span> <span class="n">rhs</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">lhs</span><span class="p">));</span>
 <span class="p">}</span>
 
 <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Predicate</span><span class="o">&gt;</span>
@@ -493,7 +493,7 @@ would be:</p>
     <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">generator</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">lhs</span><span class="p">,</span>
     <span class="k">const</span> <span class="n">map_t</span><span class="o">&lt;</span><span class="n">BinaryOperation</span><span class="o">&gt;&amp;</span> <span class="n">rhs</span><span class="p">)</span>
 <span class="p">{</span>
-    <span class="k">return</span> <span class="nf">rhs</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">lhs</span><span class="p">));</span>
+    <span class="k">return</span> <span class="n">rhs</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">lhs</span><span class="p">));</span>
 <span class="p">}</span>
 
 <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">BinaryOperation</span><span class="o">&gt;</span>

@@ -158,7 +158,7 @@ polymorphism happens at runtime, when calling a function on a base type gets
 resolved to the actual function of the deriving type:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">base</span>
 <span class="p">{</span>
-    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">func</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">func</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="k">struct</span> <span class="nc">foo</span> <span class="o">:</span> <span class="n">base</span>
@@ -449,7 +449,7 @@ of any one of those types. Using variant, we can re-write the above as:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">variant</span><span class="o">&lt;</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="o">&gt;</span> <span class="n">transform</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">variant</span><span class="o">&lt;</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="o">&gt;</span> <span class="n">either</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">visit</span><span class="p">([](</span><span class="k">auto</span> <span class="n">e</span><span class="o">&amp;&amp;</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="nf">constexpr</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">is_same_v</span><span class="o">&lt;</span><span class="k">decltype</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="n">A</span><span class="o">&gt;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="k">constexpr</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">is_same_v</span><span class="o">&lt;</span><span class="k">decltype</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="n">A</span><span class="o">&gt;</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">foo</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">get</span><span class="o">&lt;</span><span class="n">A</span><span class="o">&gt;</span><span class="p">(</span><span class="n">e</span><span class="p">));</span>
         <span class="k">else</span>
             <span class="k">return</span> <span class="n">bar</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">get</span><span class="o">&lt;</span><span class="n">B</span><span class="o">&gt;</span><span class="p">(</span><span class="n">e</span><span class="p">));</span>

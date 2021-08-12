@@ -67,7 +67,7 @@ they had in the input.</p>
 <p>An easy solution is to traverse the input once and store all even numbers
 encountered during the traversal into a separate array, then traverse it again
 and do the same for the odd numbers:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span> <span class="nf">evens_before_odds</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">numbers</span><span class="p">)</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span> <span class="n">evens_before_odds</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">numbers</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">result</span><span class="p">;</span>
     <span class="n">result</span><span class="p">.</span><span class="n">reserve</span><span class="p">(</span><span class="n">numbers</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
@@ -476,7 +476,7 @@ we should return it:</p>
 
     <span class="c1">// Partition around pivot</span>
     <span class="k">auto</span> <span class="n">p</span> <span class="o">=</span> <span class="n">partition</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">,</span> <span class="p">[</span><span class="o">&amp;</span><span class="p">](</span><span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="n">i</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nf">comp</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="o">*</span><span class="n">last</span><span class="p">);</span>
+        <span class="k">return</span> <span class="n">comp</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="o">*</span><span class="n">last</span><span class="p">);</span>
     <span class="p">});</span>
 
     <span class="c1">// Move pivot back in place</span>

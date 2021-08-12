@@ -115,19 +115,19 @@ data and close and, if not opened, can be opened. This can be modelled like
 this:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">connection</span>
 <span class="p">{</span>
-    <span class="k">auto</span> <span class="nf">open</span><span class="p">()</span>
+    <span class="k">auto</span> <span class="n">open</span><span class="p">()</span>
     <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">is_opened</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/* error, connection already opened */</span> <span class="p">}</span>
         <span class="p">...</span>
     <span class="p">};</span>
 
-    <span class="k">auto</span> <span class="nf">close</span><span class="p">()</span>
+    <span class="k">auto</span> <span class="n">close</span><span class="p">()</span>
     <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">is_opened</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/* error, connection not opened */</span> <span class="p">}</span>
         <span class="p">...</span>
     <span class="p">}</span>
 
-    <span class="k">auto</span> <span class="nf">receive</span><span class="p">()</span>
+    <span class="k">auto</span> <span class="n">receive</span><span class="p">()</span>
     <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">is_opened</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/* error, connection not opened */</span> <span class="p">}</span>
         <span class="p">...</span>
@@ -144,13 +144,13 @@ way to model this (as of C++17) is using a variant and separate types for open
 and closed connections:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">opened_connection</span>
 <span class="p">{</span>
-    <span class="k">auto</span> <span class="nf">close</span><span class="p">()</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
-    <span class="k">auto</span> <span class="nf">receive</span><span class="p">()</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+    <span class="k">auto</span> <span class="n">close</span><span class="p">()</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+    <span class="k">auto</span> <span class="n">receive</span><span class="p">()</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
 <span class="p">};</span>
 
 <span class="k">struct</span> <span class="nc">closed_connection</span>
 <span class="p">{</span>
-    <span class="k">auto</span> <span class="nf">open</span><span class="p">()</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+    <span class="k">auto</span> <span class="n">open</span><span class="p">()</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
 <span class="p">};</span>
 
 <span class="k">using</span> <span class="n">connection</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">variant</span><span class="o">&lt;</span><span class="n">closed_connection</span><span class="p">,</span> <span class="n">opened_connection</span><span class="o">&gt;</span><span class="p">;</span>

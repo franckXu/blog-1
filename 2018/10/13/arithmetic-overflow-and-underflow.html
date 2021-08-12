@@ -276,8 +276,8 @@ look at the other two possibilities. We will implement a couple of types
 templated on an integer type <span class="docutils literal"><span class="pre">T</span></span>, with overflow and underflow handlers:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span>
 <span class="k">struct</span> <span class="nc">Policy</span> <span class="p">{</span>
-    <span class="k">static</span> <span class="k">constexpr</span> <span class="n">T</span> <span class="n">OnOverflow</span><span class="p">()</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
-    <span class="k">static</span> <span class="k">constexpr</span> <span class="n">T</span> <span class="n">OnUnderflow</span><span class="p">()</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="n">T</span> <span class="nf">OnOverflow</span><span class="p">()</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="n">T</span> <span class="nf">OnUnderflow</span><span class="p">()</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
 <span class="p">};</span>
 </pre></div>
 </div>
@@ -288,11 +288,11 @@ templated on an integer type <span class="docutils literal"><span class="pre">T<
 
 <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span>
 <span class="k">struct</span> <span class="nc">ThrowingPolicy</span> <span class="p">{</span>
-    <span class="k">static</span> <span class="k">constexpr</span> <span class="n">T</span> <span class="n">OnOverflow</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="n">T</span> <span class="nf">OnOverflow</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">throw</span> <span class="k">new</span> <span class="n">ArithmeticOverflowException</span><span class="p">{};</span>
     <span class="p">}</span>
 
-    <span class="k">static</span> <span class="k">constexpr</span> <span class="n">T</span> <span class="n">OnUnderflow</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="n">T</span> <span class="nf">OnUnderflow</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">throw</span> <span class="k">new</span> <span class="n">ArithmeticUnderflowException</span><span class="p">{};</span>
     <span class="p">}</span>
 <span class="p">};</span>
@@ -301,11 +301,11 @@ templated on an integer type <span class="docutils literal"><span class="pre">T<
 <p>The saturation policy is:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span>
 <span class="k">struct</span> <span class="nc">SaturationPolicy</span> <span class="p">{</span>
-    <span class="k">static</span> <span class="k">constexpr</span> <span class="n">T</span> <span class="n">OnOverflow</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="n">T</span> <span class="nf">OnOverflow</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">max</span><span class="p">();</span>
     <span class="p">}</span>
 
-    <span class="k">static</span> <span class="k">constexpr</span> <span class="n">T</span> <span class="n">OnUnderflow</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="n">T</span> <span class="nf">OnUnderflow</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">min</span><span class="p">();</span>
     <span class="p">}</span>
 <span class="p">};</span>

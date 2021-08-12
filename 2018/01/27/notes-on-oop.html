@@ -98,12 +98,12 @@ different interfaces? In general, do we add an interface for each behavior and
 then pull groups of interfaces together to form more refined types?</p>
 <div class="highlight-C++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">IQuack</span>
 <span class="p">{</span>
-    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">Quack</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">Quack</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="k">struct</span> <span class="nc">IWaddle</span>
 <span class="p">{</span>
-    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">Waddle</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">Waddle</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="k">class</span> <span class="nc">Duck</span> <span class="o">:</span> <span class="n">IQuack</span><span class="p">,</span> <span class="n">IWaddle</span>

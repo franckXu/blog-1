@@ -75,12 +75,12 @@ truly needed <a class="footnote-reference" href="#id5" id="id1">[1]</a>.</p>
 <p>A simple example:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">StringUtil</span>
 <span class="p">{</span>
-    <span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">Concat1</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str1</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str2</span><span class="p">)</span>
+    <span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="nf">Concat1</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str1</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str2</span><span class="p">)</span>
     <span class="p">{</span>
         <span class="k">return</span> <span class="n">str1</span> <span class="o">+</span> <span class="n">str2</span><span class="p">;</span>
     <span class="p">}</span>
 
-    <span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">Concat2</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str1</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str2</span><span class="p">)</span>
+    <span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="nf">Concat2</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str1</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str2</span><span class="p">)</span>
     <span class="p">{</span>
         <span class="k">return</span> <span class="n">str1</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">str2</span><span class="p">);</span>
     <span class="p">}</span>
@@ -95,12 +95,12 @@ might be introduced accidentally and have unexpected consequences down the line.
 <span class="docutils literal"><span class="pre">const</span></span>:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">StringUtil</span>
 <span class="p">{</span>
-    <span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">Concat1</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str1</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str2</span><span class="p">)</span>
+    <span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="nf">Concat1</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str1</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str2</span><span class="p">)</span>
     <span class="p">{</span>
          <span class="k">return</span> <span class="n">str1</span> <span class="o">+</span> <span class="n">str2</span><span class="p">;</span>
     <span class="p">}</span>
 
-    <span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">Concat2</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str1</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str2</span><span class="p">)</span>
+    <span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="nf">Concat2</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str1</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str2</span><span class="p">)</span>
     <span class="p">{</span>
          <span class="k">return</span> <span class="n">str1</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">str2</span><span class="p">);</span> <span class="c1">// Won&#39;t compile - can&#39;t call append on str1</span>
     <span class="p">}</span>

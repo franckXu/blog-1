@@ -98,7 +98,7 @@ and <span class="docutils literal"><span class="pre">Stop()</span></span> method
 <p><em>Car.cpp</em>:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;Car.h&quot;</span><span class="cp"></span>
 
-<span class="kt">void</span> <span class="n">Car</span><span class="o">::</span><span class="n">Drive</span><span class="p">()</span>
+<span class="kt">void</span> <span class="nf">Car::Drive</span><span class="p">()</span>
 <span class="p">{</span>
     <span class="n">m_engine</span><span class="p">.</span><span class="n">Start</span><span class="p">();</span>
     <span class="c1">// drive</span>
@@ -119,8 +119,8 @@ an <span class="docutils literal"><span class="pre">IEngine</span></span> interf
 
 <span class="k">struct</span> <span class="nc">IEngine</span>
 <span class="p">{</span>
-    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">Start</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">Stop</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">Start</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">Stop</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
     <span class="k">virtual</span> <span class="o">~</span><span class="n">IEngine</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
 <span class="p">};</span>
 
@@ -163,7 +163,7 @@ an <span class="docutils literal"><span class="pre">IEngine</span></span> interf
 <p><em>Car.cpp</em>:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;Car.h&quot;</span><span class="cp"></span>
 
-<span class="kt">void</span> <span class="n">Car</span><span class="o">::</span><span class="n">Drive</span><span class="p">()</span>
+<span class="kt">void</span> <span class="nf">Car::Drive</span><span class="p">()</span>
 <span class="p">{</span>
     <span class="n">m_engine</span><span class="o">-&gt;</span><span class="n">Start</span><span class="p">();</span>
     <span class="c1">// drive</span>
@@ -199,10 +199,10 @@ to be expicitly defined - compiler might generate a default one.</p>
 <p>MSVC compiler provides a <span class="docutils literal"><span class="pre">__declspec(novtable)</span></span> <a class="footnote-reference" href="#id2" id="id1">[1]</a> custom attribute which
 tells the compiler not to generate a vtable for pure abstract classes. This
 reduces code size. Below is the <span class="docutils literal"><span class="pre">IEngine</span></span> declaration with this attribute:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nf">__declspec</span><span class="p">(</span><span class="n">novtable</span><span class="p">)</span> <span class="n">IEngine</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">__declspec</span><span class="p">(</span><span class="n">novtable</span><span class="p">)</span> <span class="n">IEngine</span>
 <span class="p">{</span>
-    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">Start</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">Stop</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">Start</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">Stop</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
     <span class="k">virtual</span> <span class="o">~</span><span class="n">IEngine</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
 <span class="p">};</span>
 </pre></div>
@@ -271,7 +271,7 @@ details, in which case we would end up with the following:</p>
 
 <span class="k">struct</span> <span class="nc">ICar</span>
 <span class="p">{</span>
-    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">Drive</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">Drive</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
     <span class="k">virtual</span> <span class="o">~</span><span class="n">ICar</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
 <span class="p">};</span>
 
@@ -353,7 +353,7 @@ expose an interface. In that case, we can add an internal Car.h header:</p>
 <p><em>Car.cpp</em> becomes:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;Car.h&quot;</span><span class="cp"></span>
 
-<span class="kt">void</span> <span class="n">Car</span><span class="o">::</span><span class="n">Drive</span><span class="p">()</span>
+<span class="kt">void</span> <span class="nf">Car::Drive</span><span class="p">()</span>
 <span class="p">{</span>
     <span class="n">m_engine</span><span class="p">.</span><span class="n">Start</span><span class="p">();</span>
     <span class="c1">// drive</span>
@@ -480,7 +480,7 @@ we could have something like this:</p>
 
 <span class="k">struct</span> <span class="nc">ICar</span>
 <span class="p">{</span>
-    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">Drive</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">Drive</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
     <span class="k">virtual</span> <span class="o">~</span><span class="n">ICar</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
 <span class="p">};</span>
 

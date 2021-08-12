@@ -66,7 +66,7 @@ some component that exposes a service to other components.</p>
 by Arno Lepisk covers some implementation alternatives, suggesting that in most
 cases using a namespace and flat functions is the simplest and best way to
 implement a singleton:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">namespace</span> <span class="n">Foo</span> <span class="p">{</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">namespace</span> <span class="nn">Foo</span> <span class="p">{</span>
 
 <span class="kt">void</span> <span class="nf">DoFoo</span><span class="p">();</span>
 
@@ -95,7 +95,7 @@ and flat functions.</p>
 like the following:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">IFoo</span>
 <span class="p">{</span>
-    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">DoFoo</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">DoFoo</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
     <span class="k">virtual</span> <span class="o">~</span><span class="n">IFoo</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
 <span class="p">};</span>
