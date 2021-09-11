@@ -4,6 +4,7 @@ Sitemap
 .. toctree::
    :maxdepth: 1
 
+   2021/09/10/machine-learning-on-azure-part-1
    2021/08/12/shipping-a-feature
    2021/06/21/data-engineering-on-azure-rtm
    2021/03/12/ingesting-data
