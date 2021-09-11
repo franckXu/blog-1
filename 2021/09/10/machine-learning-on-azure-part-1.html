@@ -1,0 +1,359 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="Vlad's Tech Blog">
+        <meta name="viewport" content="width=device-width">
+        <title>Machine Learning on Azure - Part 1 &mdash; Blog</title>
+            <link rel="stylesheet" href="../../../_static/normalize.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/sphinx.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/main.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/flat.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+            <link rel="stylesheet" href="../../../_static/font-awesome.min.css" type="text/css">
+        <link rel="shortcut icon" href="../../../_static/tinkerer.ico" /><!-- Load modernizr and JQuery -->
+        <script src="../../../_static/vendor/modernizr-2.6.2.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="../../../_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
+        <script src="../../../_static/plugins.js"></script>
+        <script src="../../../_static/main.js"></script>
+        <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Shipping a Feature" href="../../08/12/shipping-a-feature.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.7.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        SOURCELINK_SUFFIX: '.txt',
+        HAS_SOURCE:  true
+      };
+    </script><script type="text/javascript" src="../../../_static/underscore.js"></script><script type="text/javascript" src="../../../_static/doctools.js"></script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script type="text/javascript" src="../../../_static/google_analytics.js"></script><link rel="stylesheet" href="../../../_static/extra.css" type="text/css" />
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+</script></head>
+    <body role="document">
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+      <div id="container"><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>September 10, 2021</span>
+        </div>
+    <div class="section" id="machine-learning-on-azure-part-1">
+<h1>Machine Learning on Azure - Part 1</h1>
+<p>This is an excerpt from chapter 7 of my book, <a class="reference external" href="https://www.manning.com/books/azure-data-engineering">Data Engineering on Azure</a>,
+which deals with machine learning workloads. This will be a series of 3 posts.
+In this post, we’ll create a simple ML model in Python. In the next post, we’ll
+go over Azure Machine Learning. In the final post, we’ll run this model in
+Azure Machine Learning. Let’s start with the simple ML model.</p>
+<div class="section" id="training-a-machine-learning-model">
+<h2>Training a machine learning model</h2>
+<p>This model predicts whether a user is likely to be a high spender, based on the
+number of sessions and page views on our website. A session is a website visit
+in which the user views one or more pages. Let’s assume that the amount of money
+a user spends on our products is correlated to the number of sessions and page
+views. We’ll consider a user a high spender if they spend $30 or more.</p>
+<p>The following table shows our input data: the user’s ID, the number of sessions,
+the number of page views, the amount of dollars spent, and whether we consider
+the user a high spender.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="17%" />
+<col width="21%" />
+<col width="23%" />
+<col width="25%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">User ID</th>
+<th class="head">Sessions</th>
+<th class="head">Page views</th>
+<th class="head">Total spent</th>
+<th class="head">High spender</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>10</td>
+<td>45</td>
+<td>100</td>
+<td>Yes</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>5</td>
+<td>10</td>
+<td>30</td>
+<td>Yes</td>
+</tr>
+<tr class="row-even"><td>3</td>
+<td>1</td>
+<td>5</td>
+<td>10</td>
+<td>No</td>
+</tr>
+<tr class="row-odd"><td>4</td>
+<td>2</td>
+<td>2</td>
+<td>0</td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td>5</td>
+<td>9</td>
+<td>33</td>
+<td>95</td>
+<td>Yes</td>
+</tr>
+<tr class="row-odd"><td>6</td>
+<td>7</td>
+<td>5</td>
+<td>5</td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td>7</td>
+<td>19</td>
+<td>31</td>
+<td>95</td>
+<td>Yes</td>
+</tr>
+<tr class="row-odd"><td>8</td>
+<td>1</td>
+<td>20</td>
+<td>0</td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td>9</td>
+<td>2</td>
+<td>17</td>
+<td>0</td>
+<td>No</td>
+</tr>
+<tr class="row-odd"><td>10</td>
+<td>8</td>
+<td>25</td>
+<td>40</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+<p>The listing shows the input CSV file corresponding to
+the table that we’ll use for training, <span class="docutils literal"><span class="pre">input.csv</span></span>.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>UserId,Sessions,PageViews,TotalSpend,HighSpender
+1,10,45,100,Yes
+2,5,10,30,Yes
+3,1,5,10,No
+4,2,2,0,No
+5,9,33,95,Yes
+6,7,5,5,No
+7,19,31,95,Yes
+8,1,20,0,No
+9,2,17,0,No
+10,8,25,40,Yes
+</pre></div>
+</div>
+<p>You need to create this file on your machine as <span class="docutils literal"><span class="pre">input.csv</span></span>. We are working
+with simple input and a simple model because our focus is taking a model and
+putting it into production, not in building the model itself. There are plenty
+of great references covering model development and ML if you are interested in
+the topic.</p>
+<p>Assuming you already have Python on your machine, let’s start by installing the
+two packages we need for our model: <span class="docutils literal"><span class="pre">pandas</span></span> and <span class="docutils literal"><span class="pre">scikit-learn</span></span> (also known
+as <span class="docutils literal"><span class="pre">sklearn</span></span>). The following listing shows the command to install these
+packages using the Python package manager, <span class="docutils literal"><span class="pre">pip</span></span>. If you don’t have Python,
+you can install it from <a class="reference external" href="https://www.python.org/downloads/">https://www.python.org/downloads/</a>.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip install pandas sklearn
+</pre></div>
+</div>
+<p>Now that we have our input file and packages, let’s look at the high spender
+model itself. Don’t worry if you haven’t implemented a ML model before; our
+model has only a few lines of code and is very basic. We’ll walk through the
+steps that should give you at least a high-level understanding.</p>
+</div>
+<div class="section" id="training-a-model-using-scikit-learn">
+<h2>Training a model using Scikit-learn</h2>
+<p>Our model takes an <span class="docutils literal"><span class="pre">--input</span> <span class="pre">&lt;file&gt;</span></span> argument, representing the input CSV. It
+reads this file into a Pandas DataFrame.</p>
+<blockquote>
+<div>A <em>DataFrame</em> is a fancy table data structure offered by the Pandas library.
+It provides various useful ways to slice and dice the data.</div></blockquote>
+<p>We’ll split the data into the features used to train the model (<em>X</em>) and what we
+are trying to predict (<em>y</em>). In our case, we will take the Sessions and
+PageViews columns from the input as <em>X</em>, and the HighSpender column as <em>y</em>. This
+model doesn’t care about user ID and the exact amount spent, so we can ignore
+those columns.</p>
+<p>We will split our input data so that we take 80% of it to train the model and
+use the remaining 20% to test our model. For the 20%, we will use the model to
+predict whether the user is a high spender and see how our prediction compares
+with the actual data. This is a common practice for measuring model prediction
+accuracy.</p>
+<p>We will use <span class="docutils literal"><span class="pre">KNeighborsClassifier</span></span> from <span class="docutils literal"><span class="pre">scikit-learn</span></span>. This implements a
+well-known classification algorithm, the k-nearest neighbors vote. We use a
+classification algorithm because we want to classify our users into high
+spenders and non-high spenders. We won’t cover the details of the algorithm
+here, but the good news is that this is fully encapsulated in the
+<span class="docutils literal"><span class="pre">scikit-learn</span></span> library so we can create it with one line of code and train it
+with a second line of code. We will use the training data to train the model,
+then try to predict on the test data and print the predictions. The figure
+shows these steps:</p>
+<img alt="../../../_images/steps.png" class="align-center" src="../../../_images/steps.png" />
+<p>Steps for training our model:</p>
+<ol class="arabic simple">
+<li>Extract features and target the value from the input</li>
+<li>Split the dataset into train and test data</li>
+<li>Train the model on the training data</li>
+<li>Use the model to predict on the test data, comparing predictions with actual</li>
+<li>data.</li>
+</ol>
+<p>Finally, we will save the model on disk as <span class="docutils literal"><span class="pre">outputs/highspender.pkl</span></span>. The idea
+is that once we have a trained model, another system picks it up and uses it to
+predict new data. For example, as users visit our website, we can use the model
+to predict who is likely to be a high spender and maybe offer them a discount.
+Or maybe we want to encourage non-high spenders to spend more time on the
+website, hoping it converts them into high spenders. Either way, some other
+service has to load this model and feed it never-before-seen data, and the model
+will predict if the user is likely to be a high spender or not.</p>
+</div>
+<div class="section" id="high-spender-model-implementation">
+<h2>High spender model implementation</h2>
+<p>Training a model might sound like a lot, but it is only 25 lines of Python code
+as the following listing shows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">from</span> <span class="nn">joblib</span> <span class="kn">import</span> <span class="n">dump</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">sklearn.neighbors</span> <span class="kn">import</span> <span class="n">KNeighborsClassifier</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+
+<span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--input&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;model_input&#39;</span><span class="p">)</span>
+
+<span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+<span class="n">model_input</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">model_input</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">model_input</span><span class="p">)</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;Sessions&quot;</span><span class="p">,</span> <span class="s2">&quot;PageViews&quot;</span><span class="p">]]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;HighSpender&quot;</span><span class="p">]</span>
+
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span>
+  <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">knn</span> <span class="o">=</span> <span class="n">KNeighborsClassifier</span><span class="p">()</span>
+<span class="n">knn</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="n">score</span> <span class="o">=</span> <span class="n">knn</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">X_test</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">predictions</span><span class="p">[</span><span class="s2">&quot;Prediction&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">score</span>
+<span class="n">predictions</span><span class="p">[</span><span class="s2">&quot;Actual&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">y_test</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="s1">&#39;outputs&#39;</span><span class="p">):</span> <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="s1">&#39;outputs&#39;</span><span class="p">)</span>
+
+<span class="n">model_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;outputs&#39;</span><span class="p">,</span> <span class="s1">&#39;highspender.pkl&#39;</span><span class="p">)</span>
+<span class="n">dump</span><span class="p">(</span><span class="n">knn</span><span class="p">,</span> <span class="n">model_path</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We’ll save this Python script as <span class="docutils literal"><span class="pre">highspenders.py</span></span>.</p>
+<p>Let’s break it down and explain each step. First, we import all the libraries
+we need. Next, we set up command line argument parsing to expect an
+<span class="docutils literal"><span class="pre">--input</span></span> argument:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--input&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;model_input&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We then grab the input file path from the command line argument and load the
+file into a Pandas DataFrame:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+<span class="n">model_input</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">model_input</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">model_input</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Then we define the model inputs as the Sessions and PageViews columns and the
+output (prediction) as the HighSpender column:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;Sessions&quot;</span><span class="p">,</span> <span class="s2">&quot;PageViews&quot;</span><span class="p">]]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;HighSpender&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Next, we split the input data into training data and data reserved for testing
+using a 0.2 ratio:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span>
+    <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We select the <span class="docutils literal"><span class="pre">KNeighborsClassifier</span></span> with default settings:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">knn</span> <span class="o">=</span> <span class="n">KNeighborsClassifier</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Then we train the model on the training data:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">knn</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Next, we set the prediction score using the trained model on the test data:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">score</span> <span class="o">=</span> <span class="n">knn</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We then format the output, copying it into a new DataFrame and adding
+Prediction and Actual columns:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">predictions</span> <span class="o">=</span> <span class="n">X_test</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">predictions</span><span class="p">[</span><span class="s2">&quot;Prediction&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">score</span>
+<span class="n">predictions</span><span class="p">[</span><span class="s2">&quot;Actual&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">y_test</span>
+</pre></div>
+</div>
+<p>Finally, we print the predictions to the console, ensure we have an
+<span class="docutils literal"><span class="pre">outputs/</span></span> directory, and save the model as <span class="docutils literal"><span class="pre">outputs/highspender.pkl</span></span>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="s1">&#39;outputs&#39;</span><span class="p">):</span> <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="s1">&#39;outputs&#39;</span><span class="p">)</span>
+
+<span class="n">model_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;outputs&#39;</span><span class="p">,</span> <span class="s1">&#39;highspender.pkl&#39;</span><span class="p">)</span>
+<span class="n">dump</span><span class="p">(</span><span class="n">knn</span><span class="p">,</span> <span class="n">model_path</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Let’s run the script and check the output. The following listing shows the
+console command for running the model:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>python highspenders.py --input input.csv
+</pre></div>
+</div>
+<p>You should see the test predictions and actual data printed to the console. You
+should also now see the <span class="docutils literal"><span class="pre">outputs/highspender.pkl</span></span> model file. Strictly
+speaking, we don’t need the prediction and printing part, but it should
+help if we want to play with the model.</p>
+<p>Here, we’re using a small input size. The larger the input dataset, the better
+the accuracy. But again, our focus is taking this Python script and running it
+in the cloud. The good news is that our approach to DevOps (or MLOps) scales to
+more complex models and larger inputs. In the next post, we’ll look at Azure
+Machine Learning, the Azure PaaS (platform as a service) offering for running
+ML in the cloud. We’ll then connect the dots and get this model running in
+Azure Machine Learning in part 3.</p>
+</div>
+</div>
+
+    <div class="postmeta">
+        
+        
+        
+        </div><ul class="related clearfix">
+            <li class="left"></li>
+            <li class="right"><a href="../../08/12/shipping-a-feature.html">Shipping a Feature</a> &raquo; </li>
+        </ul></article></div> <!-- #main --></div> <!-- #main-container -->
+
+        <div class="footer-container" role="contentinfo"><div style="text-align: center; color: #93a4ad">
+    By Vlad Rișcuția | <a href="http://feeds.feedburner.com/vladris">Subscribe</a> | <a href="http://vladris.com/blog/archive">Archive</a>
+</div></div> <!-- footer-container -->
+
+      </div> <!--! end of #container --><!--[if lt IE 7 ]>
+          <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+          <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+        <![endif]-->
+    </body>
+</html>
