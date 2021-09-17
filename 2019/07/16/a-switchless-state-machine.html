@@ -188,7 +188,7 @@ result to the caller:</p>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">result</span><span class="p">;</span>
     <span class="p">}</span>
 
-    <span class="k">private</span> <span class="nx">processLine</span><span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="nx">processLine</span><span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="ow">void</span> <span class="p">{</span>
         <span class="k">switch</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">mode</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">case</span> <span class="nx">TextProcessingMode.Text</span>:
                 <span class="kt">this.processTextLine</span><span class="p">(</span><span class="nx">line</span><span class="p">);</span>
@@ -202,7 +202,7 @@ result to the caller:</p>
         <span class="p">}</span>
     <span class="p">}</span>
 
-    <span class="k">private</span> <span class="nx">processTextLine</span><span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="nx">processTextLine</span><span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="ow">void</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">line</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">line</span><span class="p">.</span><span class="nx">startsWith</span><span class="p">(</span><span class="s2">&quot;&lt;!--&quot;</span><span class="p">))</span> <span class="p">{</span>
@@ -212,7 +212,7 @@ result to the caller:</p>
         <span class="p">}</span>
     <span class="p">}</span>
 
-    <span class="k">private</span> <span class="nx">processMarkerLine</span><span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="nx">processMarkerLine</span><span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="ow">void</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">line</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">line</span><span class="p">.</span><span class="nx">startsWith</span><span class="p">(</span><span class="s2">&quot;```ts&quot;</span><span class="p">))</span> <span class="p">{</span>
@@ -222,7 +222,7 @@ result to the caller:</p>
         <span class="p">}</span>
     <span class="p">}</span>
 
-    <span class="k">private</span> <span class="nx">processCodeLine</span><span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="nx">processCodeLine</span><span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="ow">void</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">line</span><span class="p">.</span><span class="nx">startsWith</span><span class="p">(</span><span class="s2">&quot;```&quot;</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">line</span><span class="p">);</span>
 
@@ -252,7 +252,7 @@ to a different method. In fact, we no longer need to externally keep track of
 our state. We don’t even need an enum:</p>
 <div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">TextProcessor</span> <span class="p">{</span>
     <span class="k">private</span> <span class="nx">result</span>: <span class="kt">string</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[];</span>
-    <span class="k">private</span> <span class="nx">processLine</span><span class="o">:</span> <span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="k">void</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">processTextLine</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nx">processLine</span><span class="o">:</span> <span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="ow">void</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">processTextLine</span><span class="p">;</span>
     <span class="k">private</span> <span class="nx">codeSample</span>: <span class="kt">string</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[];</span>
 
     <span class="nx">processText</span><span class="p">(</span><span class="nx">lines</span>: <span class="kt">string</span><span class="p">[])</span><span class="o">:</span> <span class="kt">string</span><span class="p">[]</span> <span class="p">{</span>
@@ -266,7 +266,7 @@ our state. We don’t even need an enum:</p>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">result</span><span class="p">;</span>
     <span class="p">}</span>
 
-    <span class="k">private</span> <span class="nx">processTextLine</span><span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="nx">processTextLine</span><span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="ow">void</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">line</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">line</span><span class="p">.</span><span class="nx">startsWith</span><span class="p">(</span><span class="s2">&quot;&lt;!--&quot;</span><span class="p">))</span> <span class="p">{</span>
@@ -276,7 +276,7 @@ our state. We don’t even need an enum:</p>
         <span class="p">}</span>
     <span class="p">}</span>
 
-    <span class="k">private</span> <span class="nx">processMarkerLine</span><span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="nx">processMarkerLine</span><span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="ow">void</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">line</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">line</span><span class="p">.</span><span class="nx">startsWith</span><span class="p">(</span><span class="s2">&quot;```ts&quot;</span><span class="p">))</span> <span class="p">{</span>
@@ -286,7 +286,7 @@ our state. We don’t even need an enum:</p>
         <span class="p">}</span>
     <span class="p">}</span>
 
-    <span class="k">private</span> <span class="nx">processCodeLine</span><span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="nx">processCodeLine</span><span class="p">(</span><span class="nx">line</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="ow">void</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">line</span><span class="p">.</span><span class="nx">startsWith</span><span class="p">(</span><span class="s2">&quot;```&quot;</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">line</span><span class="p">);</span>
 
@@ -338,7 +338,7 @@ provides a <span class="docutils literal"><span class="pre">process()</span></sp
         <span class="k">this</span><span class="p">.</span><span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">line</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">line</span><span class="p">.</span><span class="nx">startsWith</span><span class="p">(</span><span class="s2">&quot;&lt;!--&quot;</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="k">new</span> <span class="nx">MarkerLineProcessor</span><span class="p">(</span>
+            <span class="k">return</span> <span class="ow">new</span> <span class="nx">MarkerLineProcessor</span><span class="p">(</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">result</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">loadCodeSample</span><span class="p">(</span><span class="nx">line</span><span class="p">));</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
             <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
@@ -365,7 +365,7 @@ provides a <span class="docutils literal"><span class="pre">process()</span></sp
         <span class="k">if</span> <span class="p">(</span><span class="nx">line</span><span class="p">.</span><span class="nx">startsWith</span><span class="p">(</span><span class="s2">&quot;```ts&quot;</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">result</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">result</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">codeSample</span><span class="p">);</span>
 
-            <span class="k">return</span> <span class="k">new</span> <span class="nx">CodeLineProcessor</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">result</span><span class="p">);</span>
+            <span class="k">return</span> <span class="ow">new</span> <span class="nx">CodeLineProcessor</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">result</span><span class="p">);</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
             <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
         <span class="p">}</span>
@@ -383,7 +383,7 @@ provides a <span class="docutils literal"><span class="pre">process()</span></sp
         <span class="k">if</span> <span class="p">(</span><span class="nx">line</span><span class="p">.</span><span class="nx">startsWith</span><span class="p">(</span><span class="s2">&quot;```&quot;</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">line</span><span class="p">);</span>
 
-            <span class="k">return</span> <span class="k">new</span> <span class="nx">TextLineProcessor</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">result</span><span class="p">);</span>
+            <span class="k">return</span> <span class="ow">new</span> <span class="nx">TextLineProcessor</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">result</span><span class="p">);</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
             <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
         <span class="p">}</span>
@@ -392,7 +392,7 @@ provides a <span class="docutils literal"><span class="pre">process()</span></sp
 
 <span class="kd">function</span> <span class="nx">processText</span><span class="p">(</span><span class="nx">lines</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="kt">string</span><span class="p">[]</span> <span class="p">{</span>
     <span class="kd">let</span> <span class="nx">processor</span>: <span class="kt">TextLineProcessor</span> <span class="o">|</span> <span class="nx">MarkerLineProcessor</span>
-        <span class="o">|</span> <span class="nx">CodeLineProcessor</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">TextLineProcessor</span><span class="p">([]);</span>
+        <span class="o">|</span> <span class="nx">CodeLineProcessor</span> <span class="o">=</span> <span class="ow">new</span> <span class="nx">TextLineProcessor</span><span class="p">([]);</span>
 
     <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">line</span> <span class="k">of</span> <span class="nx">lines</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">processor</span> <span class="o">=</span> <span class="nx">processor</span><span class="p">.</span><span class="nx">process</span><span class="p">(</span><span class="nx">line</span><span class="p">);</span>

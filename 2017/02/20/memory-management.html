@@ -67,17 +67,17 @@ by an automated process.</p>
 <h2>Manual Memory Management</h2>
 <p>Manual memory management is efficient, since allocations and deallocations
 don’t incur any overhead. In C:</p>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">struct</span> <span class="nc">_Foo</span> <span class="p">{</span>
-    <span class="p">...</span>
-<span class="p">}</span> <span class="n">Foo</span><span class="p">;</span>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span><span class="w"> </span><span class="k">struct</span> <span class="nc">_Foo</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="p">...</span><span class="w"></span>
+<span class="p">}</span><span class="w"> </span><span class="n">Foo</span><span class="p">;</span><span class="w"></span>
 
-<span class="p">...</span>
+<span class="p">...</span><span class="w"></span>
 
-<span class="n">Foo</span><span class="o">*</span> <span class="n">foo</span> <span class="o">=</span> <span class="p">(</span><span class="n">Foo</span><span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">Foo</span><span class="p">));</span>
+<span class="n">Foo</span><span class="o">*</span><span class="w"> </span><span class="n">foo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">Foo</span><span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">Foo</span><span class="p">));</span><span class="w"></span>
 
-<span class="p">...</span>
+<span class="p">...</span><span class="w"></span>
 
-<span class="n">free</span><span class="p">(</span><span class="n">foo</span><span class="p">);</span>
+<span class="n">free</span><span class="p">(</span><span class="n">foo</span><span class="p">);</span><span class="w"></span>
 </pre></div>
 </div>
 <p>The disadvantage of this approach, and the main reason automatic memory
@@ -173,18 +173,18 @@ reference goes out of scope.</p>
 </pre></div>
 </div>
 <p>C++ smart pointers work in a similar manner:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">Foo</span> <span class="p">{</span> <span class="p">};</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">Foo</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
 
-<span class="p">...</span>
+<span class="p">...</span><span class="w"></span>
 
 <span class="c1">// foo1 is a shared_ptr pointing to a Foo stored on the heap. Reference</span>
 <span class="c1">// count for the Foo object is 1</span>
-<span class="k">auto</span> <span class="n">foo1</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">foo1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">();</span><span class="w"></span>
 
 <span class="c1">// reference count becomes 2 after assignment</span>
-<span class="k">auto</span> <span class="n">foo2</span> <span class="o">=</span> <span class="n">foo1</span><span class="p">;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">foo2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">foo1</span><span class="p">;</span><span class="w"></span>
 
-<span class="p">...</span>
+<span class="p">...</span><span class="w"></span>
 <span class="c1">// Once foo1 and foo2 go out of scope, reference count becomes 0 and memory</span>
 <span class="c1">// is automatically freed</span>
 </pre></div>
@@ -213,18 +213,18 @@ be collected. Example of reference cycle in Python:</p>
 </pre></div>
 </div>
 <p>A similar example in C++:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">Foo</span>
-<span class="p">{</span>
-    <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span> <span class="n">other</span><span class="p">;</span>
-<span class="p">};</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">Foo</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="w"> </span><span class="n">other</span><span class="p">;</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
 
-<span class="p">...</span>
+<span class="p">...</span><span class="w"></span>
 
-<span class="k">auto</span> <span class="n">foo1</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">();</span>
-<span class="k">auto</span> <span class="n">foo2</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">foo1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">();</span><span class="w"></span>
+<span class="k">auto</span><span class="w"> </span><span class="n">foo2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">();</span><span class="w"></span>
 
-<span class="n">foo1</span><span class="o">-&gt;</span><span class="n">other</span> <span class="o">=</span> <span class="n">foo2</span><span class="p">;</span>
-<span class="n">foo2</span><span class="o">-&gt;</span><span class="n">other</span> <span class="o">=</span> <span class="n">foo1</span><span class="p">;</span>
+<span class="n">foo1</span><span class="o">-&gt;</span><span class="n">other</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">foo2</span><span class="p">;</span><span class="w"></span>
+<span class="n">foo2</span><span class="o">-&gt;</span><span class="n">other</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">foo1</span><span class="p">;</span><span class="w"></span>
 <span class="c1">// there are two references to each Foo object: foo1 and foo2-&gt;other for the first</span>
 <span class="c1">// object, foo2 and foo1-&gt;other for the second object. Even if the foo1 and foo2</span>
 <span class="c1">// variables go out of scope, neither of the objects would be collected due to the</span>
@@ -262,18 +262,18 @@ weak references go away too.</li>
 </ul>
 <p>Updating the <span class="docutils literal"><span class="pre">Foo</span></span> struct in the example above to use a <span class="docutils literal"><span class="pre">weak_ptr</span></span> instead,
 the reference cycle is avoided:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">Foo</span>
-<span class="p">{</span>
-    <span class="n">std</span><span class="o">::</span><span class="n">weak_ptr</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span> <span class="n">other</span><span class="p">;</span>
-<span class="p">};</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">Foo</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">weak_ptr</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="w"> </span><span class="n">other</span><span class="p">;</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
 
-<span class="p">...</span>
+<span class="p">...</span><span class="w"></span>
 
-<span class="k">auto</span> <span class="n">foo1</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">();</span>
-<span class="k">auto</span> <span class="n">foo2</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">foo1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">();</span><span class="w"></span>
+<span class="k">auto</span><span class="w"> </span><span class="n">foo2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">();</span><span class="w"></span>
 
-<span class="n">foo1</span><span class="o">-&gt;</span><span class="n">other</span> <span class="o">=</span> <span class="n">foo2</span><span class="p">;</span>
-<span class="n">foo2</span><span class="o">-&gt;</span><span class="n">other</span> <span class="o">=</span> <span class="n">foo1</span><span class="p">;</span>
+<span class="n">foo1</span><span class="o">-&gt;</span><span class="n">other</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">foo2</span><span class="p">;</span><span class="w"></span>
+<span class="n">foo2</span><span class="o">-&gt;</span><span class="n">other</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">foo1</span><span class="p">;</span><span class="w"></span>
 <span class="c1">// now the two Foo objects have only one strong reference to them through</span>
 <span class="c1">// the foo1 and foo2 variables The other pointers are weak references which</span>
 <span class="c1">// won&#39;t prevent the objects from being destroyed when foo1 and foo2 go out</span>
@@ -287,18 +287,18 @@ the reference cycle is avoided:</p>
 <em>lifetime</em>. In this model, a heap object is uniquely owned by some other object
 and gets freed automatically when the owner is destructed. In C++, this is
 achieved through <span class="docutils literal"><span class="pre">unique_ptr</span></span>:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">Foo</span> <span class="p">{</span> <span class="p">};</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">Foo</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
 
-<span class="k">struct</span> <span class="nc">Bar</span>
-<span class="p">{</span>
-    <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span> <span class="n">foo</span> <span class="p">{</span> <span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">();</span> <span class="p">}</span>
-<span class="p">}</span>
+<span class="k">struct</span> <span class="nc">Bar</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="w"> </span><span class="n">foo</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">();</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 
-<span class="p">...</span>
+<span class="p">...</span><span class="w"></span>
 
-<span class="p">{</span>
-    <span class="n">Bar</span> <span class="n">bar</span><span class="p">;</span> <span class="c1">// this creates a Foo object on the heap, owned by bar</span>
-<span class="p">}</span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">Bar</span><span class="w"> </span><span class="n">bar</span><span class="p">;</span><span class="w"> </span><span class="c1">// this creates a Foo object on the heap, owned by bar</span>
+<span class="p">}</span><span class="w"></span>
 <span class="c1">// the heap object gets freed once bar gets freed</span>
 </pre></div>
 </div>
@@ -309,16 +309,16 @@ count of references, a <span class="docutils literal"><span class="pre">unique_p
 <p>Unique pointers cannot be copied though (by definition, otherwise there would
 no longer denote unique ownership), so when other code needs to access the heap
 object, it would need to get a reference from the owning object:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">UseFoo</span><span class="p">(</span><span class="k">const</span> <span class="n">Foo</span><span class="o">&amp;</span> <span class="n">foo</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="p">...</span>
-<span class="p">}</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">UseFoo</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Foo</span><span class="o">&amp;</span><span class="w"> </span><span class="n">foo</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="p">...</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 
-<span class="p">...</span>
+<span class="p">...</span><span class="w"></span>
 
-<span class="n">Bar</span> <span class="n">bar</span><span class="p">;</span>
+<span class="n">Bar</span><span class="w"> </span><span class="n">bar</span><span class="p">;</span><span class="w"></span>
 
-<span class="n">UseFoo</span><span class="p">(</span><span class="o">*</span><span class="n">bar</span><span class="p">.</span><span class="n">foo</span><span class="p">);</span>
+<span class="n">UseFoo</span><span class="p">(</span><span class="o">*</span><span class="n">bar</span><span class="p">.</span><span class="n">foo</span><span class="p">);</span><span class="w"></span>
 </pre></div>
 </div>
 <p>The problem with this approach is that if another object ends up holding on to a
@@ -332,19 +332,19 @@ mostly left up to the developer. Rust on the other hand provides strong static
 analysis and lifetime annotations to ensure such issues do not occur. In fact,
 the default in Rust is to have uniquely owned objects which can be “borrowed”
 when needed and static analysis ensures no dangling references appear. In C++:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">Foo</span> <span class="p">{</span> <span class="p">};</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">Foo</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
 
-<span class="k">struct</span> <span class="nc">Bar</span><span class="p">{</span>
-    <span class="n">Foo</span><span class="o">*</span> <span class="n">foo</span><span class="p">;</span>
-<span class="p">};</span>
+<span class="k">struct</span> <span class="nc">Bar</span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">Foo</span><span class="o">*</span><span class="w"> </span><span class="n">foo</span><span class="p">;</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
 
-<span class="p">...</span>
+<span class="p">...</span><span class="w"></span>
 
-<span class="n">Bar</span> <span class="n">bar</span><span class="p">;</span>
-<span class="p">{</span>
-    <span class="n">Foo</span> <span class="n">foo</span><span class="p">;</span>
-    <span class="n">bar</span><span class="p">.</span><span class="n">foo</span> <span class="o">=</span> <span class="o">*</span><span class="n">foo</span><span class="p">;</span>
-<span class="p">}</span>
+<span class="n">Bar</span><span class="w"> </span><span class="n">bar</span><span class="p">;</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">Foo</span><span class="w"> </span><span class="n">foo</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">bar</span><span class="p">.</span><span class="n">foo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="n">foo</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 <span class="c1">// bar.foo is now a dangling pointer since Foo was freed</span>
 </pre></div>
 </div>

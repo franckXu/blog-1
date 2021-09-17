@@ -221,69 +221,69 @@ C++, for example, we can do it at compile-time, at link-time, or at run-time.</p
 <p>At compile-time, we can use a template parameter as the “interface”, have the
 production version of the code instantiate it with one concrete
 implementation and have the tests instantiate it with a mock:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">TImpl</span><span class="o">&gt;</span>
-<span class="k">class</span> <span class="nc">Example</span>
-<span class="p">{</span>
-<span class="k">private</span><span class="o">:</span>
-    <span class="n">TImpl</span> <span class="n">impl</span><span class="p">;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">TImpl</span><span class="o">&gt;</span><span class="w"></span>
+<span class="k">class</span> <span class="nc">Example</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="k">private</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="n">TImpl</span><span class="w"> </span><span class="n">impl</span><span class="p">;</span><span class="w"></span>
 
-<span class="k">public</span><span class="o">:</span>
-    <span class="kt">void</span> <span class="n">Do</span><span class="p">()</span> <span class="p">{</span>
-        <span class="n">impl</span><span class="p">.</span><span class="n">Do</span><span class="p">();</span>
-    <span class="p">}</span>
-<span class="p">};</span>
+<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">Do</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">impl</span><span class="p">.</span><span class="n">Do</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
 
-<span class="k">class</span> <span class="nc">ConcreteImpl</span>
-<span class="p">{</span>
-<span class="k">public</span><span class="o">:</span>
-    <span class="kt">void</span> <span class="n">Do</span><span class="p">()</span> <span class="p">{</span>
-        <span class="c1">// Concrete implementation</span>
-    <span class="p">}</span>
-<span class="p">};</span>
+<span class="k">class</span> <span class="nc">ConcreteImpl</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">Do</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="c1">// Concrete implementation</span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
 
-<span class="k">class</span> <span class="nc">MockImpl</span>
-<span class="p">{</span>
-<span class="k">public</span><span class="o">:</span>
-    <span class="kt">void</span> <span class="n">Do</span><span class="p">()</span> <span class="p">{</span>
-        <span class="c1">// Mock implementation</span>
-    <span class="p">}</span>
-<span class="p">};</span>
+<span class="k">class</span> <span class="nc">MockImpl</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">Do</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="c1">// Mock implementation</span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
 
 <span class="c1">// ...</span>
 
-<span class="n">Example</span><span class="o">&lt;</span><span class="n">ConcreteImpl</span><span class="o">&gt;</span> <span class="n">ex</span><span class="p">;</span>
+<span class="n">Example</span><span class="o">&lt;</span><span class="n">ConcreteImpl</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ex</span><span class="p">;</span><span class="w"></span>
 </pre></div>
 </div>
 <p>At link-time, we can link against the concrete implementations in production
 and against mock implementations in tests:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Example</span>
-<span class="p">{</span>
-<span class="k">private</span><span class="o">:</span>
-    <span class="n">Impl</span> <span class="n">impl</span><span class="p">;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Example</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="k">private</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="n">Impl</span><span class="w"> </span><span class="n">impl</span><span class="p">;</span><span class="w"></span>
 
-<span class="k">public</span><span class="o">:</span>
-    <span class="kt">void</span> <span class="n">Do</span><span class="p">()</span> <span class="p">{</span>
-        <span class="n">impl</span><span class="p">.</span><span class="n">Do</span><span class="p">();</span>
-    <span class="p">}</span>
-<span class="p">};</span>
+<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">Do</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">impl</span><span class="p">.</span><span class="n">Do</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
 
 <span class="c1">// In concrete implementation file:</span>
-<span class="k">class</span> <span class="nc">Impl</span>
-<span class="p">{</span>
-<span class="k">public</span><span class="o">:</span>
-    <span class="kt">void</span> <span class="n">Do</span><span class="p">()</span> <span class="p">{</span>
-        <span class="c1">// Concrete implementation</span>
-    <span class="p">}</span>
-<span class="p">};</span>
+<span class="k">class</span> <span class="nc">Impl</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">Do</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="c1">// Concrete implementation</span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
 
 <span class="c1">// In mock implementation file:</span>
-<span class="k">class</span> <span class="nc">Impl</span>
-<span class="p">{</span>
-<span class="k">public</span><span class="o">:</span>
-    <span class="kt">void</span> <span class="n">Do</span><span class="p">()</span> <span class="p">{</span>
-        <span class="c1">// Mock implementation</span>
-    <span class="p">}</span>
-<span class="p">};</span>
+<span class="k">class</span> <span class="nc">Impl</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">Do</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="c1">// Mock implementation</span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
 </pre></div>
 </div>
 <p>At run-time, we can do something similar to our C# example above. There are

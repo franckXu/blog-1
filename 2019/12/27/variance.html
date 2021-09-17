@@ -87,24 +87,24 @@ argument types or return types.</p>
 guessed, the answer is “yes”. We can check that such code compiles:</p>
 <div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kr">declare</span> <span class="kd">const</span> <span class="nx">TriangleType</span>: <span class="kt">unique</span> <span class="nx">symbol</span><span class="p">;</span>
 <span class="kd">class</span> <span class="nx">Triangle</span> <span class="p">{</span>
-    <span class="p">[</span><span class="nx">TriangleType</span><span class="p">]</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+    <span class="p">[</span><span class="nx">TriangleType</span><span class="p">]</span><span class="o">:</span> <span class="ow">void</span><span class="p">;</span>
     <span class="cm">/* Triangle members */</span>
 <span class="p">}</span>
 
 <span class="kr">declare</span> <span class="kd">const</span> <span class="nx">SquareType</span>: <span class="kt">unique</span> <span class="nx">symbol</span><span class="p">;</span>
 <span class="kd">class</span> <span class="nx">Square</span> <span class="p">{</span>
-    <span class="p">[</span><span class="nx">SquareType</span><span class="p">]</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+    <span class="p">[</span><span class="nx">SquareType</span><span class="p">]</span><span class="o">:</span> <span class="ow">void</span><span class="p">;</span>
     <span class="cm">/* Square members */</span>
 <span class="p">}</span>
 
 <span class="kr">declare</span> <span class="kd">const</span> <span class="nx">CircleType</span>: <span class="kt">unique</span> <span class="nx">symbol</span><span class="p">;</span>
 <span class="kd">class</span> <span class="nx">Circle</span> <span class="p">{</span>
-    <span class="p">[</span><span class="nx">CircleType</span><span class="p">]</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+    <span class="p">[</span><span class="nx">CircleType</span><span class="p">]</span><span class="o">:</span> <span class="ow">void</span><span class="p">;</span>
     <span class="cm">/* Circle members */</span>
 <span class="p">}</span>
 
 <span class="kr">declare</span> <span class="kd">function</span> <span class="nx">makeShape</span><span class="p">()</span><span class="o">:</span> <span class="nx">Triangle</span> <span class="o">|</span> <span class="nx">Square</span><span class="p">;</span>
-<span class="kr">declare</span> <span class="kd">function</span> <span class="nx">draw</span><span class="p">(</span><span class="nx">shape</span>: <span class="kt">Triangle</span> <span class="o">|</span> <span class="nx">Square</span> <span class="o">|</span> <span class="nx">Circle</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+<span class="kr">declare</span> <span class="kd">function</span> <span class="nx">draw</span><span class="p">(</span><span class="nx">shape</span>: <span class="kt">Triangle</span> <span class="o">|</span> <span class="nx">Square</span> <span class="o">|</span> <span class="nx">Circle</span><span class="p">)</span><span class="o">:</span> <span class="ow">void</span><span class="p">;</span>
 
 <span class="nx">draw</span><span class="p">(</span><span class="nx">makeShape</span><span class="p">());</span>
 </pre></div>
@@ -123,7 +123,7 @@ or <span class="docutils literal"><span class="pre">Circle</span></span>, the co
 <span class="docutils literal"><span class="pre">Circle</span></span> to the <span class="docutils literal"><span class="pre">draw()</span></span> function, which wouldn’t know what to do with it.
 We can confirm that the below code doesn’t compile:</p>
 <div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kr">declare</span> <span class="kd">function</span> <span class="nx">makeShape</span><span class="p">()</span><span class="o">:</span> <span class="nx">Triangle</span> <span class="o">|</span> <span class="nx">Square</span> <span class="o">|</span> <span class="nx">Circle</span><span class="p">;</span>
-<span class="kr">declare</span> <span class="kd">function</span> <span class="nx">draw</span><span class="p">(</span><span class="nx">shape</span>: <span class="kt">Triangle</span> <span class="o">|</span> <span class="nx">Square</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+<span class="kr">declare</span> <span class="kd">function</span> <span class="nx">draw</span><span class="p">(</span><span class="nx">shape</span>: <span class="kt">Triangle</span> <span class="o">|</span> <span class="nx">Square</span><span class="p">)</span><span class="o">:</span> <span class="ow">void</span><span class="p">;</span>
 
 <span class="nx">draw</span><span class="p">(</span><span class="nx">makeShape</span><span class="p">());</span>
 </pre></div>
@@ -141,7 +141,7 @@ works the opposite way: the supertype has more types than the subtype.</p>
 <p>Say we have an <span class="docutils literal"><span class="pre">EquilateralTriangle</span></span> which inherits from <span class="docutils literal"><span class="pre">Triangle</span></span>:</p>
 <div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kr">declare</span> <span class="kd">const</span> <span class="nx">EquilateralTriangleType</span>: <span class="kt">unique</span> <span class="nx">symbol</span><span class="p">;</span>
 <span class="kd">class</span> <span class="nx">EquilateralTriangle</span> <span class="k">extends</span> <span class="nx">Triangle</span> <span class="p">{</span>
-    <span class="p">[</span><span class="nx">EquilateralTriangleType</span><span class="p">]</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+    <span class="p">[</span><span class="nx">EquilateralTriangleType</span><span class="p">]</span><span class="o">:</span> <span class="ow">void</span><span class="p">;</span>
     <span class="cm">/* EquilateralTriangle members */</span>
 <span class="p">}</span>
 </pre></div>
@@ -164,12 +164,12 @@ subtype of <span class="docutils literal"><span class="pre">Shape</span></span>?
 
 <span class="kr">declare</span> <span class="kd">const</span> <span class="nx">TriangleType</span>: <span class="kt">unique</span> <span class="nx">symbol</span><span class="p">;</span>
 <span class="kd">class</span> <span class="nx">Triangle</span> <span class="k">extends</span> <span class="nx">Shape</span> <span class="p">{</span>
-    <span class="p">[</span><span class="nx">TriangleType</span><span class="p">]</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+    <span class="p">[</span><span class="nx">TriangleType</span><span class="p">]</span><span class="o">:</span> <span class="ow">void</span><span class="p">;</span>
     <span class="cm">/* Triangle members */</span>
 <span class="p">}</span>
 
 <span class="kr">declare</span> <span class="kd">function</span> <span class="nx">makeTriangles</span><span class="p">()</span><span class="o">:</span> <span class="nx">Triangle</span><span class="p">[];</span>
-<span class="kr">declare</span> <span class="kd">function</span> <span class="nx">draw</span><span class="p">(</span><span class="nx">shapes</span>: <span class="kt">Shape</span><span class="p">[])</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+<span class="kr">declare</span> <span class="kd">function</span> <span class="nx">draw</span><span class="p">(</span><span class="nx">shapes</span>: <span class="kt">Shape</span><span class="p">[])</span><span class="o">:</span> <span class="ow">void</span><span class="p">;</span>
 
 <span class="nx">draw</span><span class="p">(</span><span class="nx">makeTriangles</span><span class="p">());</span>
 </pre></div>
@@ -194,13 +194,13 @@ What if we define a custom collection, say a <span class="docutils literal"><spa
     <span class="p">}</span>
 
     <span class="nx">append</span><span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span><span class="o">:</span> <span class="nx">LinkedList</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">next</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">LinkedList</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">next</span> <span class="o">=</span> <span class="ow">new</span> <span class="nx">LinkedList</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">next</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
 <span class="kr">declare</span> <span class="kd">function</span> <span class="nx">makeTriangles</span><span class="p">()</span><span class="o">:</span> <span class="nx">LinkedList</span><span class="o">&lt;</span><span class="nx">Triangle</span><span class="o">&gt;</span><span class="p">;</span>
-<span class="kr">declare</span> <span class="kd">function</span> <span class="nx">draw</span><span class="p">(</span><span class="nx">shapes</span>: <span class="kt">LinkedList</span><span class="o">&lt;</span><span class="nx">Shape</span><span class="o">&gt;</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+<span class="kr">declare</span> <span class="kd">function</span> <span class="nx">draw</span><span class="p">(</span><span class="nx">shapes</span>: <span class="kt">LinkedList</span><span class="o">&lt;</span><span class="nx">Shape</span><span class="o">&gt;</span><span class="p">)</span><span class="o">:</span> <span class="ow">void</span><span class="p">;</span>
 
 <span class="nx">draw</span><span class="p">(</span><span class="nx">makeTriangles</span><span class="p">());</span>
 </pre></div>
@@ -254,7 +254,7 @@ type <span class="docutils literal"><span class="pre">()</span> <span class="pre
 <div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kr">declare</span> <span class="kd">function</span> <span class="nx">makeTriangle</span><span class="p">()</span><span class="o">:</span> <span class="nx">Triangle</span><span class="p">;</span>
 <span class="kr">declare</span> <span class="kd">function</span> <span class="nx">makeShape</span><span class="p">()</span><span class="o">:</span> <span class="nx">Shape</span><span class="p">;</span>
 
-<span class="kd">function</span> <span class="nx">useFactory</span><span class="p">(</span><span class="nx">factory</span><span class="o">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">Shape</span><span class="p">)</span><span class="o">:</span> <span class="nx">Shape</span> <span class="p">{</span>
+<span class="kd">function</span> <span class="nx">useFactory</span><span class="p">(</span><span class="nx">factory</span><span class="o">:</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="nx">Shape</span><span class="p">)</span><span class="o">:</span> <span class="nx">Shape</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">factory</span><span class="p">();</span>
 <span class="p">}</span>
 
@@ -275,7 +275,7 @@ compile:</p>
 <div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kr">declare</span> <span class="kd">function</span> <span class="nx">makeTriangle</span><span class="p">()</span><span class="o">:</span> <span class="nx">Triangle</span><span class="p">;</span>
 <span class="kr">declare</span> <span class="kd">function</span> <span class="nx">makeShape</span><span class="p">()</span><span class="o">:</span> <span class="nx">Shape</span><span class="p">;</span>
 
-<span class="kd">function</span> <span class="nx">useFactory</span><span class="p">(</span><span class="nx">factory</span><span class="o">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">Triangle</span><span class="p">)</span><span class="o">:</span> <span class="nx">Triangle</span> <span class="p">{</span>
+<span class="kd">function</span> <span class="nx">useFactory</span><span class="p">(</span><span class="nx">factory</span><span class="o">:</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="nx">Triangle</span><span class="p">)</span><span class="o">:</span> <span class="nx">Triangle</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">factory</span><span class="p">();</span>
 <span class="p">}</span>
 
@@ -306,13 +306,13 @@ allow this, as calling either of the <span class="docutils literal"><span class=
 <span class="docutils literal"><span class="pre">Shape</span></span> object:</p>
 <div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">ShapeMaker</span> <span class="p">{</span>
     <span class="nx">make</span><span class="p">()</span><span class="o">:</span> <span class="nx">Shape</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="k">new</span> <span class="nx">Shape</span><span class="p">();</span>
+        <span class="k">return</span> <span class="ow">new</span> <span class="nx">Shape</span><span class="p">();</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
 <span class="kd">class</span> <span class="nx">TriangleMaker</span> <span class="k">extends</span> <span class="nx">ShapeMaker</span> <span class="p">{</span>
     <span class="nx">make</span><span class="p">()</span><span class="o">:</span> <span class="nx">Triangle</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="k">new</span> <span class="nx">Triangle</span><span class="p">();</span>
+        <span class="k">return</span> <span class="ow">new</span> <span class="nx">Triangle</span><span class="p">();</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -332,12 +332,12 @@ another?</p>
 <p>Let’s introduce another function, <span class="docutils literal"><span class="pre">render()</span></span>, which takes as arguments a
 <span class="docutils literal"><span class="pre">Triangle</span></span> and an <span class="docutils literal"><span class="pre">(argument:</span> <span class="pre">Triangle)</span> <span class="pre">=&gt;</span> <span class="pre">void</span></span> function. It simply calls
 the given function with the given <span class="docutils literal"><span class="pre">Triangle</span></span>:</p>
-<div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kr">declare</span> <span class="kd">function</span> <span class="nx">drawShape</span><span class="p">(</span><span class="nx">shape</span>: <span class="kt">Shape</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
-<span class="kr">declare</span> <span class="kd">function</span> <span class="nx">drawTriangle</span><span class="p">(</span><span class="nx">triangle</span>: <span class="kt">Triangle</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+<div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kr">declare</span> <span class="kd">function</span> <span class="nx">drawShape</span><span class="p">(</span><span class="nx">shape</span>: <span class="kt">Shape</span><span class="p">)</span><span class="o">:</span> <span class="ow">void</span><span class="p">;</span>
+<span class="kr">declare</span> <span class="kd">function</span> <span class="nx">drawTriangle</span><span class="p">(</span><span class="nx">triangle</span>: <span class="kt">Triangle</span><span class="p">)</span><span class="o">:</span> <span class="ow">void</span><span class="p">;</span>
 
 <span class="kd">function</span> <span class="nx">render</span><span class="p">(</span>
     <span class="nx">triangle</span>: <span class="kt">Triangle</span><span class="p">,</span>
-    <span class="nx">drawFunc</span><span class="o">:</span> <span class="p">(</span><span class="nx">argument</span>: <span class="kt">Triangle</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="k">void</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span> <span class="p">{</span>
+    <span class="nx">drawFunc</span><span class="o">:</span> <span class="p">(</span><span class="nx">argument</span>: <span class="kt">Triangle</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="ow">void</span><span class="p">)</span><span class="o">:</span> <span class="ow">void</span> <span class="p">{</span>
     <span class="nx">drawFunc</span><span class="p">(</span><span class="nx">triangle</span><span class="p">);</span>
 <span class="p">}</span>
 </pre></div>
@@ -384,9 +384,9 @@ triangle. The implementation of the method is not important:</p>
 
 <span class="kr">declare</span> <span class="kd">const</span> <span class="nx">TriangleType</span>: <span class="kt">unique</span> <span class="nx">symbol</span><span class="p">;</span>
 <span class="kd">class</span> <span class="nx">Triangle</span> <span class="k">extends</span> <span class="nx">Shape</span> <span class="p">{</span>
-    <span class="p">[</span><span class="nx">TriangleType</span><span class="p">]</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+    <span class="p">[</span><span class="nx">TriangleType</span><span class="p">]</span><span class="o">:</span> <span class="ow">void</span><span class="p">;</span>
 
-    <span class="nx">isRightAngled</span><span class="p">()</span><span class="o">:</span> <span class="kr">boolean</span> <span class="p">{</span>
+    <span class="nx">isRightAngled</span><span class="p">()</span><span class="o">:</span> <span class="kt">boolean</span> <span class="p">{</span>
         <span class="kd">let</span> <span class="nx">result</span>: <span class="kt">boolean</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 
         <span class="cm">/* Determine whether it is a right-angled triangle */</span>
@@ -402,12 +402,12 @@ triangle. The implementation of the method is not important:</p>
 expects a <span class="docutils literal"><span class="pre">Shape</span></span> instead of a <span class="docutils literal"><span class="pre">Triangle</span></span>, and a function which can draw
 shapes <span class="docutils literal"><span class="pre">(argument:</span> <span class="pre">Shape)</span> <span class="pre">=&gt;</span> <span class="pre">void</span></span> instead of a function which can only draw
 triangles <span class="docutils literal"><span class="pre">(argument:</span> <span class="pre">Triangle)</span> <span class="pre">=&gt;</span> <span class="pre">void</span></span>:</p>
-<div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kr">declare</span> <span class="kd">function</span> <span class="nx">drawShape</span><span class="p">(</span><span class="nx">shape</span>: <span class="kt">Shape</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
-<span class="kr">declare</span> <span class="kd">function</span> <span class="nx">drawTriangle</span><span class="p">(</span><span class="nx">triangle</span>: <span class="kt">Triangle</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+<div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kr">declare</span> <span class="kd">function</span> <span class="nx">drawShape</span><span class="p">(</span><span class="nx">shape</span>: <span class="kt">Shape</span><span class="p">)</span><span class="o">:</span> <span class="ow">void</span><span class="p">;</span>
+<span class="kr">declare</span> <span class="kd">function</span> <span class="nx">drawTriangle</span><span class="p">(</span><span class="nx">triangle</span>: <span class="kt">Triangle</span><span class="p">)</span><span class="o">:</span> <span class="ow">void</span><span class="p">;</span>
 
 <span class="kd">function</span> <span class="nx">render</span><span class="p">(</span>
     <span class="nx">shape</span>: <span class="kt">Shape</span><span class="p">,</span>
-    <span class="nx">drawFunc</span><span class="o">:</span> <span class="p">(</span><span class="nx">argument</span>: <span class="kt">Shape</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="k">void</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span> <span class="p">{</span>
+    <span class="nx">drawFunc</span><span class="o">:</span> <span class="p">(</span><span class="nx">argument</span>: <span class="kt">Shape</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="ow">void</span><span class="p">)</span><span class="o">:</span> <span class="ow">void</span> <span class="p">{</span>
     <span class="nx">drawFunc</span><span class="p">(</span><span class="nx">shape</span><span class="p">);</span>
 <span class="p">}</span>
 </pre></div>
@@ -421,18 +421,18 @@ method we just added. We then call <span class="docutils literal"><span class="p
 <p>Now <span class="docutils literal"><span class="pre">drawTriangle()</span></span> will receive a <span class="docutils literal"><span class="pre">Shape</span></span> object and attempt to call
 <span class="docutils literal"><span class="pre">isRightAngled()</span></span> on it, but since the <span class="docutils literal"><span class="pre">Shape</span></span> is not a <span class="docutils literal"><span class="pre">Triangle</span></span>, this
 will cause an error:</p>
-<div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">drawTriangle</span><span class="p">(</span><span class="nx">triangle</span>: <span class="kt">Triangle</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span> <span class="p">{</span>
+<div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">drawTriangle</span><span class="p">(</span><span class="nx">triangle</span>: <span class="kt">Triangle</span><span class="p">)</span><span class="o">:</span> <span class="ow">void</span> <span class="p">{</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">triangle</span><span class="p">.</span><span class="nx">isRightAngled</span><span class="p">());</span>
     <span class="cm">/* ... */</span>
 <span class="p">}</span>
 
 <span class="kd">function</span> <span class="nx">render</span><span class="p">(</span>
     <span class="nx">shape</span>: <span class="kt">Shape</span><span class="p">,</span>
-    <span class="nx">drawFunc</span><span class="o">:</span> <span class="p">(</span><span class="nx">argument</span>: <span class="kt">Shape</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="k">void</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span> <span class="p">{</span>
+    <span class="nx">drawFunc</span><span class="o">:</span> <span class="p">(</span><span class="nx">argument</span>: <span class="kt">Shape</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="ow">void</span><span class="p">)</span><span class="o">:</span> <span class="ow">void</span> <span class="p">{</span>
     <span class="nx">drawFunc</span><span class="p">(</span><span class="nx">shape</span><span class="p">);</span>
 <span class="p">}</span>
 
-<span class="nx">render</span><span class="p">(</span><span class="k">new</span> <span class="nx">Shape</span><span class="p">(),</span> <span class="nx">drawTriangle</span><span class="p">);</span>
+<span class="nx">render</span><span class="p">(</span><span class="ow">new</span> <span class="nx">Shape</span><span class="p">(),</span> <span class="nx">drawTriangle</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>We can pass a <span class="docutils literal"><span class="pre">Shape</span></span> and <span class="docutils literal"><span class="pre">drawTriangle()</span></span> to <span class="docutils literal"><span class="pre">render()</span></span>. This code will

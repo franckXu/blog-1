@@ -67,7 +67,7 @@ function to each element in the sequence, and produces a new sequence with the
 transformed elements.</p>
 <div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span><span class="o">*</span> <span class="nx">map</span><span class="o">&lt;</span><span class="nx">T</span><span class="p">,</span> <span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span>
     <span class="nx">iter</span>: <span class="kt">Iterable</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">,</span>
-    <span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">item</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">U</span><span class="p">)</span><span class="o">:</span> <span class="nx">IterableIterator</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">item</span>: <span class="kt">T</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">U</span><span class="p">)</span><span class="o">:</span> <span class="nx">IterableIterator</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span> <span class="p">{</span>
     <span class="k">for</span> <span class="p">(</span><span class="kd">const</span> <span class="nx">value</span> <span class="k">of</span> <span class="nx">iter</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">yield</span> <span class="nx">func</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
     <span class="p">}</span>
@@ -91,12 +91,12 @@ example, an <span class="docutils literal"><span class="pre">Optional&lt;T&gt;</
         <span class="p">}</span>
     <span class="p">}</span>
 
-    <span class="nx">hasValue</span><span class="p">()</span><span class="o">:</span> <span class="kr">boolean</span> <span class="p">{</span>
+    <span class="nx">hasValue</span><span class="p">()</span><span class="o">:</span> <span class="kt">boolean</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">assigned</span><span class="p">;</span>
     <span class="p">}</span>
 
     <span class="nx">getValue</span><span class="p">()</span><span class="o">:</span> <span class="nx">T</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">assigned</span><span class="p">)</span> <span class="k">throw</span> <span class="nb">Error</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">assigned</span><span class="p">)</span> <span class="k">throw</span> <span class="ne">Error</span><span class="p">();</span>
 
         <span class="k">return</span> <span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="k">this</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
     <span class="p">}</span>
@@ -117,11 +117,11 @@ implementation:</p>
 <div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="nx">namespace</span> <span class="nx">Optional</span> <span class="p">{</span>
     <span class="k">export</span> <span class="kd">function</span> <span class="nx">map</span><span class="o">&lt;</span><span class="nx">T</span><span class="p">,</span> <span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span>
         <span class="nx">optional</span>: <span class="kt">Optional</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">,</span>
-        <span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">U</span><span class="p">)</span><span class="o">:</span> <span class="nx">Optional</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span> <span class="p">{</span>
+        <span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">U</span><span class="p">)</span><span class="o">:</span> <span class="nx">Optional</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">optional</span><span class="p">.</span><span class="nx">hasValue</span><span class="p">())</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="k">new</span> <span class="nx">Optional</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">func</span><span class="p">(</span><span class="nx">optional</span><span class="p">.</span><span class="nx">getValue</span><span class="p">()));</span>
+            <span class="k">return</span> <span class="ow">new</span> <span class="nx">Optional</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">func</span><span class="p">(</span><span class="nx">optional</span><span class="p">.</span><span class="nx">getValue</span><span class="p">()));</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="k">new</span> <span class="nx">Optional</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span><span class="p">();</span>
+            <span class="k">return</span> <span class="ow">new</span> <span class="nx">Optional</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span><span class="p">();</span>
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">}</span>
@@ -142,7 +142,7 @@ function and return its result if we have a value of type <span class="docutils 
 <div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="nx">namespace</span> <span class="nx">SumType</span> <span class="p">{</span>
     <span class="k">export</span> <span class="kd">function</span> <span class="nx">map</span><span class="o">&lt;</span><span class="nx">T</span><span class="p">,</span> <span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span>
         <span class="nx">value</span>: <span class="kt">T</span> <span class="o">|</span> <span class="kc">undefined</span><span class="p">,</span>
-        <span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">U</span><span class="p">)</span><span class="o">:</span> <span class="nx">U</span> <span class="o">|</span> <span class="kc">undefined</span> <span class="p">{</span>
+        <span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">U</span><span class="p">)</span><span class="o">:</span> <span class="nx">U</span> <span class="o">|</span> <span class="kc">undefined</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">value</span> <span class="o">==</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="kc">undefined</span><span class="p">;</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
@@ -172,8 +172,8 @@ back into a <span class="docutils literal"><span class="pre">Box&lt;U&gt;</span>
 <div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="nx">namespace</span> <span class="nx">Box</span> <span class="p">{</span>
     <span class="k">export</span> <span class="kd">function</span> <span class="nx">map</span><span class="o">&lt;</span><span class="nx">T</span><span class="p">,</span> <span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span>
         <span class="nx">box</span>: <span class="kt">Box</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">,</span>
-        <span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">U</span><span class="p">)</span><span class="o">:</span> <span class="nx">Box</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="k">new</span> <span class="nx">Box</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">func</span><span class="p">(</span><span class="nx">box</span><span class="p">.</span><span class="nx">value</span><span class="p">));</span>
+        <span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">U</span><span class="p">)</span><span class="o">:</span> <span class="nx">Box</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="ow">new</span> <span class="nx">Box</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">func</span><span class="p">(</span><span class="nx">box</span><span class="p">.</span><span class="nx">value</span><span class="p">));</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -235,7 +235,7 @@ types:</p>
 <div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="nx">namespace</span> <span class="nx">SumType</span> <span class="p">{</span>
     <span class="k">export</span> <span class="kd">function</span> <span class="nx">map</span><span class="o">&lt;</span><span class="nx">T</span><span class="p">,</span> <span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span>
         <span class="nx">value</span>: <span class="kt">T</span> <span class="o">|</span> <span class="kc">undefined</span><span class="p">,</span>
-        <span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">U</span><span class="p">)</span><span class="o">:</span> <span class="nx">U</span> <span class="o">|</span> <span class="kc">undefined</span> <span class="p">{</span>
+        <span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">U</span><span class="p">)</span><span class="o">:</span> <span class="nx">U</span> <span class="o">|</span> <span class="kc">undefined</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">value</span> <span class="o">==</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="kc">undefined</span><span class="p">;</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
@@ -270,7 +270,7 @@ that to <span class="docutils literal"><span class="pre">map()</span></span>:</p
     <span class="kd">let</span> <span class="nx">value</span>: <span class="kt">number</span> <span class="o">|</span> <span class="kc">undefined</span> <span class="o">=</span> <span class="nx">readNumber</span><span class="p">();</span>
 
     <span class="k">return</span> <span class="nx">SumType</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span>
-        <span class="p">(</span><span class="nx">value</span>: <span class="kt">number</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">stringify</span><span class="p">(</span><span class="nx">square</span><span class="p">(</span><span class="nx">value</span><span class="p">)));</span>
+        <span class="p">(</span><span class="nx">value</span>: <span class="kt">number</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">stringify</span><span class="p">(</span><span class="nx">square</span><span class="p">(</span><span class="nx">value</span><span class="p">)));</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -294,7 +294,7 @@ and package it back in a <span class="docutils literal"><span class="pre">Box&lt
 <span class="p">}</span>
 
 <span class="kd">function</span> <span class="nx">squareBox</span><span class="p">(</span><span class="nx">box</span>: <span class="kt">Box</span><span class="o">&lt;</span><span class="kt">number</span><span class="o">&gt;</span><span class="p">)</span><span class="o">:</span> <span class="nx">Box</span><span class="o">&lt;</span><span class="kt">number</span><span class="o">&gt;</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="k">new</span> <span class="nx">Box</span><span class="p">(</span><span class="nx">square</span><span class="p">(</span><span class="nx">box</span><span class="p">.</span><span class="nx">value</span><span class="p">));</span>
+    <span class="k">return</span> <span class="ow">new</span> <span class="nx">Box</span><span class="p">(</span><span class="nx">square</span><span class="p">(</span><span class="nx">box</span><span class="p">.</span><span class="nx">value</span><span class="p">));</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -309,7 +309,7 @@ the previous ones:</p>
 <span class="p">}</span>
 
 <span class="kd">function</span> <span class="nx">stringifyBox</span><span class="p">(</span><span class="nx">box</span>: <span class="kt">Box</span><span class="o">&lt;</span><span class="kt">number</span><span class="o">&gt;</span><span class="p">)</span><span class="o">:</span> <span class="nx">Box</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">&gt;</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="k">new</span> <span class="nx">Box</span><span class="p">(</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">box</span><span class="p">.</span><span class="nx">value</span><span class="p">))</span>
+    <span class="k">return</span> <span class="ow">new</span> <span class="nx">Box</span><span class="p">(</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">box</span><span class="p">.</span><span class="nx">value</span><span class="p">))</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -319,7 +319,7 @@ provide the abstraction to remove the duplicate code. We can pass either
 <span class="docutils literal"><span class="pre">square()</span></span> or <span class="docutils literal"><span class="pre">stringify()</span></span> to either <span class="docutils literal"><span class="pre">SumType.map()</span></span> or to
 <span class="docutils literal"><span class="pre">Box.map()</span></span>, no additional code needed:</p>
 <div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">x</span>: <span class="kt">number</span> <span class="o">|</span> <span class="kc">undefined</span> <span class="o">=</span> <span class="mf">1</span><span class="p">;</span>
-<span class="kd">let</span> <span class="nx">y</span>: <span class="kt">Box</span><span class="o">&lt;</span><span class="kt">number</span><span class="o">&gt;</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Box</span><span class="p">(</span><span class="mf">42</span><span class="p">);</span>
+<span class="kd">let</span> <span class="nx">y</span>: <span class="kt">Box</span><span class="o">&lt;</span><span class="kt">number</span><span class="o">&gt;</span> <span class="o">=</span> <span class="ow">new</span> <span class="nx">Box</span><span class="p">(</span><span class="mf">42</span><span class="p">);</span>
 
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">SumType</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">stringify</span><span class="p">));</span>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">Box</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">y</span><span class="p">,</span> <span class="nx">stringify</span><span class="p">));</span>
@@ -366,7 +366,7 @@ takes a function from <span class="docutils literal"><span class="pre">T</span><
 interface for it. Let’s call this interface <span class="docutils literal"><span class="pre">Functor</span></span> and have it declare
 <span class="docutils literal"><span class="pre">map()</span></span>:</p>
 <div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kd">interface</span> <span class="nx">Functor</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="p">{</span>
-    <span class="nx">map</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">U</span><span class="p">)</span><span class="o">:</span> <span class="nx">Functor</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span><span class="p">;</span>
+    <span class="nx">map</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">U</span><span class="p">)</span><span class="o">:</span> <span class="nx">Functor</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span><span class="p">;</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -378,8 +378,8 @@ interface for it. Let’s call this interface <span class="docutils literal"><sp
         <span class="k">this</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
     <span class="p">}</span>
 
-    <span class="nx">map</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">U</span><span class="p">)</span><span class="o">:</span> <span class="nx">Box</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="k">new</span> <span class="nx">Box</span><span class="p">(</span><span class="nx">func</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">value</span><span class="p">));</span>
+    <span class="nx">map</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">U</span><span class="p">)</span><span class="o">:</span> <span class="nx">Box</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="ow">new</span> <span class="nx">Box</span><span class="p">(</span><span class="nx">func</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">value</span><span class="p">));</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -395,7 +395,7 @@ type of <span class="docutils literal"><span class="pre">map()</span></span> wil
 would look like if TypeScript supported higher kinded types. It obviously
 doesn’t compile:</p>
 <div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="kd">interface</span> <span class="nx">Functor</span><span class="o">&lt;</span><span class="nx">H</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;&gt;</span> <span class="p">{</span>
-    <span class="nx">map</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">U</span><span class="p">)</span><span class="o">:</span> <span class="nx">H</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span><span class="p">;</span>
+    <span class="nx">map</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">U</span><span class="p">)</span><span class="o">:</span> <span class="nx">H</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="kd">class</span> <span class="nx">Box</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="k">implements</span> <span class="nx">Functor</span><span class="o">&lt;</span><span class="nx">Box</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;&gt;</span> <span class="p">{</span>
@@ -405,8 +405,8 @@ doesn’t compile:</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
     <span class="p">}</span>
 
-    <span class="nx">map</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">U</span><span class="p">)</span><span class="o">:</span> <span class="nx">Box</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="k">new</span> <span class="nx">Box</span><span class="p">(</span><span class="nx">func</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">value</span><span class="p">));</span>
+    <span class="nx">map</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">U</span><span class="p">)</span><span class="o">:</span> <span class="nx">Box</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="ow">new</span> <span class="nx">Box</span><span class="p">(</span><span class="nx">func</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">value</span><span class="p">));</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -433,9 +433,9 @@ This will return a function which takes two arguments of type <span class="docut
 a value of type <span class="docutils literal"><span class="pre">U</span></span>:</p>
 <div class="highlight-ts notranslate"><div class="highlight"><pre><span></span><span class="nx">namespace</span> <span class="nb">Function</span> <span class="p">{</span>
     <span class="k">export</span> <span class="kd">function</span> <span class="nx">map</span><span class="o">&lt;</span><span class="nx">T</span><span class="p">,</span> <span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span>
-        <span class="nx">f</span><span class="o">:</span> <span class="p">(</span><span class="nx">arg1</span>: <span class="kt">T</span><span class="p">,</span> <span class="nx">arg2</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">T</span><span class="p">,</span>
-        <span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">U</span><span class="p">)</span><span class="o">:</span> <span class="p">(</span><span class="nx">arg1</span>: <span class="kt">T</span><span class="p">,</span> <span class="nx">arg2</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">U</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="p">(</span><span class="nx">arg1</span>: <span class="kt">T</span><span class="p">,</span> <span class="nx">arg2</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">func</span><span class="p">(</span><span class="nx">f</span><span class="p">(</span><span class="nx">arg1</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">));</span>
+        <span class="nx">f</span><span class="o">:</span> <span class="p">(</span><span class="nx">arg1</span>: <span class="kt">T</span><span class="p">,</span> <span class="nx">arg2</span>: <span class="kt">T</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">T</span><span class="p">,</span>
+        <span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">U</span><span class="p">)</span><span class="o">:</span> <span class="p">(</span><span class="nx">arg1</span>: <span class="kt">T</span><span class="p">,</span> <span class="nx">arg2</span>: <span class="kt">T</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">U</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nx">arg1</span>: <span class="kt">T</span><span class="p">,</span> <span class="nx">arg2</span>: <span class="kt">T</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">func</span><span class="p">(</span><span class="nx">f</span><span class="p">(</span><span class="nx">arg1</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">));</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>

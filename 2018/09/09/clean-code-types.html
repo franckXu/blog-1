@@ -67,21 +67,21 @@ pound-force seconds, while another component developed by NASA expected momentum
 as Newton seconds.</p>
 <p>We can image the component developed by NASA being something like this:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// Will not disintegrate as long as momentum &gt;= 2 N s</span>
-<span class="kt">void</span> <span class="nf">trajectory_correction</span><span class="p">(</span><span class="kt">double</span> <span class="n">momentum</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">momentum</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="cm">/* N s */</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="n">disintegrate</span><span class="p">();</span>
-    <span class="p">}</span>
-    <span class="cm">/* ... */</span>
-<span class="p">}</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">trajectory_correction</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">momentum</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">momentum</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="cm">/* N s */</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">disintegrate</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="cm">/* ... */</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
 <p>We can also imagine the Lockheed component calling into the above with:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">main</span><span class="p">()</span>
-<span class="p">{</span>
-    <span class="n">trajectory_correction</span><span class="p">(</span><span class="mf">1.5</span> <span class="cm">/* lbf s */</span><span class="p">);</span>
-<span class="p">}</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">trajectory_correction</span><span class="p">(</span><span class="mf">1.5</span><span class="w"> </span><span class="cm">/* lbf s */</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
 <p>A pound-force second (lbfs) is about 4.448222 Newton seconds (Ns). So from
@@ -99,47 +99,47 @@ value in the problem’s domain and causes situations like the above. Representi
 zip codes as numbers, telephone numbers as strings, Ns and lbfs as <span class="docutils literal"><span class="pre">double</span></span>
 are all examples of this.</p>
 <p>A more type safe solution would have defined a simple <span class="docutils literal"><span class="pre">Ns</span></span> type:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">Ns</span>
-<span class="p">{</span>
-    <span class="kt">double</span> <span class="n">value</span><span class="p">;</span>
-<span class="p">};</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">Ns</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">;</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
 
-<span class="kt">bool</span> <span class="k">operator</span><span class="o">&lt;</span><span class="p">(</span><span class="k">const</span> <span class="n">Ns</span><span class="o">&amp;</span> <span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">Ns</span><span class="o">&amp;</span> <span class="n">b</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="k">return</span> <span class="n">a</span><span class="p">.</span><span class="n">value</span> <span class="o">&lt;</span> <span class="n">b</span><span class="p">.</span><span class="n">value</span><span class="p">;</span>
-<span class="p">}</span>
+<span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">&lt;</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Ns</span><span class="o">&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Ns</span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">value</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">value</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
 <p>We can similarly define a simple <span class="docutils literal"><span class="pre">lbfs</span></span> type:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">lbfs</span>
-<span class="p">{</span>
-    <span class="kt">double</span> <span class="n">value</span><span class="p">;</span>
-<span class="p">};</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">lbfs</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">;</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
 
-<span class="kt">bool</span> <span class="k">operator</span><span class="o">&lt;</span><span class="p">(</span><span class="k">const</span> <span class="n">lbfs</span><span class="o">&amp;</span> <span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">lbfs</span><span class="o">&amp;</span> <span class="n">b</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="k">return</span> <span class="n">a</span><span class="p">.</span><span class="n">value</span> <span class="o">&lt;</span> <span class="n">b</span><span class="p">.</span><span class="n">value</span><span class="p">;</span>
-<span class="p">}</span>
+<span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">&lt;</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">lbfs</span><span class="o">&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">lbfs</span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">value</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">value</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
 <p>Now we can implement a type safe <span class="docutils literal"><span class="pre">trajectory_correction</span></span>:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// Will not disintegrate as long as momentum &gt;= 2 N s</span>
-<span class="kt">void</span> <span class="nf">trajectory_correction</span><span class="p">(</span><span class="n">Ns</span> <span class="n">momentum</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">momentum</span> <span class="o">&lt;</span> <span class="n">Ns</span><span class="p">{</span> <span class="mi">2</span> <span class="p">})</span>
-    <span class="p">{</span>
-        <span class="n">disintegrate</span><span class="p">();</span>
-    <span class="p">}</span>
-    <span class="cm">/* ... */</span>
-<span class="p">}</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">trajectory_correction</span><span class="p">(</span><span class="n">Ns</span><span class="w"> </span><span class="n">momentum</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">momentum</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">Ns</span><span class="p">{</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="p">})</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">disintegrate</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="cm">/* ... */</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
 <p>Calling this with <span class="docutils literal"><span class="pre">lbfs</span></span> as below fails to compile as the types are
 incompatible:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">main</span><span class="p">()</span>
-<span class="p">{</span>
-    <span class="n">trajectory_correction</span><span class="p">(</span><span class="n">lbfs</span><span class="p">{</span> <span class="mf">1.5</span> <span class="p">});</span>
-<span class="p">}</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">trajectory_correction</span><span class="p">(</span><span class="n">lbfs</span><span class="p">{</span><span class="w"> </span><span class="mf">1.5</span><span class="w"> </span><span class="p">});</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
 <p>Note how the meaning of the values, which used to be specified in comments
@@ -147,22 +147,22 @@ incompatible:</p>
 in code (<span class="docutils literal"><span class="pre">Ns{</span> <span class="pre">2</span> <span class="pre">}</span></span>, <span class="docutils literal"><span class="pre">lbfs{</span> <span class="pre">1.5</span> <span class="pre">}</span></span>).</p>
 <p>We can, of course, provide casting from <span class="docutils literal"><span class="pre">lbfs</span></span> to <span class="docutils literal"><span class="pre">Ns</span></span> as an explicit
 operator:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">lbfs</span>
-<span class="p">{</span>
-    <span class="kt">double</span> <span class="n">value</span><span class="p">;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">lbfs</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">;</span><span class="w"></span>
 
-    <span class="k">explicit</span> <span class="k">operator</span> <span class="n">Ns</span><span class="p">()</span>
-    <span class="p">{</span>
-        <span class="k">return</span> <span class="n">value</span> <span class="o">*</span> <span class="mf">4.448222</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="p">};</span>
+<span class="w">    </span><span class="k">explicit</span><span class="w"> </span><span class="k">operator</span><span class="w"> </span><span class="n">Ns</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">4.448222</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
 </pre></div>
 </div>
 <p>Equipped with this, we can call <span class="docutils literal"><span class="pre">trajectory_correction</span></span> via a static cast:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">main</span><span class="p">()</span>
-<span class="p">{</span>
-    <span class="n">trajectory_correction</span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Ns</span><span class="o">&gt;</span><span class="p">(</span><span class="n">lbfs</span><span class="p">{</span> <span class="mf">1.5</span> <span class="p">}));</span>
-<span class="p">}</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">trajectory_correction</span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Ns</span><span class="o">&gt;</span><span class="p">(</span><span class="n">lbfs</span><span class="p">{</span><span class="w"> </span><span class="mf">1.5</span><span class="w"> </span><span class="p">}));</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
 <p>This does the right thing of multiplying by the ratio. The cast can also be
@@ -190,14 +190,14 @@ the types of all live variables at a given point in time.</p>
 their possible states and since we have two of them, our program can be in any
 of their combined states.</p>
 <p>This gets more interesting when we look at functions that initialize values:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">bool</span> <span class="nf">get_momentum</span><span class="p">(</span><span class="n">Ns</span><span class="o">&amp;</span> <span class="n">momentum</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">some_condition</span><span class="p">())</span> <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_momentum</span><span class="p">(</span><span class="n">Ns</span><span class="o">&amp;</span><span class="w"> </span><span class="n">momentum</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">some_condition</span><span class="p">())</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
 
-    <span class="n">momentum</span> <span class="o">=</span> <span class="n">Ns</span><span class="p">{</span> <span class="mi">3</span> <span class="p">};</span>
+<span class="w">    </span><span class="n">momentum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Ns</span><span class="p">{</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
 
-    <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
-<span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
 <p>In the above example we take a <span class="docutils literal"><span class="pre">Ns</span></span> by reference and initialize it if some
@@ -210,35 +210,35 @@ is in any one of the possible <span class="docutils literal"><span class="pre">N
 returns <span class="docutils literal"><span class="pre">false</span></span>, then <span class="docutils literal"><span class="pre">momentum</span></span> was not set. It is still in any one of the
 possible <span class="docutils literal"><span class="pre">Ns</span></span> values, but it is not a valid value. Often times we have bugs
 where we accidentally propagate such invalid state:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">example</span><span class="p">()</span>
-<span class="p">{</span>
-    <span class="n">Ns</span> <span class="n">momenum</span><span class="p">;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">example</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">Ns</span><span class="w"> </span><span class="n">momenum</span><span class="p">;</span><span class="w"></span>
 
-    <span class="n">get_momentum</span><span class="p">(</span><span class="n">momentum</span><span class="p">);</span>
+<span class="w">    </span><span class="n">get_momentum</span><span class="p">(</span><span class="n">momentum</span><span class="p">);</span><span class="w"></span>
 
-    <span class="n">trajectory_correction</span><span class="p">(</span><span class="n">momentum</span><span class="p">);</span>
-<span class="p">}</span>
+<span class="w">    </span><span class="n">trajectory_correction</span><span class="p">(</span><span class="n">momentum</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
 <p>What we should have done instead is:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">example</span><span class="p">()</span>
-<span class="p">{</span>
-    <span class="n">Ns</span> <span class="n">momentum</span><span class="p">;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">example</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">Ns</span><span class="w"> </span><span class="n">momentum</span><span class="p">;</span><span class="w"></span>
 
-    <span class="k">if</span> <span class="p">(</span><span class="n">get_momentum</span><span class="p">(</span><span class="n">momentum</span><span class="p">))</span>
-    <span class="p">{</span>
-        <span class="n">trajectory_correction</span><span class="p">(</span><span class="n">momentum</span><span class="p">);</span>
-    <span class="p">}</span>
-<span class="p">}</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">get_momentum</span><span class="p">(</span><span class="n">momentum</span><span class="p">))</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">trajectory_correction</span><span class="p">(</span><span class="n">momentum</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
 <p>There is a better way though, where this can be enforced:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">optional</span><span class="o">&lt;</span><span class="n">Ns</span><span class="o">&gt;</span> <span class="n">get_momentum</span><span class="p">()</span>
-<span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">some_condition</span><span class="p">())</span> <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">nullopt</span><span class="p">;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">optional</span><span class="o">&lt;</span><span class="n">Ns</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_momentum</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">some_condition</span><span class="p">())</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">nullopt</span><span class="p">;</span><span class="w"></span>
 
-    <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">make_optional</span><span class="p">(</span><span class="n">Ns</span><span class="p">{</span> <span class="mi">3</span> <span class="p">});</span>
-<span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_optional</span><span class="p">(</span><span class="n">Ns</span><span class="p">{</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="p">});</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
 <p>Using an <span class="docutils literal"><span class="pre">optional</span></span>, this version of the function has a significantly smaller
@@ -248,15 +248,15 @@ Now it becomes impossible to have an invalid <span class="docutils literal"><spa
 throughout the system. We can also no longer <em>forget</em> to check the return value
 as an <span class="docutils literal"><span class="pre">optional&lt;Ns&gt;</span></span> is not implicitly convertible to an <span class="docutils literal"><span class="pre">Ns</span></span> - we need to
 explicitly unpack it:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">example</span><span class="p">()</span>
-<span class="p">{</span>
-    <span class="k">auto</span> <span class="n">maybeMomentum</span> <span class="o">=</span> <span class="n">get_momentum</span><span class="p">();</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">example</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">maybeMomentum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">get_momentum</span><span class="p">();</span><span class="w"></span>
 
-    <span class="k">if</span> <span class="p">(</span><span class="n">maybeMomentum</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="n">trajectory_correction</span><span class="p">(</span><span class="o">*</span><span class="n">maybeMomentum</span><span class="p">);</span>
-    <span class="p">}</span>
-<span class="p">}</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">maybeMomentum</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">trajectory_correction</span><span class="p">(</span><span class="o">*</span><span class="n">maybeMomentum</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
 <p>In general, we want our functions to return <strong>result or error</strong> not
@@ -278,38 +278,38 @@ form of free, delete, close etc. on the resource.</p>
 <p>Since these resources are external, they are not directly expressed into our
 type system. For example if we allocate some heap memory, we get a pointer on
 which we have to call <span class="docutils literal"><span class="pre">delete</span></span>:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">Foo</span> <span class="p">{};</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">Foo</span><span class="w"> </span><span class="p">{};</span><span class="w"></span>
 
-<span class="kt">void</span> <span class="nf">example</span><span class="p">()</span>
-<span class="p">{</span>
-    <span class="n">Foo</span><span class="o">*</span> <span class="n">foo</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Foo</span><span class="p">();</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">example</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">Foo</span><span class="o">*</span><span class="w"> </span><span class="n">foo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Foo</span><span class="p">();</span><span class="w"></span>
 
-    <span class="cm">/* Use foo */</span>
+<span class="w">    </span><span class="cm">/* Use foo */</span><span class="w"></span>
 
-    <span class="k">delete</span> <span class="n">foo</span><span class="p">;</span>
-<span class="p">}</span>
+<span class="w">    </span><span class="k">delete</span><span class="w"> </span><span class="n">foo</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
 <p>But what happens if we forget or something prevents us from calling <span class="docutils literal"><span class="pre">delete</span></span>?</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">example</span><span class="p">()</span>
-<span class="p">{</span>
-    <span class="n">Foo</span><span class="o">*</span> <span class="n">foo</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Foo</span><span class="p">();</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">example</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">Foo</span><span class="o">*</span><span class="w"> </span><span class="n">foo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Foo</span><span class="p">();</span><span class="w"></span>
 
-    <span class="k">throw</span> <span class="n">std</span><span class="o">::</span><span class="n">exception</span><span class="p">();</span>
+<span class="w">    </span><span class="k">throw</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">exception</span><span class="p">();</span><span class="w"></span>
 
-    <span class="k">delete</span> <span class="n">foo</span><span class="p">;</span>
-<span class="p">}</span>
+<span class="w">    </span><span class="k">delete</span><span class="w"> </span><span class="n">foo</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
 <p>In this case we no longer call <span class="docutils literal"><span class="pre">delete</span></span> and we leak the resource. In general,
 we don’t want to perform such manual cleanup. For heap memory, we actually have
 <span class="docutils literal"><span class="pre">unique_ptr</span></span> to help us manage it:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">example</span><span class="p">()</span>
-<span class="p">{</span>
-    <span class="k">auto</span> <span class="n">foo</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">();</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">example</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">foo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">();</span><span class="w"></span>
 
-    <span class="k">throw</span> <span class="n">std</span><span class="o">::</span><span class="n">exception</span><span class="p">();</span>
-<span class="p">}</span>
+<span class="w">    </span><span class="k">throw</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">exception</span><span class="p">();</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
 <p>The <span class="docutils literal"><span class="pre">unique_ptr</span></span> is a stack object so whenever it goes out of scope (when the

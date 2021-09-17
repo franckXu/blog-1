@@ -73,18 +73,18 @@ that. A good rule of thumb is to mark things as <span class="docutils literal"><
 <span class="docutils literal"><span class="pre">const*</span></span> etc.) and/or <span class="docutils literal"><span class="pre">readonly</span></span> by default, and make them mutable only when
 truly needed <a class="footnote-reference" href="#id5" id="id1">[1]</a>.</p>
 <p>A simple example:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">StringUtil</span>
-<span class="p">{</span>
-    <span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="nf">Concat1</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str1</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str2</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="k">return</span> <span class="n">str1</span> <span class="o">+</span> <span class="n">str2</span><span class="p">;</span>
-    <span class="p">}</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">StringUtil</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">Concat1</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">str1</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">str2</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">str1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">str2</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
 
-    <span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="nf">Concat2</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str1</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str2</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="k">return</span> <span class="n">str1</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">str2</span><span class="p">);</span>
-    <span class="p">}</span>
-<span class="p">};</span>
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">Concat2</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">str1</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">str2</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">str1</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">str2</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
 </pre></div>
 </div>
 <p>Both <span class="docutils literal"><span class="pre">StringUtil::Concat1</span></span> and <span class="docutils literal"><span class="pre">StringUtil::Concat2</span></span> return the same thing
@@ -93,38 +93,38 @@ for the same input, the difference being that <span class="docutils literal"><sp
 might be introduced accidentally and have unexpected consequences down the line.</p>
 <p>A simple way to address this is by explicitly marking the arguments as
 <span class="docutils literal"><span class="pre">const</span></span>:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">StringUtil</span>
-<span class="p">{</span>
-    <span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="nf">Concat1</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str1</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str2</span><span class="p">)</span>
-    <span class="p">{</span>
-         <span class="k">return</span> <span class="n">str1</span> <span class="o">+</span> <span class="n">str2</span><span class="p">;</span>
-    <span class="p">}</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">StringUtil</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">Concat1</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">str1</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">str2</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">         </span><span class="k">return</span><span class="w"> </span><span class="n">str1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">str2</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
 
-    <span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="nf">Concat2</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str1</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">str2</span><span class="p">)</span>
-    <span class="p">{</span>
-         <span class="k">return</span> <span class="n">str1</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">str2</span><span class="p">);</span> <span class="c1">// Won&#39;t compile - can&#39;t call append on str1</span>
-    <span class="p">}</span>
-<span class="p">};</span>
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">Concat2</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">str1</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">str2</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">         </span><span class="k">return</span><span class="w"> </span><span class="n">str1</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">str2</span><span class="p">);</span><span class="w"> </span><span class="c1">// Won&#39;t compile - can&#39;t call append on str1</span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
 </pre></div>
 </div>
 <p>In this case, <span class="docutils literal"><span class="pre">Concat2</span></span> won’t compile, so we can rely on the compiler to
 eliminate this type of unintended behavior.</p>
 <p>Another example: a simple <span class="docutils literal"><span class="pre">UpCase</span></span> function which calls <span class="docutils literal"><span class="pre">toupper</span></span> on each
 character of the given string, upcasing it in place:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">UpCase</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">string</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="k">while</span> <span class="p">(</span><span class="o">*</span><span class="n">string</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="o">*</span><span class="n">string</span> <span class="o">=</span> <span class="n">toupper</span><span class="p">(</span><span class="o">*</span><span class="n">string</span><span class="p">);</span>
-        <span class="n">string</span><span class="o">++</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="p">};</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">UpCase</span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">string</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">string</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="o">*</span><span class="n">string</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">toupper</span><span class="p">(</span><span class="o">*</span><span class="n">string</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="n">string</span><span class="o">++</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
 </pre></div>
 </div>
 <p>Calling it with</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">char</span><span class="o">*</span> <span class="n">myString</span> <span class="o">=</span> <span class="s">&quot;Foo&quot;</span><span class="p">;</span>
-<span class="p">...</span>
-<span class="n">UpCase</span><span class="p">(</span><span class="n">myString</span><span class="p">);</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">myString</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Foo&quot;</span><span class="p">;</span><span class="w"></span>
+<span class="p">...</span><span class="w"></span>
+<span class="n">UpCase</span><span class="p">(</span><span class="n">myString</span><span class="p">);</span><span class="w"></span>
 </pre></div>
 </div>
 <p>will lead to a crash at runtime - the function will try to call <span class="docutils literal"><span class="pre">toupper</span></span> on
@@ -133,9 +133,9 @@ to a string literal which gets compiled into the read-only data segment of the
 binary. This cannot be modified.</p>
 <p>To catch this type of errors at compile-time, we again only need to mark the
 immutable data as such:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">myString</span> <span class="o">=</span> <span class="s">&quot;Foo&quot;</span><span class="p">;</span>
-<span class="p">...</span>
-<span class="n">UpCase</span><span class="p">(</span><span class="n">myString</span><span class="p">);</span> <span class="c1">// Won&#39;t compile - can&#39;t call UpCase on myString</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">myString</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Foo&quot;</span><span class="p">;</span><span class="w"></span>
+<span class="p">...</span><span class="w"></span>
+<span class="n">UpCase</span><span class="p">(</span><span class="n">myString</span><span class="p">);</span><span class="w"> </span><span class="c1">// Won&#39;t compile - can&#39;t call UpCase on myString</span>
 </pre></div>
 </div>
 <p>In contrast with the previous example, the argument to <span class="docutils literal"><span class="pre">UpCase</span></span> is mutable by
@@ -204,11 +204,11 @@ code, write it like C++ code. Don’t write C# code as C++, write it as C# etc.<
 <p>Also, keep up to date on the language. Language syntax evolves to address needs,
 so in general modern syntax introduces simpler, better ways to implement things
 than old syntax. Take object allocation and initialization in C++ as an example:</p>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">Foo</span><span class="o">*</span> <span class="n">foo</span> <span class="o">=</span> <span class="p">(</span><span class="n">Foo</span><span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">Foo</span><span class="p">));</span>
-<span class="n">init</span><span class="p">(</span><span class="n">foo</span><span class="p">);</span>
-<span class="p">...</span>
-<span class="n">deinit</span><span class="p">(</span><span class="n">foo</span><span class="p">);</span>
-<span class="n">free</span><span class="p">(</span><span class="n">foo</span><span class="p">);</span>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">Foo</span><span class="o">*</span><span class="w"> </span><span class="n">foo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">Foo</span><span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">Foo</span><span class="p">));</span><span class="w"></span>
+<span class="n">init</span><span class="p">(</span><span class="n">foo</span><span class="p">);</span><span class="w"></span>
+<span class="p">...</span><span class="w"></span>
+<span class="n">deinit</span><span class="p">(</span><span class="n">foo</span><span class="p">);</span><span class="w"></span>
+<span class="n">free</span><span class="p">(</span><span class="n">foo</span><span class="p">);</span><span class="w"></span>
 </pre></div>
 </div>
 <p>This is the C way of allocating and initializing a structure on the heap, then
@@ -218,9 +218,9 @@ managed resources (by omitting the <span class="docutils literal"><span class="p
 to end up with an initialized struct (by omitting the <span class="docutils literal"><span class="pre">init</span></span> call), or
 accidental double-initialization, double-deinitialization, double-free etc.</p>
 <p>C++ introduced classes, and the following syntax:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">Foo</span><span class="o">*</span> <span class="n">foo</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Foo</span><span class="p">();</span>
-<span class="p">...</span>
-<span class="k">delete</span> <span class="n">foo</span><span class="p">;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">Foo</span><span class="o">*</span><span class="w"> </span><span class="n">foo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Foo</span><span class="p">();</span><span class="w"></span>
+<span class="p">...</span><span class="w"></span>
+<span class="k">delete</span><span class="w"> </span><span class="n">foo</span><span class="p">;</span><span class="w"></span>
 </pre></div>
 </div>
 <p><span class="docutils literal"><span class="pre">new</span></span> both allocates memory and calls the constructor, while <span class="docutils literal"><span class="pre">delete</span></span> calls
@@ -229,14 +229,14 @@ go away, but there is still the problem of leaking the resource by omitting the
 <span class="docutils literal"><span class="pre">delete</span></span> call, and the issue of calling <span class="docutils literal"><span class="pre">delete</span></span> twice on the same memory
 address.</p>
 <p>To address these issues, smart pointers were introduced in the language:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span> <span class="n">foo</span><span class="p">(</span><span class="k">new</span> <span class="n">Foo</span><span class="p">());</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="w"> </span><span class="n">foo</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Foo</span><span class="p">());</span><span class="w"></span>
 </pre></div>
 </div>
 <p>Smart pointers encapsulate reference counting (how many <span class="docutils literal"><span class="pre">shared_ptr</span></span> objects
 point to the same memory address), and automatically release the resource when
 the last reference goes away. This gets rid of most problems, but there is an
 even better way of allocating heap objects:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span> <span class="n">foo</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">();</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span><span class="w"> </span><span class="n">foo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">();</span><span class="w"></span>
 </pre></div>
 </div>
 <p><span class="docutils literal"><span class="pre">make_shared</span></span> has the advantage of improved performance, by allocating memory
