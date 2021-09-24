@@ -35,8 +35,8 @@ workspace.
     providing a centralized place to work with all the artifacts you create.
 
 In this post, we'll create and configure a workspace, then we'll look at
-everything needed for taking our high spender model we developed in part 1 from
-our local machine and running it on Azure. 
+everything needed for taking our high spender model we developed in `part 1 <https://vladris.com/blog/2021/09/10/machine-learning-on-azure-part-1.html>`_
+from our local machine and running it on Azure. 
 
 Creating a workspace
 --------------------
