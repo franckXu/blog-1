@@ -4,6 +4,7 @@ Sitemap
 .. toctree::
    :maxdepth: 1
 
+   2021/11/27/notes-on-software-lifecycle
    2021/09/24/machine-learning-on-azure-part-3
    2021/09/17/machine-learning-on-azure-part-2
    2021/09/10/machine-learning-on-azure-part-1
